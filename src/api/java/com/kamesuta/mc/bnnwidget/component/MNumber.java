@@ -28,7 +28,7 @@ public class MNumber extends WPanel {
 			protected boolean onClicked(final WEvent ev, final Area pgp, final Point p, final int button) {
 				return negClicked();
 			}
-		}.setText(I18n.format("signpic.gui.editor.number.neg"));
+		}.setText("-");
 		add(this.neg);
 		this.field = new MChatTextField(new R(Coord.left(buttonwidth), Coord.right(buttonwidth), Coord.top(0), Coord.bottom(0))) {
 			@Override
@@ -42,7 +42,7 @@ public class MNumber extends WPanel {
 			protected boolean onClicked(final WEvent ev, final Area pgp, final Point p, final int button) {
 				return posClicked();
 			}
-		}.setText(I18n.format("signpic.gui.editor.number.pos"));
+		}.setText("+");
 		add(this.pos);
 	}
 

@@ -4,7 +4,7 @@
 		{
 			"modid": "bnnwidget",
 			"name": "BnnWidget",
-			"description": "Easy but powerful GUI widget",
+			"description": "Easy but powerful Minecraft GUI widget",
 			"mcversion": "${mcversion}",
 			"version": "${version}",
 			"authorList": [
