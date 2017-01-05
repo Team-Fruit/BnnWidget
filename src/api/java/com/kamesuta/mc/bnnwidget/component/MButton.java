@@ -22,7 +22,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class MButton extends WBase {
-	public static final @Nonnull ResourceLocation button = new ResourceLocation("bnnwidget", "textures/gui/buttons.png");
+	public static final @Nonnull ResourceLocation button = new ResourceLocation("signpic", "textures/gui/buttons.png");
 	public static boolean tryNew;
 
 	public @Nullable String text = null;
@@ -63,7 +63,7 @@ public class MButton extends WBase {
 	}
 
 	public static void playPressButtonSound() {
-		mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 	}
 
 	protected boolean onClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {

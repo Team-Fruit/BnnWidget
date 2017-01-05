@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             name = 'forge'
             url = 'http://files.minecraftforge.net/maven'
@@ -12,11 +13,15 @@ buildscript {
     }
     dependencies {
         classpath project.forgegradle
+        classpath 'com.matthewprenger:CurseGradle:1.0-SNAPSHOT'
     }
 }
 
-apply plugin: 'forge'
-apply plugin: 'curseforge'
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.matthewprenger.cursegradle'
 
 // ext.build = System.getenv().BUILD_NUMBER ?: 'git'
 ext.modversion = "${project.version_major}.${project.version_minor}.${project.version_micro}"
@@ -89,17 +94,14 @@ jar {
     manifest commonManifest
 }
 
+sourceJar {
+    from sourceSets.api.allSource
+}
+
 task devJar(dependsOn: 'classes', type: Jar) {
     from sourceSets.main.output
     from sourceSets.api.output
     classifier = 'dev'
-    manifest commonManifest
-}
-
-task sourceJar(dependsOn: 'classes', type: Jar) {
-    from sourceSets.main.allSource
-    from sourceSets.api.allSource
-    classifier = 'sources'
     manifest commonManifest
 }
 

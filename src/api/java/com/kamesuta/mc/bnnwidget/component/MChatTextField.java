@@ -252,7 +252,7 @@ public class MChatTextField extends WBase {
 
 	protected class MGuiTextField extends GuiTextField {
 		public MGuiTextField() {
-			super(font(), 0, 0, 0, 0);
+			super(1, font(), 0, 0, 0, 0);
 		}
 
 		@Override

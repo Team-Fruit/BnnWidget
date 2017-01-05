@@ -11,28 +11,31 @@ import org.apache.commons.lang3.StringUtils;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class WGui extends Gui {
 	public static final @Nonnull Minecraft mc;
 	public static final @Nonnull Tessellator t = WRenderer.t;
+	public static final @Nonnull WorldRenderer w = WRenderer.w;
 	// public static final StencilClip clip = StencilClip.instance;
 	static {
 		mc = FMLClientHandler.instance().getClient();
 	}
 
 	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		t.startDrawingQuads();
-		t.addVertexWithUV(vx1, vy2, 0, tx1, ty2);
-		t.addVertexWithUV(vx2, vy2, 0, tx2, ty2);
-		t.addVertexWithUV(vx2, vy1, 0, tx2, ty1);
-		t.addVertexWithUV(vx1, vy1, 0, tx1, ty1);
+		w.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		w.pos(vx1, vy2, 0).tex(tx1, ty2).endVertex();
+		w.pos(vx2, vy2, 0).tex(tx2, ty2).endVertex();
+		w.pos(vx2, vy1, 0).tex(tx2, ty1).endVertex();
+		w.pos(vx1, vy1, 0).tex(tx1, ty1).endVertex();
 		t.draw();
 	}
 
@@ -82,11 +85,11 @@ public class WGui extends Gui {
 	}
 
 	public static void draw(final float x1, final float y1, final float x2, final float y2, final int mode) {
-		t.startDrawing(mode);
-		t.addVertex(x1, y2, 0);
-		t.addVertex(x2, y2, 0);
-		t.addVertex(x2, y1, 0);
-		t.addVertex(x1, y1, 0);
+		w.begin(mode, DefaultVertexFormats.POSITION);
+		w.pos(x1, y2, 0).endVertex();
+		w.pos(x2, y2, 0).endVertex();
+		w.pos(x2, y1, 0).endVertex();
+		w.pos(x1, y1, 0).endVertex();
 		t.draw();
 	}
 
@@ -129,7 +132,7 @@ public class WGui extends Gui {
 	}
 
 	public static @Nonnull FontRenderer font() {
-		return mc.fontRenderer;
+		return mc.fontRendererObj;
 	}
 
 	public static void drawString(final @Nonnull String text, final float x, final float y, final float w, final float h, final @Nonnull Align align, final @Nonnull VerticalAlign valign, final boolean shadow) {

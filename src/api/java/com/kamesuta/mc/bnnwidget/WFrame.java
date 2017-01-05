@@ -1,5 +1,6 @@
 package com.kamesuta.mc.bnnwidget;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -158,7 +159,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	}
 
 	@Override
-	protected void mouseClicked(final int x, final int y, final int button) {
+	protected void mouseClicked(final int x, final int y, final int button) throws IOException {
 		this.mousebutton = button;
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
@@ -166,17 +167,17 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		sMouseClicked(x, y, button);
 	}
 
-	protected void sMouseClicked(final int x, final int y, final int button) {
+	protected void sMouseClicked(final int x, final int y, final int button) throws IOException {
 		super.mouseClicked(x, y, button);
 	}
 
 	@Override
-	protected void mouseMovedOrUp(final int x, final int y, final int button) {
-		sMouseMovedOrUp(x, y, button);
+	protected void mouseReleased(final int x, final int y, final int button) {
+		sMouseReleased(x, y, button);
 	}
 
-	protected void sMouseMovedOrUp(final int x, final int y, final int button) {
-		super.mouseMovedOrUp(x, y, button);
+	protected void sMouseReleased(final int x, final int y, final int button) {
+		super.mouseReleased(x, y, button);
 	}
 
 	@Override
@@ -261,7 +262,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	}
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		final int i = Mouse.getEventDWheel();
 		if (i!=0) {
 			final Area gp = getAbsolute();
@@ -271,16 +272,16 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		sHandleMouseInput();
 	}
 
-	protected void sHandleMouseInput() {
+	protected void sHandleMouseInput() throws IOException {
 		super.handleMouseInput();
 	}
 
 	@Override
-	public void handleKeyboardInput() {
+	public void handleKeyboardInput() throws IOException {
 		sHandleKeyboardInput();
 	}
 
-	protected void sHandleKeyboardInput() {
+	protected void sHandleKeyboardInput() throws IOException {
 		super.handleKeyboardInput();
 	}
 
