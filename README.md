@@ -16,7 +16,7 @@
 * [License](#license)
 * [Downloads](#downloads)
 * [Usage](#usage)
-* [Code](#code)
+* [Example](#example)
 * [Issues](#issues)
 * [Building](#building)
 * [Contribution](#contribution)
@@ -50,7 +50,7 @@ Downloads can be found on [github](https://github.com/Team-Fruit/BnnWidget/relea
 
 Change the package name to anything you want and include these files!
 
-## Code
+## Example
 
 ```java
 import javax.annotation.Nonnull;
