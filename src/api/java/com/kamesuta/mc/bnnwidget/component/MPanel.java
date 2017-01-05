@@ -15,7 +15,7 @@ import com.kamesuta.mc.bnnwidget.render.OpenGL;
 import net.minecraft.util.ResourceLocation;
 
 public class MPanel extends WPanel {
-	public static final @Nonnull ResourceLocation background = new ResourceLocation("signpic", "textures/gui/background.png");
+	public static final @Nonnull ResourceLocation background = new ResourceLocation("bnnwidget", "textures/gui/background.png");
 	public static boolean tryNew;
 
 	public MPanel(final @Nonnull R position) {

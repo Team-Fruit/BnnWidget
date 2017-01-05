@@ -22,7 +22,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 public class MButton extends WBase {
-	public static final @Nonnull ResourceLocation button = new ResourceLocation("signpic", "textures/gui/buttons.png");
+	public static final @Nonnull ResourceLocation button = new ResourceLocation("bnnwidget", "textures/gui/buttons.png");
 	public static boolean tryNew;
 
 	public @Nullable String text = null;
