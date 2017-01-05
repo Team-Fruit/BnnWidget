@@ -15,7 +15,8 @@
 * [Contacts](#contacts)
 * [License](#license)
 * [Downloads](#downloads)
-* [Installation](#installation)
+* [Usage](#usage)
+* [Code](#code)
 * [Issues](#issues)
 * [Building](#building)
 * [Contribution](#contribution)
@@ -43,11 +44,93 @@ The sign tells us how beautiful it is!
 
 ## Downloads
 
-Downloads can be found on [CurseForge](https://minecraft.curseforge.com/projects/bnnwidget) or on the [github](https://github.com/Team-Fruit/BnnWidget/releases).
+Downloads can be found on [github](https://github.com/Team-Fruit/BnnWidget/releases).
 
-## Installation
+## Usage
 
-You install this mod by putting it into the `minecraft/mods/` folder. It has no additional hard dependencies.
+Change the package name to anything you want and include these files!
+
+## Code
+
+```java
+import javax.annotation.Nonnull;
+
+import com.kamesuta.mc.bnnwidget.WBase;
+import com.kamesuta.mc.bnnwidget.WEvent;
+import com.kamesuta.mc.bnnwidget.WFrame;
+import com.kamesuta.mc.bnnwidget.WPanel;
+import com.kamesuta.mc.bnnwidget.WRenderer;
+import com.kamesuta.mc.bnnwidget.motion.Easings;
+import com.kamesuta.mc.bnnwidget.position.Area;
+import com.kamesuta.mc.bnnwidget.position.Point;
+import com.kamesuta.mc.bnnwidget.position.R;
+import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.var.V;
+import com.kamesuta.mc.bnnwidget.var.VMotion;
+
+// your main gui extends "WFrame"
+public class MyGui extends WFrame {
+	// init widgets in "initWidget"
+	@Override
+	protected void initWidget() {
+		// add your panel extends "WPanel"
+		add(new WPanel(new R()) {
+			@Override
+			protected void initWidget() {
+				// "R" is a class that relatively expresses an area.
+				add(new WBase(new R()) {
+					// "VMotion" is a constantly changing value depending on the specified animation.
+					VMotion m = V.pm(0);
+
+					@Override
+					public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float opacity) {
+						// Let's prepare before rendering with "WRenderer.startShape()"
+						WRenderer.startShape();
+						// BnnWidget provides a GL wrapper that absorbs differences in Minecraft versions.
+						// The value of the "V" class is retrieved by get () every time.
+						OpenGL.glColor4f(0f, 0f, 0f, this.m.get());
+						// "WGui" has drawing methods that can be specified in detail with a float value.
+						draw(getGuiPosition(pgp));
+					}
+
+					private boolean mouseinside;
+
+					@Override
+					public void update(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
+						// The area of the parent widget becomes get Area of the child widget by getGuiPosition.
+						final Area a = getGuiPosition(pgp);
+						// PointInside determines if the cursor is over the widget
+						if (a.pointInside(p)) {
+							if (!this.mouseinside) {
+								this.mouseinside = true;
+								// Add animation and start it. Release the queue with stop.
+								this.m.stop().add(Easings.easeLinear.move(.2f, 0f)).start();
+							}
+						} else if (this.mouseinside) {
+							this.mouseinside = false;
+							this.m.stop().add(Easings.easeLinear.move(.2f, .5f)).start();
+						}
+						super.update(ev, pgp, p);
+					}
+
+					// It is called when the GUI is closed. If you want to add closing animation, return false and let's wait.
+					@Override
+					public boolean onCloseRequest() {
+						this.m.stop().add(Easings.easeLinear.move(.25f, 0f)).start();
+						return false;
+					}
+
+					// The GUI will not exit until it returns true. Let's see if the animation has ended with isFinished.
+					@Override
+					public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse) {
+						return this.m.isFinished();
+					}
+				});
+			}
+		});
+	}
+}
+```
 
 ## Issues
 
