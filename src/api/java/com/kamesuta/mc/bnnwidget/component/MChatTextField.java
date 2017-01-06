@@ -159,7 +159,7 @@ public class MChatTextField extends WBase {
 	}
 
 	public int func_146197_a(final int p_146197_1_, final int p_146197_2_, final boolean p_146197_3_) {
-		return this.t.func_146197_a(p_146197_1_, p_146197_2_, p_146197_3_);
+		return this.t.getNthWordFromPosWS(p_146197_1_, p_146197_2_, p_146197_3_);
 	}
 
 	public void moveCursorBy(final int p_146182_1_) {

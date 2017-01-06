@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 public class OpenGL {
 	public static void glEnable(final int attrib) {
@@ -170,7 +170,13 @@ public class OpenGL {
 	}
 
 	public static void glCullFace(final int mode) {
-		GlStateManager.cullFace(mode);
+		// GlStateManager.cullFace(mode);
+		if (mode==GlStateManager.CullFace.BACK.mode)
+			GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+		else if (mode==GlStateManager.CullFace.FRONT.mode)
+			GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
+		else if (mode==GlStateManager.CullFace.FRONT_AND_BACK.mode)
+			GlStateManager.cullFace(GlStateManager.CullFace.FRONT_AND_BACK);
 		// GL11.glCullFace(mode);
 	}
 
@@ -324,7 +330,7 @@ public class OpenGL {
 		GL11.glVertex3f(x, y, z);
 	}
 
-	public static void glVertex(final Vec3 vertex) {
+	public static void glVertex(final Vec3d vertex) {
 		GL11.glVertex3f((float) vertex.xCoord, (float) vertex.yCoord, (float) vertex.zCoord);
 	}
 

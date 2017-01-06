@@ -15,16 +15,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class WGui extends Gui {
 	public static final @Nonnull Minecraft mc;
 	public static final @Nonnull Tessellator t = WRenderer.t;
-	public static final @Nonnull WorldRenderer w = WRenderer.w;
+	public static final @Nonnull VertexBuffer w = WRenderer.w;
 	// public static final StencilClip clip = StencilClip.instance;
 	static {
 		mc = FMLClientHandler.instance().getClient();
@@ -197,6 +197,6 @@ public class WGui extends Gui {
 	public static int getStringWidth(final @Nonnull String s) {
 		if (StringUtils.isEmpty(s))
 			return 0;
-		return font().getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+		return font().getStringWidth(TextFormatting.getTextWithoutFormattingCodes(s));
 	}
 }
