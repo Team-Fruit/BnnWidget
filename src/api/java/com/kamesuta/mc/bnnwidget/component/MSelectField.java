@@ -5,14 +5,28 @@ import javax.annotation.Nonnull;
 import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.R;
 
+/**
+ * テキストフィールド選択肢コンポーネントです
+ * @author TeamFruit
+ */
 public class MSelectField extends MSelect<String> {
+	/**
+	 * テキストフィールド
+	 */
 	protected final @Nonnull MChatTextField field;
 	private @Nonnull StringSelector selector = new StringSelector();
 
+	/**
+	 * 文字列セレクターを設定
+	 * @param selector ボタンセレクター
+	 */
 	public void setSelector(final @Nonnull StringSelector selector) {
 		this.selector = selector;
 	}
 
+	/**
+	 * 文字列セレクター
+	 */
 	@Override
 	protected @Nonnull Selector<String> getSelector() {
 		return this.selector;
@@ -28,6 +42,10 @@ public class MSelectField extends MSelect<String> {
 		});
 	}
 
+	/**
+	 * 選択が変更された際に呼ばれます
+	 * @param widget ボタン
+	 */
 	protected void onChanged(final @Nonnull String oldText, final @Nonnull String newText) {
 	}
 

@@ -8,14 +8,39 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
+/**
+ * モーションセット
+ *
+ * @author TeamFruit
+ */
 public class CompoundMotion implements IMotion, ICompoundMotion {
-
+	/**
+	 * 一時停止中の場合true
+	 */
 	protected boolean paused = true;
+	/**
+	 * モーションタスク
+	 */
 	protected @Nonnull TaskList<IMotion> tasks;
+	/**
+	 * 現在のモーション
+	 */
 	protected @Nullable IMotion current;
+	/**
+	 * 最初の値
+	 */
 	protected float firstcoord;
+	/**
+	 * 現在の値
+	 */
 	protected float coord;
+	/**
+	 * ループの最後
+	 */
 	protected boolean looplast;
+	/**
+	 * アニメーション後のタスク
+	 */
 	protected @Nullable Runnable after;
 	protected boolean usecoord;
 
@@ -42,6 +67,10 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		return this;
 	}
 
+	/**
+	 * 現在のタスクを設定
+	 * @param current 現在のタスク
+	 */
 	protected void setCurrent(final @Nullable IMotion current) {
 		if (this.current!=null)
 			this.current.onFinished();
@@ -85,6 +114,10 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		return this;
 	}
 
+	/**
+	 * 次のタスクへ進む
+	 * @return
+	 */
 	protected @Nullable IMotion nextCurrent() {
 		final IMotion m = this.tasks.poll();
 		setCurrent(m);
@@ -238,6 +271,11 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 			this.after.run();
 	}
 
+	/**
+	 * モーションからモーションセットを作成します
+	 * @param motions モーション
+	 * @return モーションセット
+	 */
 	public static @Nonnull CompoundMotion of(final @Nonnull IMotion... motions) {
 		final CompoundMotion compound = new CompoundMotion();
 		for (final IMotion motion : motions)
@@ -246,6 +284,12 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		return compound;
 	}
 
+	/**
+	 * 初期値とモーションからモーションセットを作成します
+	 * @param coord 初期値
+	 * @param motions モーション
+	 * @return モーションセット
+	 */
 	public static @Nonnull CompoundMotion of(final float coord, final @Nonnull IMotion... motions) {
 		final CompoundMotion compound = new CompoundMotion(coord);
 		for (final IMotion motion : motions)
@@ -254,6 +298,11 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		return compound;
 	}
 
+	/**
+	 * モーションタスク
+	 * @param <E> モーション
+	 * @author TeamFruit
+	 */
 	public static class TaskList<E> implements Iterable<E> {
 
 		private final @Nonnull List<E> tasks = Lists.newArrayList();

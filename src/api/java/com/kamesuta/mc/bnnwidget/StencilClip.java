@@ -8,12 +8,20 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.WGui;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
+/**
+ * 描画を切り抜くためのユーティリティメソッド群です。
+ * <p>
+ * <b>実装が不安定です。使用しないことをお勧めします。</b>
+ *
+ * @author TeamFruit
+ */
 @Deprecated
 public class StencilClip {
 	public static final StencilClip instance = new StencilClip();

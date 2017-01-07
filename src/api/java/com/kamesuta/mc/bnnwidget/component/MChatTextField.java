@@ -15,10 +15,28 @@ import com.kamesuta.mc.bnnwidget.render.OpenGL;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ChatAllowedCharacters;
 
+/**
+ * Minecraftの{@link GuiTextField}のウィジェットラッパーです。
+ *
+ * @author TeamFruit
+ */
 public class MChatTextField extends WBase {
-	protected final @Nonnull GuiTextField t;
+	/**
+	 * テキストフィールド
+	 */
+	protected final @Nonnull MGuiTextField t;
 
+	/**
+	 * 透かし文字
+	 */
 	protected @Nullable String watermark;
+	/**
+	 * 透かし文字色
+	 */
+	protected int watermarkcolor = 0x777777;
+	/**
+	 * 入力可能文字
+	 */
 	protected @Nullable String allowedCharacters;
 
 	public MChatTextField(final @Nonnull R position) {
@@ -26,6 +44,11 @@ public class MChatTextField extends WBase {
 		this.t = new MGuiTextField();
 	}
 
+	/**
+	 * 入力可能かどうか
+	 * @param c 文字
+	 * @return 入力可能の場合true
+	 */
 	public boolean canAddChar(final char c) {
 		if (StringUtils.isEmpty(getAllowedCharacters()))
 			return true;
@@ -35,20 +58,56 @@ public class MChatTextField extends WBase {
 			return StringUtils.contains(getAllowedCharacters(), c);
 	}
 
+	/**
+	 * 透かし文字を設定します
+	 * @param watermark 透かし文字
+	 * @return this
+	 */
 	public @Nonnull MChatTextField setWatermark(final @Nullable String watermark) {
 		this.watermark = watermark;
 		return this;
 	}
 
+	/**
+	 * 透かし文字
+	 * @return 透かし文字
+	 */
 	public @Nullable String getWatermark() {
 		return this.watermark;
 	}
 
+	/**
+	 * 透かし文字の色を設定します
+	 * @param watermark 透かし文字の色
+	 * @return this
+	 */
+	public @Nonnull MChatTextField setWatermarkColor(final int watermark) {
+		this.watermarkcolor = watermark;
+		return this;
+	}
+
+	/**
+	 * 透かし文字の色
+	 * @return 透かし文字の色
+	 */
+	public int getWatermarkColor() {
+		return this.watermarkcolor;
+	}
+
+	/**
+	 * 入力可能文字を設定します
+	 * @param s 入力可能文字
+	 * @return this
+	 */
 	public @Nonnull MChatTextField setAllowedCharacters(final @Nullable String s) {
 		this.allowedCharacters = s;
 		return this;
 	}
 
+	/**
+	 * 入力可能文字
+	 * @return 入力可能文字
+	 */
 	public @Nullable String getAllowedCharacters() {
 		return this.allowedCharacters;
 	}
@@ -110,6 +169,10 @@ public class MChatTextField extends WBase {
 		return true;
 	}
 
+	/**
+	 * ウィジェットの絶対座標をテキストフィールドに反映します。
+	 * @param a 絶対座標
+	 */
 	protected void updateArea(final @Nonnull Area a) {
 		final Area b = a.child(1, 1, -1, -1);
 		this.t.xPosition = (int) b.x1();
@@ -118,17 +181,33 @@ public class MChatTextField extends WBase {
 		this.t.height = (int) b.h();
 	}
 
+	/**
+	 * テキストを設定します
+	 * @param p_146180_1_
+	 */
 	public void setText(final @Nonnull String p_146180_1_) {
 		this.t.setText(p_146180_1_);
 	}
 
+	/**
+	 * テキストが変更された場合に呼び出されます。
+	 * @param oldText 変更前のテキスト
+	 */
 	protected void onTextChanged(final @Nonnull String oldText) {
 	}
 
+	/**
+	 * テキスト
+	 * @return テキスト
+	 */
 	public @Nonnull String getText() {
 		return this.t.getText();
 	}
 
+	/**
+	 * 選択中のテキスト
+	 * @return
+	 */
 	public @Nonnull String getSelectedText() {
 		return this.t.getSelectedText();
 	}
@@ -195,35 +274,66 @@ public class MChatTextField extends WBase {
 		return this.t.getCursorPosition();
 	}
 
+	/**
+	 * デフォルトのMinecraftテキストフィールドデザインを描画するかどうか
+	 * @return デフォルトのMinecraftテキストフィールドデザインを描画する場合はtrue
+	 */
 	public boolean getEnableBackgroundDrawing() {
 		return this.t.getEnableBackgroundDrawing();
 	}
 
-	public void setEnableBackgroundDrawing(final boolean p_146185_1_) {
-		this.t.setEnableBackgroundDrawing(p_146185_1_);
+	/**
+	 * デフォルトのMinecraftテキストフィールドデザインを描画するかどうかを設定します
+	 * @param b デフォルトのMinecraftテキストフィールドデザインを描画する場合はtrue
+	 */
+	public void setEnableBackgroundDrawing(final boolean b) {
+		this.t.setEnableBackgroundDrawing(b);
 	}
 
-	public void setTextColor(final int p_146193_1_) {
-		this.t.setTextColor(p_146193_1_);
+	/**
+	 * テキストの色を設定します
+	 * @param color テキストの色
+	 */
+	public void setTextColor(final int color) {
+		this.t.setTextColor(color);
 	}
 
-	public void setDisabledTextColour(final int p_146204_1_) {
-		this.t.setDisabledTextColour(p_146204_1_);
+	/**
+	 * 無効状態のテキストの色を指定します
+	 * @param color 無効状態のテキストの色
+	 */
+	public void setDisabledTextColour(final int color) {
+		this.t.setDisabledTextColour(color);
 	}
 
-	public void setFocused(final boolean p_146195_1_) {
-		this.t.setFocused(p_146195_1_);
+	/**
+	 * このフィールドを選択中かどうかを設定します
+	 * @param b このフィールドを選択中の場合はtrue
+	 */
+	public void setFocused(final boolean b) {
+		this.t.setFocused(b);
 	}
 
+	/**
+	 * フォーカス状態が変更された場合に呼ばれます
+	 */
 	protected void onFocusChanged() {
 	}
 
+	/**
+	 * このフィールドを選択中かどうか
+	 * @return このフィールドを選択中の場合はtrue
+	 */
 	public boolean isFocused() {
 		return this.t.isFocused();
 	}
 
-	public void setEnabled(final boolean p_146184_1_) {
-		this.t.setEnabled(p_146184_1_);
+	/**
+	 * テキストフィールドが有効かどうかを設定します
+	 * @param b テキストフィールドが有効な場合true
+	 */
+	public void setEnabled(final boolean b) {
+		this.t.setEnabled(b);
 	}
 
 	public int getSelectionEnd() {
@@ -242,14 +352,27 @@ public class MChatTextField extends WBase {
 		this.t.setCanLoseFocus(p_146205_1_);
 	}
 
+	/**
+	 * テキストフィールドを表示するかどうか
+	 * @return テキストフィールドを表示する場合true
+	 */
 	public boolean getVisible() {
 		return this.t.getVisible();
 	}
 
-	public void setVisible(final boolean p_146189_1_) {
-		this.t.setVisible(p_146189_1_);
+	/**
+	 * テキストフィールドを表示するかどうかを設定します
+	 * @param b テキストフィールドを表示する場合true
+	 */
+	public void setVisible(final boolean b) {
+		this.t.setVisible(b);
 	}
 
+	/**
+	 * GuiTextFieldにフックが加わったクラスです
+	 *
+	 * @author TeamFruit
+	 */
 	protected class MGuiTextField extends GuiTextField {
 		public MGuiTextField() {
 			super(font(), 0, 0, 0, 0);
@@ -325,7 +448,7 @@ public class MChatTextField extends WBase {
 			if (!StringUtils.isEmpty(getWatermark())&&StringUtils.isEmpty(getText())&&!isFocused()) {
 				final int l = getEnableBackgroundDrawing() ? this.xPosition+4 : this.xPosition;
 				final int i1 = getEnableBackgroundDrawing() ? this.yPosition+(this.height-8)/2 : this.yPosition;
-				font().drawStringWithShadow(getWatermark(), l, i1, 0x777777);
+				font().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
 			}
 		}
 

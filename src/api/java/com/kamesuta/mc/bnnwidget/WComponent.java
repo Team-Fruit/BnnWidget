@@ -5,7 +5,13 @@ import javax.annotation.Nullable;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
+import com.kamesuta.mc.bnnwidget.render.WGui;
 
+/**
+ * 実装を含まない、コンポーネントの基盤です。
+ *
+ * @author TeamFruit
+ */
 public class WComponent extends WGui implements WCommon {
 	@Override
 	public void onAdded() {

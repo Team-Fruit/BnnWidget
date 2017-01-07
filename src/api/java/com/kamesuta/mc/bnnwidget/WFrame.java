@@ -12,48 +12,112 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.WGui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
+/**
+ * MinecraftのGUIとウィジェットをつなぐ重量コンポーネントです。
+ * <p>
+ * 全てのウィジェットはこの重量コンポーネントの上で動作し、描画されます。
+ * <p>
+ * {@link net.minecraft.client.Minecraft#displayGuiScreen(GuiScreen) displayGuiScreen(GuiScreen)}メソッドなどでGUIを開く際はこのクラスのインスタンスを渡す必要があります。
+ *
+ * @author TeamFruit
+ */
 public class WFrame extends GuiScreen implements WContainer<WCommon> {
+	/**
+	 * GUIの背後に表示するGUIです
+	 * <p>
+	 * ウィジェットを他のGUIの上で動作させる場合に役立ちます
+	 */
 	protected @Nullable GuiScreen parent;
-	protected @Nonnull WPanel contentPane = new WPanel(new R());
+	/**
+	 * ルート・パネルです。すべてのウィジェットはこのパネルの中に配置されます。
+	 */
+	private @Nonnull WPanel contentPane = new WPanel(new R());
+	/**
+	 * これはGUIで管理されるイベントです。
+	 */
 	protected final @Nonnull WEvent event = new WEvent(this);
+	/**
+	 * ウィジェットが初期化されたかどうかを保持します。
+	 * <p>
+	 * これは{@link #initWidget()}を一度だけ呼び出すのに役立ちます。
+	 */
 	protected boolean initialized;
+	/**
+	 * シングルプレイ時にゲームを一時停止させる場合はtrue
+	 * @see GuiScreen#doesGuiPauseGame()
+	 */
 	protected boolean doesPauseGui = true;
-	public float width;
-	public float height;
+	private float width;
+	private float height;
 
+	/**
+	 * 入力されたマウスボタンを保持します
+	 */
 	protected int mousebutton = -1;
+	/**
+	 * 最後に入力されたカーソル位置を保持します
+	 */
 	protected @Nullable Point mouselast;
+	/**
+	 * 最後に入力されたマウスボタンを保持します
+	 */
 	protected int lastbutton = -1;
+	/**
+	 * ウィジェットを終了する際のフラグです。
+	 */
 	protected boolean closeRequest;
 
+	/**
+	 * float精度で幅を設定します
+	 * @param width 幅
+	 * @return this
+	 */
 	public @Nonnull WFrame setWidth(final float width) {
 		this.width = width;
 		super.width = (int) width;
 		return this;
 	}
 
+	/**
+	 * float精度で高さを設定します
+	 * @param height 高さ
+	 * @return this
+	 */
 	public @Nonnull WFrame setHeight(final float height) {
 		this.height = height;
 		super.height = (int) height;
 		return this;
 	}
 
+	/**
+	 * float精度の幅
+	 * @return float精度の幅
+	 */
 	public float width() {
 		if (super.width!=(int) this.width)
 			this.width = super.width;
 		return this.width;
 	}
 
+	/**
+	 * float精度の高さ
+	 * @return float精度の高さ
+	 */
 	public float height() {
 		if (super.height!=(int) this.height)
 			this.height = super.height;
 		return this.height;
 	}
 
+	/**
+	 * 親GUIを指定してGUIを作成します
+	 * @param parent 親GUI
+	 */
 	public WFrame(final @Nullable GuiScreen parent) {
 		this.parent = parent;
 		this.mc = WGui.mc;
@@ -62,10 +126,18 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	public WFrame() {
 	}
 
+	/**
+	 * GUIの絶対座標
+	 * @return GUIの絶対座標
+	 */
 	public @Nonnull Area getAbsolute() {
 		return new Area(0, 0, width(), height());
 	}
 
+	/**
+	 * カーソルの絶対座標
+	 * @return カーソルの絶対座標
+	 */
 	public @Nonnull Point getMouseAbsolute() {
 		return new Point(Mouse.getX()*width()/this.mc.displayWidth,
 				height()-Mouse.getY()*height()/this.mc.displayHeight-1);
@@ -86,10 +158,18 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		return getContentPane().remove(widget);
 	}
 
+	/**
+	 * ルート・パネルです。すべてのウィジェットはこのパネルの中に配置されます。
+	 * @return ルート・パネル
+	 */
 	public @Nonnull WPanel getContentPane() {
 		return this.contentPane;
 	}
 
+	/**
+	 * ルート・パネルを設定します。すべてのウィジェットはこのパネルの中に配置されます。
+	 * @return ルート・パネル
+	 */
 	public void setContentPane(final @Nonnull WPanel panel) {
 		this.contentPane = panel;
 	}
@@ -116,6 +196,13 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		getContentPane().onInit(this.event, gp, p);
 	}
 
+	/**
+	 * ウィジェットを初期化します。
+	 * <p>
+	 * このメソッドはGUIの初期化時に一度だけ呼び出されます。
+	 * <p>
+	 * オーバーライドしてGUIの構築を行いましょう。
+	 */
 	protected void initWidget() {
 	}
 
@@ -142,6 +229,10 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		drawScreen(mousex, mousey, f, getOpacity());
 	}
 
+	/**
+	 * GUIの絶対透明度
+	 * @return 絶対透明度
+	 */
 	protected float getOpacity() {
 		return 1f;
 	}
@@ -237,15 +328,26 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 			close();
 	}
 
+	/**
+	 * GUIが終了される最終フェーズで呼び出されます。
+	 */
 	protected void close() {
 		this.mc.displayGuiScreen(this.parent);
 	}
 
+	/**
+	 * GUIを終了します。終了処理がある場合は終了処理を行った後、終了されます。
+	 */
 	public void requestClose() {
 		getContentPane().onCloseRequest();
 		this.closeRequest = true;
 	}
 
+	/**
+	 * 終了処理をキャンセルします。
+	 * <p>
+	 * この機能は正しく機能しません。
+	 */
 	@Deprecated
 	protected void cancelCloseRequest() {
 		this.closeRequest = false;
@@ -293,6 +395,11 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		return this.parent!=null&&this.parent.doesGuiPauseGame();
 	}
 
+	/**
+	 * シングルプレイ時にゲームを一時停止させるかどうかを設定します。
+	 * @param doesPause シングルプレイ時にゲームを一時停止させる場合はtrue
+	 * @return this
+	 */
 	public @Nonnull WFrame setGuiPauseGame(final boolean doesPause) {
 		this.doesPauseGui = doesPause;
 		return this;

@@ -5,6 +5,11 @@ import javax.annotation.Nonnull;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.R;
 
+/**
+ * コンポーネントの大きさによって可変なテキストラベルです
+ *
+ * @author TeamFruit
+ */
 public class MScaledLabel extends MLabel {
 	public MScaledLabel(final @Nonnull R position) {
 		super(position);

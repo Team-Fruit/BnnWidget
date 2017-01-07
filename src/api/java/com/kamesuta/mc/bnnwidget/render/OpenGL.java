@@ -15,6 +15,13 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.Vec3;
 
+/**
+ * OpenGL操作のラッパーです。
+ * <p>
+ * 主にMinecraftのバージョン間の差異を吸収します。
+ *
+ * @author TeamFruit
+ */
 public class OpenGL {
 	public static void glEnable(final int attrib) {
 		//switch (attrib) {

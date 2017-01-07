@@ -2,11 +2,22 @@ package com.kamesuta.mc.bnnwidget.var;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 割合の値
+ *
+ * @author TeamFruit
+ */
 public class VPercent implements VCommon {
 	private @Nonnull VCommon a;
 	private @Nonnull VCommon b;
 	private @Nonnull VCommon c;
 
+	/**
+	 * 割合の値を作成します
+	 * @param a 始点
+	 * @param b 終点
+	 * @param c 相対的な値
+	 */
 	public VPercent(final @Nonnull VCommon a, final @Nonnull VCommon b, final @Nonnull VCommon c) {
 		this.a = a;
 		this.b = b;

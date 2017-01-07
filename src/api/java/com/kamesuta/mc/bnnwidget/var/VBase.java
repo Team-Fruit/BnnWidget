@@ -2,6 +2,11 @@ package com.kamesuta.mc.bnnwidget.var;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 絶対的な値と相対的な値を定義た値です
+ *
+ * @author TeamFruit
+ */
 public class VBase implements VCommon {
 	private final float coord;
 	private @Nonnull VType type;

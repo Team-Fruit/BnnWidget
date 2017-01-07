@@ -3,28 +3,48 @@ package com.kamesuta.mc.bnnwidget.component;
 import javax.annotation.Nonnull;
 
 import com.kamesuta.mc.bnnwidget.WEvent;
-import com.kamesuta.mc.bnnwidget.WRenderer;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
+/**
+ * チェックボックス
+ *
+ * @author TeamFruit
+ */
 public class MCheckBox extends MLabel {
+	/**
+	 * チェック状態
+	 */
 	protected boolean checked = true;
 
 	public MCheckBox(final @Nonnull R position) {
 		super(position);
 	}
 
+	/**
+	 * チェック状態を設定します
+	 * @param check チェックされている場合true
+	 */
 	public void check(final boolean check) {
 		this.checked = check;
 		onCheckChanged(!check);
 	}
 
+	/**
+	 * チェック状態
+	 * @return チェックされている場合true
+	 */
 	public final boolean isCheck() {
 		return this.checked;
 	}
 
+	/**
+	 * チェック状態が変更された際に呼ばれます
+	 * @param oldCheck
+	 */
 	protected void onCheckChanged(final boolean oldCheck) {
 	}
 
@@ -48,6 +68,10 @@ public class MCheckBox extends MLabel {
 		drawText(b, getGuiOpacity(popacity));
 	}
 
+	/**
+	 * チェックボックスを描画します
+	 * @param out 絶対座標
+	 */
 	protected void drawCheckBox(final @Nonnull Area out) {
 		final Area in = out.child(1, 1, -1, -1);
 		WRenderer.startShape();
