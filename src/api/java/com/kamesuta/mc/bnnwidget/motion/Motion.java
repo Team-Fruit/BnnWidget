@@ -5,10 +5,24 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.util.Timer;
 
+/**
+ * モーション
+ *
+ * @author TeamFruit
+ */
 public abstract class Motion implements IMotion {
 
+	/**
+	 * タイマー
+	 */
 	protected final @Nonnull Timer timer;
+	/**
+	 * モーションの長さ
+	 */
 	protected final float duration;
+	/**
+	 * モーション後タスク
+	 */
 	protected @Nullable Runnable after;
 
 	public Motion(final float duration) {
@@ -76,28 +90,71 @@ public abstract class Motion implements IMotion {
 			r.run();
 	}
 
+	/**
+	 * Easingモーションを作成します
+	 * @param duration モーションの長さ
+	 * @param easing Easing
+	 * @param end モーション後値
+	 * @return モーション
+	 */
 	public static @Nonnull IMotion easing(final float duration, final @Nonnull Easing easing, final float end) {
 		return new EasingMotion(duration, easing, end);
 	}
 
+	/**
+	 * 空のモーションを作成します
+	 * <p>
+	 * 主に間を置くために使用されます
+	 * @param duration モーションの長さ
+	 * @return モーション
+	 */
 	public static @Nonnull IMotion blank(final float duration) {
 		return new BlankMotion(duration);
 	}
 
+	/**
+	 * 移動モーションを作成します。
+	 * <p>
+	 * 補完がなく、モーションの最初から最後までモーション後値となります
+	 * @param end モーション後値
+	 * @return モーション
+	 */
 	public static @Nonnull IMotion move(final float end) {
 		return new MoveMotion(end);
 	}
 
+	/**
+	 * モーションからモーションセットを作成します
+	 * @param motions モーション
+	 * @return モーションセット
+	 */
 	public static @Nonnull CompoundMotion of(final @Nonnull IMotion... motions) {
 		return CompoundMotion.of(motions);
 	}
 
+	/**
+	 * 初期値とモーションからモーションセットを作成します
+	 * @param coord 初期値
+	 * @param motions モーション
+	 * @return モーションセット
+	 */
 	public static @Nonnull CompoundMotion of(final float coord, final @Nonnull IMotion... motions) {
 		return CompoundMotion.of(coord, motions);
 	}
 
+	/**
+	 * Easingモーション
+	 *
+	 * @author TeamFruit
+	 */
 	static class EasingMotion extends Motion {
+		/**
+		 * Easing
+		 */
 		protected final @Nonnull Easing easing;
+		/**
+		 * モーション後値
+		 */
 		protected final float end;
 
 		public EasingMotion(final float duration, final @Nonnull Easing easing, final float end) {
@@ -144,6 +201,9 @@ public abstract class Motion implements IMotion {
 	}
 
 	static class MoveMotion extends Motion {
+		/**
+		 * モーション後値
+		 */
 		protected final float end;
 
 		public MoveMotion(final float end) {

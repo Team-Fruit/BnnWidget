@@ -14,16 +14,38 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 
+/**
+ * {@link W}型のコンポーネントを含むことのできるパネルです。
+ * @param <W> コンポーネントが含むことのできる型
+ * @author TeamFruit
+ */
 public abstract class WTypedPanel<W extends WCommon> extends WBase implements WContainer<W> {
 	private final @Nonnull List<W> widgets = Lists.newArrayList();
+	/**
+	 * このキューに追加されたコンポーネントは逐次、消去されます。
+	 */
 	protected final @Nonnull Deque<W> removelist = Queues.newArrayDeque();
+	/**
+	 * ウィジェットが初期化されたかどうかを保持します。
+	 * <p>
+	 * これは{@link #initWidget()}を一度だけ呼び出すのに役立ちます。
+	 */
 	protected boolean initialized;
+	/**
+	 * このキューに追加されたタスクは逐次、実行されます。
+	 */
 	protected @Nonnull Deque<Runnable> eventQueue = Queues.newArrayDeque();
 
 	public WTypedPanel(final @Nonnull R position) {
 		super(position);
 	}
 
+	/**
+	 * 安全なタイミングで実行されるタスクを追加します
+	 * <p>
+	 * 安全に追加、消去などを行うことに使用します。
+	 * @param doRun タスク
+	 */
 	public void invokeLater(final @Nullable Runnable doRun) {
 		if (doRun!=null)
 			this.eventQueue.push(doRun);
@@ -60,6 +82,13 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 		}
 	}
 
+	/**
+	 * ウィジェットを初期化します。
+	 * <p>
+	 * このメソッドはGUIの初期化時に一度だけ呼び出されます。
+	 * <p>
+	 * オーバーライドしてGUIの構築を行いましょう。
+	 */
 	protected void initWidget() {
 	}
 
