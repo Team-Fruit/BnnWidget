@@ -48,6 +48,10 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 */
 	protected boolean initialized;
 	/**
+	 * 画面サイズによるサイズ変更の影響を受けなくする場合はtrue
+	 */
+	protected boolean fixGuiScale;
+	/**
 	 * シングルプレイ時にゲームを一時停止させる場合はtrue
 	 * @see GuiScreen#doesGuiPauseGame()
 	 */
@@ -98,7 +102,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * float精度の幅
 	 * @return float精度の幅
 	 */
-	public float width() {
+	public float guiWidth() {
 		if (super.width!=(int) this.width)
 			this.width = super.width;
 		return this.width;
@@ -108,10 +112,104 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * float精度の高さ
 	 * @return float精度の高さ
 	 */
-	public float height() {
+	public float guiHeight() {
 		if (super.height!=(int) this.height)
 			this.height = super.height;
 		return this.height;
+	}
+
+	/**
+	 * float精度の幅 (GUIスケールが固定されている場合はMinecraftの画面の幅)
+	 * @return float精度の幅
+	 */
+	public float width() {
+		if (this.fixGuiScale)
+			return getDisplayWidth();
+		return guiWidth();
+	}
+
+	/**
+	 * float精度の高さ (GUIスケールが固定されている場合はMinecraftの画面の高さ)
+	 * @return float精度の高さ
+	 */
+	public float height() {
+		if (this.fixGuiScale)
+			return getDisplayHeight();
+		return guiHeight();
+	}
+
+	/**
+	 * Minecraftの画面の幅
+	 * @return Minecraftの画面の幅
+	 */
+	protected static float getDisplayWidth() {
+		return WGui.mc.displayWidth;
+	}
+
+	/**
+	 * Minecraftの画面の高さ
+	 * @return Minecraftの画面の高さ
+	 */
+	protected static float getDisplayHeight() {
+		return WGui.mc.displayHeight;
+	}
+
+	/**
+	 * このGUIの幅がMinecraftの画面の幅よりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * @return このGUIの幅がMinecraftの画面の幅よりも何倍であるか
+	 */
+	public float guiScaleX() {
+		return guiWidth()/getDisplayWidth();
+	}
+
+	/**
+	 * このGUIの高さがMinecraftの画面の高さよりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * @return このGUIの高さがMinecraftの画面の高さよりも何倍であるか
+	 */
+	public float guiScaleY() {
+		return guiHeight()/getDisplayHeight();
+	}
+
+	/**
+	 * このGUIの大きさがMinecraftの画面の大きさよりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * <br>
+	 * 縦と横の比率が違うことは考え難いですが、違う場合は小さい方の値が返されます。
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float guiScale() {
+		return Math.min(guiScaleX(), guiScaleY());
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scaleX() {
+		return 1f/guiScaleX();
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scaleY() {
+		return 1f/guiScaleY();
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * <p>
+	 * 縦と横の比率が違うことは考え難いですが、違う場合は大きい方の値が返されます。
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scale() {
+		return 1f/guiScale();
 	}
 
 	/**
@@ -139,8 +237,8 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @return カーソルの絶対座標
 	 */
 	public @Nonnull Point getMouseAbsolute() {
-		return new Point(Mouse.getX()*width()/this.mc.displayWidth,
-				height()-Mouse.getY()*height()/this.mc.displayHeight-1);
+		return new Point(Mouse.getX()*width()/getDisplayWidth(),
+				height()-Mouse.getY()*height()/getDisplayHeight()-1);
 	}
 
 	@Override
@@ -208,10 +306,10 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public void setWorldAndResolution(final @Nullable Minecraft mc, final int i, final int j) {
-		sSetWorldAndResolution(mc, i, j);
+		sSetWorldAndResolution(WGui.mc, i, j);
 	}
 
-	protected void sSetWorldAndResolution(final @Nullable Minecraft mc, final int i, final int j) {
+	protected void sSetWorldAndResolution(final @Nonnull Minecraft mc, final int i, final int j) {
 		if (this.parent!=null)
 			this.parent.setWorldAndResolution(mc, i, j);
 		super.setWorldAndResolution(mc, i, j);
@@ -219,9 +317,13 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity) {
 		sDrawScreen(mousex, mousey, f);
+		OpenGL.glPushMatrix();
+		if (this.fixGuiScale)
+			OpenGL.glScalef(guiScaleX(), guiScaleY(), 1f);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
 		getContentPane().draw(this.event, gp, p, f, opacity);
+		OpenGL.glPopMatrix();
 	}
 
 	@Override
@@ -332,7 +434,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * GUIが終了される最終フェーズで呼び出されます。
 	 */
 	protected void close() {
-		this.mc.displayGuiScreen(this.parent);
+		WGui.mc.displayGuiScreen(this.parent);
 	}
 
 	/**
@@ -393,6 +495,16 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	protected boolean parentDoesGuiPauseGame() {
 		return this.parent!=null&&this.parent.doesGuiPauseGame();
+	}
+
+	/**
+	 * 画面サイズによるサイズ変更の影響を受けなくします
+	 * @param doesFixScale 画面サイズによるサイズ変更の影響を受けなくする場合はtrue
+	 * @return this
+	 */
+	public @Nonnull WFrame setFixGuiScale(final boolean doesFixScale) {
+		this.fixGuiScale = doesFixScale;
+		return this;
 	}
 
 	/**

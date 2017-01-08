@@ -45,7 +45,7 @@ public class WGui extends Gui {
 	 * <p>
 	 * GUIを描画する際に使用します。
 	 */
-	public static final float textureScale = 0.00390625F;
+	public static final float textureScale = 1f/256f;
 
 	/**
 	 * 4つの絶対座標からテクスチャを描画します
@@ -134,7 +134,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureAbs(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float, float, float, float, float)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vx1 1つ目のX絶対座標
@@ -152,7 +152,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vx1 1つ目のX絶対座標
@@ -165,7 +165,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureSize(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSize(float, float, float, float, float, float, float, float)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vx X絶対座標
@@ -182,7 +182,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModalAbs(float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModalAbs(float, float, float, float)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vx X絶対座標
@@ -195,7 +195,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModal(Area, Area)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModal(Area, Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲
@@ -206,7 +206,7 @@ public class WGui extends Gui {
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModal(Area)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModal(Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲
@@ -311,6 +311,44 @@ public class WGui extends Gui {
 	 */
 	public static @Nonnull FontRenderer font() {
 		return mc.fontRenderer;
+	}
+
+	/**
+	 * {@link net.minecraft.client.gui.FontRenderer FontRenderer}で使用可能なカラーコードへ変換します。
+	 * @param color カラーコード
+	 * @return {@link net.minecraft.client.gui.FontRenderer FontRenderer}で使用可能なカラーコード
+	 */
+	public int toFontColor(final int color) {
+		final int alpha = Math.max(color>>24&255, 0x4)<<24;
+		return color&0xffffff|alpha;
+	}
+
+	/**
+	 * int型RGBAカラーをカラーコードに変換します
+	 * <p>
+	 * フォントカラーの範囲は0～255です
+	 * @param r カラー(赤)
+	 * @param g カラー(緑)
+	 * @param b カラー(青)
+	 * @param a カラー(不透明度)
+	 * @return カラーコード
+	 */
+	public static int toColorCode(final int r, final int g, final int b, final int a) {
+		return (a&0xff)<<24|(r&0xff)<<16|(g&0xff)<<8|(b&0xff)<<0;
+	}
+
+	/**
+	 * float型RGBAカラーをカラーコードに変換します
+	 * <p>
+	 * フォントカラーの範囲は0～1です
+	 * @param r カラー(赤)
+	 * @param g カラー(緑)
+	 * @param b カラー(青)
+	 * @param a カラー(不透明度)
+	 * @return カラーコード
+	 */
+	public static int toColorCode(final float r, final float g, final float b, final float a) {
+		return toColorCode((int) (r*255+.5f), (int) (g*255+.5f), (int) (b*255+.5f), (int) (a*255+.5f));
 	}
 
 	/**

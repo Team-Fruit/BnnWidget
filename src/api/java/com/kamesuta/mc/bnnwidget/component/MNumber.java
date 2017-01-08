@@ -8,6 +8,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import com.kamesuta.mc.bnnwidget.ShortestFloatFormatter;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.WPanel;
+import com.kamesuta.mc.bnnwidget.component.MChatTextField.CharacterFilter;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.Point;
@@ -44,7 +45,7 @@ public class MNumber extends WPanel {
 			protected void onTextChanged(final String oldText) {
 				onNumberChanged(oldText, getText());
 			}
-		}.setAllowedCharacters("+-.eE0123456789").setWatermark(I18n.format("signpic.gui.editor.number.unknown"));
+		}.setFilter(CharacterFilter.WhiteListFilter.createFromString("+-.eE0123456789")).setWatermark(I18n.format("signpic.gui.editor.number.unknown"));
 		add(this.field);
 		this.pos = new MButton(new R(Coord.right(0), Coord.width(buttonwidth), Coord.top(0), Coord.bottom(0))) {
 			@Override

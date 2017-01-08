@@ -1,10 +1,14 @@
 package com.kamesuta.mc.bnnwidget.component;
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Sets;
 import com.kamesuta.mc.bnnwidget.WBase;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
@@ -13,7 +17,6 @@ import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
 
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.ChatAllowedCharacters;
 
 /**
  * Minecraftの{@link GuiTextField}のウィジェットラッパーです。
@@ -37,7 +40,7 @@ public class MChatTextField extends WBase {
 	/**
 	 * 入力可能文字
 	 */
-	protected @Nullable String allowedCharacters;
+	protected @Nonnull CharacterFilter filter = CharacterFilter.VanillaChatFilter.create();
 
 	public MChatTextField(final @Nonnull R position) {
 		super(position);
@@ -50,12 +53,7 @@ public class MChatTextField extends WBase {
 	 * @return 入力可能の場合true
 	 */
 	public boolean canAddChar(final char c) {
-		if (StringUtils.isEmpty(getAllowedCharacters()))
-			return true;
-		else if (!ChatAllowedCharacters.isAllowedCharacter(c))
-			return true;
-		else
-			return StringUtils.contains(getAllowedCharacters(), c);
+		return getFilter().checkCharacter(c);
 	}
 
 	/**
@@ -96,11 +94,12 @@ public class MChatTextField extends WBase {
 
 	/**
 	 * 入力可能文字を設定します
-	 * @param s 入力可能文字
+	 * @param filter 入力可能文字
 	 * @return this
 	 */
-	public @Nonnull MChatTextField setAllowedCharacters(final @Nullable String s) {
-		this.allowedCharacters = s;
+	public @Nonnull MChatTextField setFilter(final @Nonnull CharacterFilter filter) {
+		this.filter = filter;
+		;
 		return this;
 	}
 
@@ -108,8 +107,8 @@ public class MChatTextField extends WBase {
 	 * 入力可能文字
 	 * @return 入力可能文字
 	 */
-	public @Nullable String getAllowedCharacters() {
-		return this.allowedCharacters;
+	public @Nonnull CharacterFilter getFilter() {
+		return this.filter;
 	}
 
 	@Override
@@ -158,8 +157,7 @@ public class MChatTextField extends WBase {
 
 	@Override
 	public boolean keyTyped(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final char c, final int keycode) {
-		if (canAddChar(c))
-			this.t.textboxKeyTyped(c, keycode);
+		this.t.textboxKeyTyped(c, keycode);
 		return isFocused();
 	}
 
@@ -455,6 +453,119 @@ public class MChatTextField extends WBase {
 		@Override
 		public @Nonnull String toString() {
 			return "TextField [text="+getText()+"]";
+		}
+	}
+
+	public static abstract class CharacterFilter {
+		/** Array of the special characters that are allowed in any text drawing of Minecraft. */
+		public static final char[] allowedCharacters = new char[] { '/', '\n', '\r', '\t', '\u0000', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
+
+		/**
+		 * Filter string by only keeping those characters for which isAllowedCharacter() returns true.
+		 */
+		public String filerAllowedCharacters(final String str) {
+			final StringBuilder stringbuilder = new StringBuilder();
+			final char[] achar = str.toCharArray();
+			final int i = achar.length;
+
+			for (int j = 0; j<i; ++j) {
+				final char c0 = achar[j];
+
+				if (checkCharacter(c0))
+					stringbuilder.append(c0);
+			}
+
+			return stringbuilder.toString();
+		}
+
+		public abstract boolean checkCharacter(char ch);
+
+		public static abstract class AbstractWhiteListFilter extends CharacterFilter {
+			@Override
+			public final boolean checkCharacter(final char ch) {
+				return isAllowedCharacter(ch);
+			}
+
+			public abstract boolean isAllowedCharacter(char ch);
+		}
+
+		public static class WhiteListFilter extends AbstractWhiteListFilter {
+			private final @Nonnull Set<Character> whitelist;
+
+			public WhiteListFilter(@Nonnull final Set<Character> whitelist) {
+				this.whitelist = whitelist;
+			}
+
+			public static @Nonnull WhiteListFilter create() {
+				return new WhiteListFilter(Sets.<Character> newHashSet());
+			}
+
+			public static @Nonnull WhiteListFilter createFromString(final String filter) {
+				return new WhiteListFilter(Sets.<Character> newHashSet(ArrayUtils.toObject(filter.toCharArray())));
+			}
+
+			public @Nonnull Set<Character> getWhitelist() {
+				return this.whitelist;
+			}
+
+			@Override
+			public boolean isAllowedCharacter(final char ch) {
+				for (final char c : this.whitelist)
+					if (c==ch)
+						return true;
+				return false;
+			}
+		}
+
+		public static abstract class AbstractBlackListFilter extends CharacterFilter {
+			@Override
+			public final boolean checkCharacter(final char ch) {
+				return !isDeniedCharacter(ch);
+			}
+
+			public abstract boolean isDeniedCharacter(char ch);
+		}
+
+		public static class BlackListFilter extends AbstractBlackListFilter {
+			private final @Nonnull Set<Character> blacklist;
+
+			public BlackListFilter(@Nonnull final Set<Character> blacklist) {
+				this.blacklist = blacklist;
+			}
+
+			public static @Nonnull BlackListFilter create() {
+				return new BlackListFilter(Sets.<Character> newHashSet());
+			}
+
+			public static @Nonnull BlackListFilter createFromString(final String filter) {
+				return new BlackListFilter(Sets.<Character> newHashSet(ArrayUtils.toObject(filter.toCharArray())));
+			}
+
+			public @Nonnull Set<Character> getBlacklist() {
+				return this.blacklist;
+			}
+
+			@Override
+			public boolean isDeniedCharacter(final char ch) {
+				for (final char c : this.blacklist)
+					if (c==ch)
+						return true;
+				return false;
+			}
+		}
+
+		public static class VanillaChatFilter extends BlackListFilter {
+			public VanillaChatFilter(@Nonnull final Set<Character> blacklist) {
+				super(blacklist);
+				for (char i = 0; i<32; i++)
+					blacklist.add(i);
+				blacklist.add((char) 127);
+				blacklist.add((char) 167);
+			}
+
+			public static @Nonnull VanillaChatFilter create() {
+				return new VanillaChatFilter(Sets.<Character> newHashSet());
+			}
 		}
 	}
 }
