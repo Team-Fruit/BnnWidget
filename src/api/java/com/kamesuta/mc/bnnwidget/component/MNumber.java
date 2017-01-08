@@ -17,8 +17,17 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 public class MNumber extends WPanel {
+	/**
+	 * マイナスボタン
+	 */
 	public @Nonnull MButton neg;
+	/**
+	 * テキストフィールド
+	 */
 	public @Nonnull MChatTextField field;
+	/**
+	 * プラスボタン
+	 */
 	public @Nonnull MButton pos;
 
 	public MNumber(final @Nonnull R position, final float buttonwidth) {
@@ -46,6 +55,10 @@ public class MNumber extends WPanel {
 		add(this.pos);
 	}
 
+	/**
+	 * マイナスボタンがクリックされた際に呼ばれます
+	 * @return イベントを受け取った場合はtrue
+	 */
 	protected boolean negClicked() {
 		float f;
 		if (GuiScreen.isShiftKeyDown())
@@ -58,6 +71,10 @@ public class MNumber extends WPanel {
 		return true;
 	}
 
+	/**
+	 * プラスボタンがクリックされた際に呼ばれます
+	 * @return イベントを受け取った場合はtrue
+	 */
 	protected boolean posClicked() {
 		float f;
 		if (GuiScreen.isShiftKeyDown())
@@ -70,29 +87,54 @@ public class MNumber extends WPanel {
 		return true;
 	}
 
+	/**
+	 * 数値を設定します
+	 * @param f 数値
+	 * @return this
+	 */
 	public @Nonnull MNumber setNumber(final float f) {
 		this.field.setText(Float.isNaN(f) ? "" : ShortestFloatFormatter.format(f));
 		return this;
 	}
 
+	/**
+	 * プラスボタンのラベルを変更します
+	 * @param s ラベル
+	 * @return this
+	 */
 	public @Nonnull MNumber setPosLabel(final @Nonnull String s) {
 		if (!StringUtils.isEmpty(s)&&!StringUtils.contains(s, "signpic."))
 			this.pos.setText(s);
 		return this;
 	}
 
+	/**
+	 * マイナスボタンのラベルを変更します
+	 * @param s ラベル
+	 * @return this
+	 */
 	public @Nonnull MNumber setNegLabel(final @Nonnull String s) {
 		if (!StringUtils.isEmpty(s)&&!StringUtils.contains(s, "signpic."))
 			this.neg.setText(s);
 		return this;
 	}
 
+	/**
+	 * 数値がないときの透かしを設定します
+	 * @param s 透かし
+	 * @return this
+	 */
 	public @Nonnull MNumber setUnknownLabel(final @Nonnull String s) {
 		if (!StringUtils.isEmpty(s)&&!StringUtils.contains(s, "signpic."))
 			this.field.setWatermark(s);
 		return this;
 	}
 
+	/**
+	 * 数値が変更されたときに呼ばれます
+	 * @param oldText 変更前
+	 * @param newText 変更後
+	 */
 	protected void onNumberChanged(final @Nonnull String oldText, final @Nonnull String newText) {
 	}
 }
