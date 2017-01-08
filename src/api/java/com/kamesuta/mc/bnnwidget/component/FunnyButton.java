@@ -11,6 +11,11 @@ import com.kamesuta.mc.bnnwidget.render.OpenGL;
 import com.kamesuta.mc.bnnwidget.var.V;
 import com.kamesuta.mc.bnnwidget.var.VMotion;
 
+/**
+ * 少し斜めに傾かせることができるボタンです
+ *
+ * @author TeamFruit
+ */
 public class FunnyButton extends MButton {
 	public FunnyButton(final @Nonnull R position) {
 		super(position);
@@ -18,13 +23,27 @@ public class FunnyButton extends MButton {
 
 	private boolean isHighlight = true;
 	private boolean highlighted;
+	/**
+	 * 傾き (°)
+	 */
 	protected @Nonnull VMotion m = V.pm(0);
+	/**
+	 * 大きさの倍率 (%)
+	 */
 	protected @Nonnull VMotion s = V.pm(1);
 
+	/**
+	 * 傾いているかどうか
+	 * @return 傾いている
+	 */
 	public boolean isHighlight() {
 		return this.isHighlight;
 	}
 
+	/**
+	 * 傾きを設定します
+	 * @param b 傾いている場合true
+	 */
 	public void setHighlight(final boolean b) {
 		this.isHighlight = b;
 	}

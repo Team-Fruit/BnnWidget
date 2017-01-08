@@ -13,7 +13,16 @@ import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.util.NotifyCollections.IModCount;
 
+/**
+ * リストを監視し、ウィジェットに反映します。
+ * @param <T> 監視リストの型
+ * @param <W> 対応ウィジェット型
+ * @author TeamFruit
+ */
 public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
+	/**
+	 * 監視するリスト
+	 */
 	protected @Nonnull IModCount<T> check;
 
 	public WList(final @Nonnull R position, final @Nonnull IModCount<T> check) {
@@ -21,15 +30,25 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 		this.check = check;
 	}
 
+	/**
+	 * 監視するリストを設定します
+	 * @param check 監視するリスト
+	 */
 	public void setList(final @Nonnull IModCount<T> check) {
 		this.check = check;
 	}
 
+	/**
+	 * 追加操作はサポートされていません
+	 */
 	@Override
 	public boolean add(final @Nonnull W widget) {
 		return false;
 	}
 
+	/**
+	 * 消去操作はサポートされていません
+	 */
 	@Override
 	public boolean remove(final @Nonnull W widget) {
 		return false;
@@ -52,6 +71,9 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	private final @Nonnull Map<T, Integer> Tindex = Maps.newHashMap();
 	private final @Nonnull Set<W> cws = Sets.newHashSet();
 
+	/**
+	 * 監視リストの変更を反映します
+	 */
 	public void update() {
 		final List<W> ws = getContainer();
 		this.cws.clear();
@@ -89,14 +111,37 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 		}
 	}
 
+	/**
+	 * 監視リストの要素をもとに対応コンポーネントを生成します
+	 * @param t 監視リストの要素
+	 * @param i インデックス
+	 * @return 対応コンポーネント
+	 */
 	protected abstract @Nonnull W createWidget(@Nonnull T t, int i);
 
+	/**
+	 * 対応コンポーネントが追加される際に呼ばれます
+	 * @param t 監視リストの要素
+	 * @param w 対応コンポーネント
+	 */
 	protected void onAdded(final @Nonnull T t, final @Nonnull W w) {
 	}
 
+	/**
+	 * 対応コンポーネントが消去される際に呼ばれます
+	 * @param t 監視リストの要素
+	 * @param w 対応コンポーネント
+	 */
 	protected void onRemove(final @Nonnull T t, final @Nonnull W w) {
 	}
 
+	/**
+	 * 対応コンポーネントが移動される際に呼ばれます
+	 * @param t 監視リストの要素
+	 * @param w 対応コンポーネント
+	 * @param from 移動前のインデックス
+	 * @param to 移動後のインデックス
+	 */
 	protected void onMoved(final @Nonnull T t, final @Nonnull W w, final int from, final int to) {
 	}
 }
