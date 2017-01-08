@@ -5,6 +5,11 @@ import javax.annotation.Nonnull;
 import com.kamesuta.mc.bnnwidget.var.V;
 import com.kamesuta.mc.bnnwidget.var.VCommon;
 
+/**
+ * 相対範囲を構成する相対座標
+ *
+ * @author TeamFruit
+ */
 public class Coord {
 	private @Nonnull VCommon coord;
 	private @Nonnull CoordSide side;

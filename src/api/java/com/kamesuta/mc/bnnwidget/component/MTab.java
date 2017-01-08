@@ -13,16 +13,54 @@ import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.var.VCommon;
 
+/**
+ * タブコンポーネント
+ *
+ * @author TeamFruit
+ */
 public class MTab extends WPanel {
+	/**
+	 * タブを表示する位置
+	 * <p>
+	 * {@link CoordSide#Width}と{@link CoordSide#Height}は指定することができません
+	 */
 	protected final @Nonnull CoordSide side;
+	/**
+	 * タブ見出しの文字列の幅をこの値によりさらに広げます。
+	 */
 	protected final float widthadd;
+	/**
+	 * タブの高さ
+	 */
 	protected final float height;
+	/**
+	 * タブの領域
+	 */
 	protected final @Nonnull R tabarea;
+	/**
+	 * コンテンツの領域
+	 */
 	protected final @Nonnull R boxarea;
+	/**
+	 * タブ
+	 */
 	protected @Nonnull Tab tab;
+	/**
+	 * コンテンツ
+	 */
 	protected @Nonnull WBox box;
+	/**
+	 * タブの幅
+	 */
 	protected float verticalWidth = 0f;
 
+	/**
+	 * タブパネルを作成します
+	 * @param position 相対座標
+	 * @param side タブを表示する位置
+	 * @param widthadd タブ見出しの文字列の幅をこの値によりさらに広げます。
+	 * @param height タブの高さ
+	 */
 	public MTab(final @Nonnull R position, final @Nonnull CoordSide side, final float widthadd, final float height) {
 		super(position);
 		this.side = side;
@@ -68,6 +106,11 @@ public class MTab extends WPanel {
 		add(this.box);
 	}
 
+	/**
+	 * タブコンポーネント
+	 *
+	 * @author TeamFruit
+	 */
 	public class Tab extends WPanel {
 		protected float ileft;
 
@@ -101,6 +144,11 @@ public class MTab extends WPanel {
 		}
 	}
 
+	/**
+	 * タブ見出しのボタンコンポーネント
+	 *
+	 * @author TeamFruit
+	 */
 	public class TabButton extends MButton {
 		public final @Nonnull WCommon widget;
 

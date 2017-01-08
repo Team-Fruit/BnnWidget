@@ -288,18 +288,32 @@ public enum Easings implements Easing {
 	},
 	;
 
+	/**
+	 * 内部ID
+	 */
 	public final int id;
 
 	private Easings(final int id) {
 		this.id = id;
 	}
 
+	/**
+	 * Easingモーションを作成します
+	 * @param time 移動時間
+	 * @param to 移動後値
+	 * @return
+	 */
 	public @Nonnull IMotion move(final float time, final float to) {
 		return Motion.easing(time, this, to);
 	}
 
 	private static final @Nonnull ImmutableMap<Integer, Easings> easingIds;
 
+	/**
+	 * 内部IDからEasingを取得します
+	 * @param id 内部ID
+	 * @return Easing
+	 */
 	public static @Nonnull Easings fromId(final int id) {
 		Easings easing = easingIds.get(id);
 		if (easing==null)

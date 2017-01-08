@@ -9,40 +9,68 @@ import javax.annotation.Nullable;
 
 import com.kamesuta.mc.bnnwidget.WBase;
 import com.kamesuta.mc.bnnwidget.WEvent;
-import com.kamesuta.mc.bnnwidget.WRenderer;
 import com.kamesuta.mc.bnnwidget.motion.Easings;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 import com.kamesuta.mc.bnnwidget.var.V;
 import com.kamesuta.mc.bnnwidget.var.VMotion;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
+/**
+ * Minecraftデザインのボタンコンポーネントです。
+ *
+ * @author TeamFruit
+ */
 public class MButton extends WBase {
+	/**
+	 * BnnWidget同封のMinecraftデザイン、ボタンです。
+	 */
 	public static final @Nonnull ResourceLocation button = new ResourceLocation("bnnwidget", "textures/gui/buttons.png");
+	/**
+	 * BnnWidgetは新デザインを開発中です。
+	 */
 	public static boolean tryNew;
 
+	/**
+	 * ボタンのテキストです
+	 */
 	public @Nullable String text = null;
-	public @Nullable String actionCommand;
 	private boolean isEnabled = true;
 
 	public MButton(final @Nonnull R position) {
 		super(position);
 	}
 
-	public MButton setText(final @Nullable String s) {
+	/**
+	 * ボタンのテキストを設定します
+	 * @param s テキスト
+	 * @return this
+	 */
+	public @Nonnull MButton setText(final @Nullable String s) {
 		this.text = s;
 		return this;
 	}
 
+	/**
+	 * このボタンが有効な状態であるか
+	 * @return 有効な状態の場合true
+	 */
 	public boolean isEnabled() {
 		return this.isEnabled;
 	}
 
+	/**
+	 * このボタンが有効な状態かどうかを設定します
+	 * @param b 有効な状態の場合true
+	 * @return this
+	 */
 	public @Nonnull MButton setEnabled(final boolean b) {
 		this.isEnabled = b;
 		return this;
@@ -54,8 +82,7 @@ public class MButton extends WBase {
 		if (abs.pointInside(p)) {
 			if (isEnabled())
 				if (onClicked(ev, pgp, p, button)) {
-					if (this.actionCommand!=null)
-						ev.eventDispatch(this.actionCommand, Integer.valueOf(button));
+					ev.bus.post(makeEvent(button));
 					playPressButtonSound();
 				}
 			return true;
@@ -63,11 +90,22 @@ public class MButton extends WBase {
 		return false;
 	}
 
+	/**
+	 * ボタンが押された時の効果音を再生します
+	 */
 	public static void playPressButtonSound() {
 		mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 
-	protected boolean onClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+	/**
+	 * ボタンが押されたときに呼び出されます
+	 * @param ev イベント
+	 * @param pgp 親コンポーネントの絶対座標
+	 * @param mouse カーソル絶対座標
+	 * @param button クリックされたボタン
+	 * @return イベントを受け取った場合はtrue
+	 */
+	protected boolean onClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse, final int button) {
 		return true;
 	}
 
@@ -104,7 +142,13 @@ public class MButton extends WBase {
 		drawText(ev, pgp, p, frame, opacity);
 	}
 
+	/**
+	 * カーソルホバーの透明度変化
+	 */
 	protected VMotion o = V.pm(0).start();
+	/**
+	 * カーソルがホバーかどうか
+	 */
 	protected boolean ob = false;;
 
 	@Override
@@ -121,24 +165,65 @@ public class MButton extends WBase {
 		}
 	}
 
-	public void drawText(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float opacity) {
+	/**
+	 * テキストを描画します
+	 * @param ev イベント
+	 * @param pgp 親コンポーネントの絶対座標
+	 * @param mouse カーソル絶対座標
+	 * @param frame 描画されるタイミングのpartialTicksです。
+	 * @param popacity 親コンポーネントの絶対透明度
+	 */
+	public void drawText(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse, final float frame, final float popacity) {
 		final String text = this.text;
 		if (text!=null) {
 			final Area a = getGuiPosition(pgp);
 			WRenderer.startTexture();
-			final Color c = new Color(getTextColour(ev, pgp, p, frame));
-			fontColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*opacity));
+			final Color c = new Color(getTextColor(ev, pgp, mouse, frame));
+			fontColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*popacity));
 			drawString(text, a, Align.CENTER, VerticalAlign.MIDDLE, true);
 		}
 	}
 
-	public int getTextColour(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame) {
+	/**
+	 * テキストの色
+	 * @param ev イベント
+	 * @param pgp 親コンポーネントの絶対座標
+	 * @param mouse カーソル絶対座標
+	 * @param frame 描画されるタイミングのpartialTicksです。
+	 * @return
+	 */
+	public int getTextColor(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse, final float frame) {
 		final Area abs = getGuiPosition(pgp);
-		return abs.pointInside(p) ? -96 : !isEnabled() ? -6250336 : -2039584;
+		return abs.pointInside(mouse) ? -96 : !isEnabled() ? -6250336 : -2039584;
 	}
 
-	public MButton setActionCommand(final @Nullable String string) {
-		this.actionCommand = string;
-		return this;
+	/**
+	 * イベントを作成します
+	 * @param mousebutton 押されたマウスボタン
+	 * @return イベント
+	 */
+	public MButtonEvent makeEvent(final int mousebutton) {
+		return new MButtonEvent(this, mousebutton);
+	}
+
+	/**
+	 * ボタンが押されたときのイベントです
+	 *
+	 * @author TeamFruit
+	 */
+	public static class MButtonEvent extends Event {
+		/**
+		 * 押されたボタン
+		 */
+		public final MButton button;
+		/**
+		 * 押されたマウスボタン
+		 */
+		public final int mousebutton;
+
+		public MButtonEvent(final MButton button, final int mousebutton) {
+			this.button = button;
+			this.mousebutton = mousebutton;
+		}
 	}
 }

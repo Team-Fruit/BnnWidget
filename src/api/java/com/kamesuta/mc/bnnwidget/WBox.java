@@ -9,6 +9,13 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 
+/**
+ * 内容を一つだけ含むことのできるパネルです。
+ * <p>
+ * 既に内容を含んでいる場合、内容が削除された後、追加されます。
+ *
+ * @author TeamFruit
+ */
 public class WBox extends WPanel {
 	protected @Nullable WCommon addtask;
 
@@ -22,6 +29,12 @@ public class WBox extends WPanel {
 		return true;
 	}
 
+	/**
+	 * 内容を設定します。
+	 * <p>
+	 * nullを設定した場合、内容は消去されます。
+	 * @param widget
+	 */
 	public void set(final @Nullable WCommon widget) {
 		this.addtask = widget;
 		removeAll();
