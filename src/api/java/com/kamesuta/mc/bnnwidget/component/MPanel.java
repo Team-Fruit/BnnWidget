@@ -6,16 +6,27 @@ import javax.annotation.Nonnull;
 
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.WPanel;
-import com.kamesuta.mc.bnnwidget.WRenderer;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * Minecraftデザインのパネルコンポーネントです。
+ *
+ * @author TeamFruit
+ */
 public class MPanel extends WPanel {
+	/**
+	 * BnnWidget同封のMinecraftデザイン、パネルです。
+	 */
 	public static final @Nonnull ResourceLocation background = new ResourceLocation("bnnwidget", "textures/gui/background.png");
+	/**
+	 * BnnWidgetは新デザインを開発中です。
+	 */
 	public static boolean tryNew;
 
 	public MPanel(final @Nonnull R position) {
@@ -43,6 +54,10 @@ public class MPanel extends WPanel {
 		super.draw(ev, pgp, p, frame, popacity);
 	}
 
+	/**
+	 * 背景を描画します
+	 * @param a 絶対座標
+	 */
 	public static void drawBack(final @Nonnull Area a) {
 		drawTextureModalSize(a.x1(), a.y1(), a.w()/2, a.h()/2, 0, 0, a.w()/2, a.h()/2);
 		drawTextureModalSize(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2, 256-a.w()/2, 0, a.w()/2, a.h()/2);

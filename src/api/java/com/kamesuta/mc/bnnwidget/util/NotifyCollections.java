@@ -7,11 +7,26 @@ import java.util.LinkedList;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 変更を確認することができるリストです
+ *
+ * @author TeamFruit
+ */
 public class NotifyCollections {
+	/**
+	 * 変更を確認することができるインターフェイスです
+	 *
+	 * @author TeamFruit
+	 */
 	public static interface IModCount<E> extends Collection<E> {
 		int getModCount();
 	}
 
+	/**
+	 * 変更を確認することができるArrayListです
+	 *
+	 * @author TeamFruit
+	 */
 	public static class NotifyArrayList<E> extends ArrayList<E> implements IModCount<E> {
 		public NotifyArrayList(final int initialCapacity) {
 			super(initialCapacity);
@@ -31,6 +46,11 @@ public class NotifyCollections {
 		}
 	}
 
+	/**
+	 * 変更を確認することができるLinkedListです
+	 *
+	 * @author TeamFruit
+	 */
 	public static class NotifyLinkedList<E> extends LinkedList<E> implements IModCount<E> {
 		public NotifyLinkedList() {
 			super();
@@ -46,6 +66,11 @@ public class NotifyCollections {
 		}
 	}
 
+	/**
+	 * 変更を確認することができるArrayDequeです
+	 *
+	 * @author TeamFruit
+	 */
 	public static class NotifyArrayDeque<E> extends ArrayDeque<E> implements IModCount<E> {
 		public NotifyArrayDeque() {
 			super();

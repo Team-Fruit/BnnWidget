@@ -25,7 +25,7 @@
 
 ## About
 
-The sign tells us how beautiful it is!
+Easy but powerful Minecraft GUI widget
 
 ## Contacts
 

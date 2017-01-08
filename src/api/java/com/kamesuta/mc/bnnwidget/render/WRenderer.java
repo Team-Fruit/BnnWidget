@@ -1,4 +1,4 @@
-package com.kamesuta.mc.bnnwidget;
+package com.kamesuta.mc.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -7,15 +7,34 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.kamesuta.mc.bnnwidget.render.OpenGL;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 
+/**
+ * 基本描画準備を担当します
+ *
+ * @author TeamFruit
+ */
 public class WRenderer {
+	/**
+	 * Tessellatorインスタンス
+	 * <p>
+	 * 描画に使用します
+	 */
 	public static final @Nonnull Tessellator t = Tessellator.getInstance();
+	/**
+	 * VertexBufferインスタンス
+	 * <p>
+	 * 描画に使用します
+	 */
 	public static final @Nonnull VertexBuffer w = t.getBuffer();
 
+	/**
+	 * 非テクスチャ要素を描画する前に呼び出します
+	 * @param src アルファブレンドsrc、null指定={@link org.lwjgl.opengl.GL11#GL_SRC_ALPHA GL_SRC_ALPHA}
+	 * @param dest アルファブレンドdest、null指定={@link org.lwjgl.opengl.GL11#GL_ONE_MINUS_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA}
+	 */
 	public static void startShape(final @Nullable BlendType src, final @Nullable BlendType dest) {
 		OpenGL.glBlendFunc(src!=null ? src.glEnum : GL_SRC_ALPHA, dest!=null ? dest.glEnum : GL_ONE_MINUS_SRC_ALPHA);
 		OpenGL.glDisable(GL_LIGHTING);
@@ -23,10 +42,20 @@ public class WRenderer {
 		OpenGL.glDisable(GL_TEXTURE_2D);
 	}
 
+	/**
+	 * 非テクスチャ要素を描画する前に呼び出します
+	 * <p>
+	 * デフォルトアルファブレンド({@link org.lwjgl.opengl.GL11#GL_SRC_ALPHA GL_SRC_ALPHA}, {@link org.lwjgl.opengl.GL11#GL_ONE_MINUS_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA})が使用されます
+	 */
 	public static void startShape() {
 		startShape(null, null);
 	}
 
+	/**
+	 * テクスチャ要素を描画する前に呼び出します
+	 * @param src アルファブレンドsrc、null指定={@link org.lwjgl.opengl.GL11#GL_SRC_ALPHA GL_SRC_ALPHA}
+	 * @param dest アルファブレンドdest、null指定={@link org.lwjgl.opengl.GL11#GL_ONE_MINUS_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA}
+	 */
 	public static void startTexture(final @Nullable BlendType src, final @Nullable BlendType dest) {
 		OpenGL.glBlendFunc(src!=null ? src.glEnum : GL_SRC_ALPHA, dest!=null ? dest.glEnum : GL_ONE_MINUS_SRC_ALPHA);
 		OpenGL.glDisable(GL_LIGHTING);
@@ -34,10 +63,20 @@ public class WRenderer {
 		OpenGL.glEnable(GL_TEXTURE_2D);
 	}
 
+	/**
+	 * テクスチャ要素を描画する前に呼び出します
+	 * <p>
+	 * デフォルトアルファブレンド({@link org.lwjgl.opengl.GL11#GL_SRC_ALPHA GL_SRC_ALPHA}, {@link org.lwjgl.opengl.GL11#GL_ONE_MINUS_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA})が使用されます
+	 */
 	public static void startTexture() {
 		startTexture(null, null);
 	}
 
+	/**
+	 * アルファブレンドを表現します
+	 *
+	 * @author TeamFruit
+	 */
 	public static enum BlendType {
 		// @formatter:off
 		ZERO(0, GL_ZERO),
@@ -58,7 +97,13 @@ public class WRenderer {
 		// @formatter:on
 
 		;
+		/**
+		 * 内部ID
+		 */
 		public final int id;
+		/**
+		 * GLEnum
+		 */
 		public final int glEnum;
 
 		private BlendType(final int id, final int glEnum) {
@@ -68,6 +113,11 @@ public class WRenderer {
 
 		private static final @Nonnull ImmutableMap<Integer, BlendType> blendIds;
 
+		/**
+		 * 内部IDからアルファブレンドを取得します
+		 * @param id 内部ID
+		 * @return アルファブレンド
+		 */
 		public static @Nullable BlendType fromId(final int id) {
 			return blendIds.get(id);
 		}
