@@ -178,7 +178,7 @@ public class MButton extends WBase {
 			final Area a = getGuiPosition(pgp);
 			WRenderer.startTexture();
 			final Color c = new Color(getTextColor(ev, pgp, mouse, frame));
-			fontColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*popacity));
+			OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*popacity));
 			drawString(text, a, Align.CENTER, VerticalAlign.MIDDLE, true);
 		}
 	}

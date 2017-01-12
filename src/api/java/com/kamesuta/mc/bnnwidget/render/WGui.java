@@ -2,11 +2,13 @@ package com.kamesuta.mc.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.Color;
+import java.nio.FloatBuffer;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 
@@ -287,62 +289,6 @@ public class WGui extends Gui {
 		draw(p, GL_QUADS);
 	}
 
-	private static int fontcolor;
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * @param color フォントカラー
-	 */
-	public static void fontColor(final int color) {
-		WGui.fontcolor = color;
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * <br>
-	 * フォントカラーの範囲は0～255です
-	 * @param r フォントカラー(赤)
-	 * @param g フォントカラー(緑)
-	 * @param b フォントカラー(青)
-	 * @param a フォントカラー(不透明度)
-	 */
-	public static void fontColor(final int r, final int g, final int b, final int a) {
-		fontColor(Math.max(a&0xff, 0x4)<<24|(r&0xFF)<<16|(g&0xFF)<<8|(b&0xFF)<<0);
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * <br>
-	 * フォントカラーの範囲は0～1です
-	 * @param r フォントカラー(赤)
-	 * @param g フォントカラー(緑)
-	 * @param b フォントカラー(青)
-	 * @param a フォントカラー(不透明度)
-	 */
-	public static void fontColor(final float r, final float g, final float b, final float a) {
-		fontColor((int) (r*255+0.5), (int) (g*255+0.5), (int) (b*255+0.5), (int) (a*255+0.5));
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * @param color フォントカラー
-	 */
-	public static void fontColor(final @Nonnull Color color) {
-		fontColor(color.getRGB());
-	}
-
-	private static void resetFontColor() {
-		WGui.fontcolor = 0xff000000;
-	}
-
 	/**
 	 * テクスチャマネージャ
 	 * <p>
@@ -382,9 +328,16 @@ public class WGui extends Gui {
 		OpenGL.glPushMatrix();
 		align.translate(text, x, w);
 		valign.translate(text, y, h);
-		font().drawString(text, 0, 0, fontcolor, shadow);
+		final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		final float r = buf.get(0);
+		final float g = buf.get(1);
+		final float b = buf.get(2);
+		final float a = buf.get(3);
+		OpenGL.glColor4f(1f, 1f, 1f, 1f);
+		font().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
+		OpenGL.glColor4f(r, g, b, a);
 		OpenGL.glPopMatrix();
-		resetFontColor();
 	}
 
 	/**

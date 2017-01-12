@@ -158,6 +158,11 @@ public class OpenGL {
 		GL11.glColor4ub(red, green, blue, alpha);
 	}
 
+	public static void glColor(final int rgb) {
+		final int value = 0xff000000|rgb;
+		glColor4i(value>>16&0xff, value>>8&0xff, value>>0&0xff, value>>24&0xff);
+	}
+
 	public static void glColor(final Color color) {
 		glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}

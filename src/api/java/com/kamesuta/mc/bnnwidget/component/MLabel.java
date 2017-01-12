@@ -248,13 +248,12 @@ public class MLabel extends WBase {
 		OpenGL.glTranslated(-(a.x1()+a.w()/2), -(a.y1()+a.h()/2), 0);
 		WRenderer.startTexture();
 		final Color c = new Color(getColor());
-		OpenGL.glColor4f(1f, 1f, 1f, opacity);
-		fontColor(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
+		OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
 		drawString(getText(), a, getAlign(), getVerticalAlign(), isShadow());
 		final String watermark = getWatermark();
 		if (watermark!=null&&!StringUtils.isEmpty(watermark)&&StringUtils.isEmpty(getText())) {
 			final Color w = new Color(getWatermarkColor());
-			fontColor(w.getRed(), w.getGreen(), w.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
+			OpenGL.glColor4i(w.getRed(), w.getGreen(), w.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
 			drawString(watermark, a, getAlign(), getVerticalAlign(), isShadow());
 		}
 		OpenGL.glPopMatrix();
