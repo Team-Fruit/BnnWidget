@@ -349,7 +349,7 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		}
 
 		public boolean isFinished() {
-			return this.pos>=this.tasks.size();
+			return this.pos>this.tasks.size();
 		}
 
 		@Override
