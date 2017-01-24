@@ -90,6 +90,11 @@ public abstract class Motion implements IMotion {
 			r.run();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Motion[(%1$ss)]", this.duration);
+	}
+
 	/**
 	 * Easingモーションを作成します
 	 * @param duration モーションの長さ

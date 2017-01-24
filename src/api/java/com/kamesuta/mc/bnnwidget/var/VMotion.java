@@ -113,4 +113,9 @@ public class VMotion extends VBase implements ICompoundMotion {
 		this.compoundMotion.reset();
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("VMotion [compoundMotion=%s]", this.compoundMotion);
+	}
 }

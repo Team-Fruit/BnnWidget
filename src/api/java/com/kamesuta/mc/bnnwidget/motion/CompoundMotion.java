@@ -271,6 +271,11 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 			this.after.run();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("CompoundMotion [paused=%s, tasks=%s, looplast=%s]", this.paused, this.tasks, this.looplast);
+	}
+
 	/**
 	 * モーションからモーションセットを作成します
 	 * @param motions モーション
@@ -350,6 +355,11 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		@Override
 		public @Nullable Iterator<E> iterator() {
 			return this.tasks.iterator();
+		}
+
+		@Override
+		public String toString() {
+			return String.format("TaskList [tasks=%s, pos=%s]", this.tasks, this.pos);
 		}
 
 	}

@@ -25,4 +25,9 @@ public class VBase implements VCommon {
 	public float getAbsCoord(final float a, final float b) {
 		return this.type.calc(a, b, get());
 	}
+
+	@Override
+	public String toString() {
+		return String.format("VBase [coord=%s, type=%s]", this.coord, this.type);
+	}
 }

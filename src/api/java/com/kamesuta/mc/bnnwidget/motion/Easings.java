@@ -307,6 +307,11 @@ public enum Easings implements Easing {
 		return Motion.easing(time, this, to);
 	}
 
+	@Override
+	public String toString() {
+		return name()+"("+this.id+")";
+	}
+
 	private static final @Nonnull ImmutableMap<Integer, Easings> easingIds;
 
 	/**
