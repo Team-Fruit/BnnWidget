@@ -99,6 +99,26 @@ public class OpenGL {
 		//}
 	}
 
+	public static boolean glIsEnabled(final int attrib) {
+		return GL11.glIsEnabled(attrib);
+	}
+
+	public static boolean glEnabled(final int attrib) {
+		if (!glIsEnabled(attrib)) {
+			glEnable(attrib);
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean glDisabled(final int attrib) {
+		if (glIsEnabled(attrib)) {
+			glEnable(attrib);
+			return true;
+		}
+		return false;
+	}
+
 	public static void glHint(final int target, final int mode) {
 		GL11.glHint(target, mode);
 	}
