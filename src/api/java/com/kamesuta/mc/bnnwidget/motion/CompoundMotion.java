@@ -328,6 +328,8 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		}
 
 		public @Nullable E poll() {
+			if (isEmpty())
+				return get();
 			return get(this.pos++);
 		}
 
@@ -346,6 +348,10 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 
 		public @Nullable E getLast() {
 			return get(this.tasks.size()-1);
+		}
+
+		public boolean isEmpty() {
+			return this.tasks.isEmpty();
 		}
 
 		public boolean isFinished() {
