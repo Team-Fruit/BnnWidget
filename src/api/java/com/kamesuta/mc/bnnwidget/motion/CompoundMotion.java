@@ -187,7 +187,7 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 	public boolean isFinished() {
 		stopNext();
 		final boolean notfinish = this.current!=null&&!this.current.isFinished();
-		return !this.looplast&&!notfinish&&this.tasks.isFinished();
+		return !this.looplast&&!notfinish&&this.tasks.isLast();
 	}
 
 	@Override
@@ -350,6 +350,10 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 
 		public boolean isFinished() {
 			return this.pos>this.tasks.size();
+		}
+
+		public boolean isLast() {
+			return this.pos>=this.tasks.size();
 		}
 
 		@Override
