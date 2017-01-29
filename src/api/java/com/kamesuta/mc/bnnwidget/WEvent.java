@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.kamesuta.mc.bnnwidget.render.WGui;
+
 import cpw.mods.fml.common.eventhandler.EventBus;
 
 /**
@@ -34,5 +36,13 @@ public class WEvent {
 		this.owner = owner;
 		this.data = new HashMap<String, Object>();
 		this.bus = new EventBus();
+	}
+
+	/**
+	 * 現在の画面がこのGUIであるかを確認します。
+	 * @return
+	 */
+	public boolean isCurrent() {
+		return WGui.mc.currentScreen==this.owner;
 	}
 }
