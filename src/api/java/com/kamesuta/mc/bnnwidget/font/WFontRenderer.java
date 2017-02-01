@@ -58,11 +58,11 @@ public class WFontRenderer implements WFont {
 		return this.setting;
 	}
 
-	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final Align align) {
+	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align) {
 		final float abswidth = w/scale;
 		final float absheight = h/scale;
 		float correctscale = 1f;
-		this.p.set(this.p).setScale(1f).setText(str).setPosition(x, y).setFontSize(Math.round(absheight));
+		this.p.set(this.p).setScale(1f).setText(str).setAlign(align).setPosition(x, y).setFontSize(Math.round(absheight));
 		final float ratiowh = this.font.getWidth(this.p)/Math.round(absheight);
 		if (absheight*ratiowh>abswidth) {
 			final float newwidth = absheight*ratiowh;
