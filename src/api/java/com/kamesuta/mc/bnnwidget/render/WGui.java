@@ -351,6 +351,8 @@ public class WGui extends Gui {
 		return toColorCode((int) (r*255+.5f), (int) (g*255+.5f), (int) (b*255+.5f), (int) (a*255+.5f));
 	}
 
+	private static FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+
 	/**
 	 * 文字列を描画します
 	 * @param text 文字列
@@ -366,7 +368,7 @@ public class WGui extends Gui {
 		OpenGL.glPushMatrix();
 		align.translate(text, x, w);
 		valign.translate(text, y, h);
-		final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+		buf.clear();
 		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
 		final float r = buf.get(0);
 		final float g = buf.get(1);
