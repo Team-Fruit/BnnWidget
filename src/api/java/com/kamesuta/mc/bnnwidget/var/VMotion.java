@@ -44,13 +44,13 @@ public class VMotion extends VBase implements ICompoundMotion {
 	@Override
 	public @Nonnull VMotion stop() {
 		this.compoundMotion.stop();
-		return stopFirst();
+		return this;
 	}
 
 	@Override
 	public @Nonnull VMotion stopLast() {
 		this.compoundMotion.stopLast();
-		return stopFirst();
+		return this;
 	}
 
 	@Override

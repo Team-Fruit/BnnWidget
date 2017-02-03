@@ -134,13 +134,15 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 	@Override
 	public @Nonnull CompoundMotion stopNext() {
 		final boolean notfinish = this.current!=null&&!this.current.isFinished();
-		if (!notfinish&&!this.paused) {
-			if (this.current!=null)
-				this.coord = this.current.getEnd(this.coord);
-			next();
+		if (!notfinish) {
+			if (!this.paused) {
+				if (this.current!=null)
+					this.coord = this.current.getEnd(this.coord);
+				next();
+			}
+			if (this.looplast&&this.tasks.isFinished())
+				restart();
 		}
-		if (this.looplast&&!notfinish&&this.tasks.isFinished())
-			restart();
 		return this;
 	}
 
@@ -186,7 +188,8 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 	@Override
 	public boolean isFinished() {
 		stopNext();
-		final boolean notfinish = this.current!=null&&!this.current.isFinished();
+		final IMotion last = this.tasks.getLast();
+		final boolean notfinish = last!=null&&!last.isFinished();
 		return !this.looplast&&!notfinish&&this.tasks.isLast();
 	}
 

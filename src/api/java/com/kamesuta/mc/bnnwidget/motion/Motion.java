@@ -212,7 +212,7 @@ public abstract class Motion implements IMotion {
 		protected final float end;
 
 		public MoveMotion(final float end) {
-			super(0.5f);
+			super(0f);
 			this.end = end;
 		}
 
