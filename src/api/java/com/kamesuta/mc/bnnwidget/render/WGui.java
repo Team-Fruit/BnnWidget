@@ -53,10 +53,11 @@ public class WGui extends WRenderer {
 	 * @param b カーソルを表示する場合true
 	 */
 	public static void setCursorVisible(final boolean b) {
-		try {
-			Mouse.setNativeCursor(b ? null : cur);
-		} catch (final LWJGLException e) {
-		}
+		if (cur!=null)
+			try {
+				Mouse.setNativeCursor(b ? null : cur);
+			} catch (final LWJGLException e) {
+			}
 	}
 
 	public static void showCursor() {
