@@ -2,13 +2,19 @@ package com.kamesuta.mc.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.IntBuffer;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.util.EnumChatFormatting;
 
 /**
@@ -25,6 +31,41 @@ public class WGui extends WRenderer {
 	 * GUIを描画する際に使用します。
 	 */
 	public static final float textureScale = 1f/256f;
+
+	private static final @Nullable org.lwjgl.input.Cursor cur;
+
+	static {
+		org.lwjgl.input.Cursor cursor = null;
+		try {
+			final IntBuffer buf = GLAllocation.createDirectIntBuffer(1);
+			buf.put(0);
+			buf.flip();
+			cursor = new org.lwjgl.input.Cursor(1, 1, 0, 0, 1, buf, null);
+		} catch (final LWJGLException e) {
+		}
+		cur = cursor;
+	}
+
+	/**
+	 * カーソルの表示を切り替えます。
+	 * <p>
+	 * 状況によっては1pxの黒ドットになる場合があります。
+	 * @param b カーソルを表示する場合true
+	 */
+	public static void setCursorVisible(final boolean b) {
+		try {
+			Mouse.setNativeCursor(b ? null : cur);
+		} catch (final LWJGLException e) {
+		}
+	}
+
+	public static void showCursor() {
+		setCursorVisible(true);
+	}
+
+	public static void hideCursor() {
+		setCursorVisible(false);
+	}
 
 	/**
 	 * 4つの絶対座標からテクスチャを描画します

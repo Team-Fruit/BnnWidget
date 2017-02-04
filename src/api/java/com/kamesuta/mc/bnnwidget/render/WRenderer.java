@@ -104,20 +104,20 @@ public class WRenderer extends Gui {
 		}
 
 		private boolean stack;
-		private float stack_x;
-		private float stack_y;
-		private float stack_z;
+		private double stack_x;
+		private double stack_y;
+		private double stack_z;
 
-		public @Nonnull WVertex pos(final float x, final float y, final float z) {
+		public @Nonnull WVertex pos(final double d, final double e, final double z) {
 			endVertex();
-			this.stack_x = x;
-			this.stack_y = y;
+			this.stack_x = d;
+			this.stack_y = e;
 			this.stack_z = z;
 			this.stack = true;
 			return this;
 		}
 
-		public @Nonnull WVertex tex(final float u, final float v) {
+		public @Nonnull WVertex tex(final double u, final double v) {
 			t.setTextureUV(u, v);
 			return this;
 		}
@@ -136,7 +136,7 @@ public class WRenderer extends Gui {
 			return this;
 		}
 
-		public void setTranslation(final float x, final float y, final float z) {
+		public void setTranslation(final double x, final double y, final double z) {
 			t.setTranslation(x, y, z);
 		}
 
