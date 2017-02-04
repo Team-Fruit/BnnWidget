@@ -4,10 +4,8 @@ import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -197,19 +195,19 @@ public class OpenGL {
 		glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
-	private static final @Nonnull FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-
 	public static int glGetColorRGBA() {
+		final FloatBuffer buf = WRenderer.buf;
 		buf.clear();
 		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
 		final float r = buf.get(0);
 		final float g = buf.get(1);
 		final float b = buf.get(2);
 		final float a = buf.get(3);
-		return WGui.toColorCode(r, g, b, a);
+		return WRenderer.toColorCode(r, g, b, a);
 	}
 
 	public static Color glGetColor() {
+		final FloatBuffer buf = WRenderer.buf;
 		buf.clear();
 		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
 		final float r = buf.get(0);
@@ -220,6 +218,7 @@ public class OpenGL {
 	}
 
 	public static org.lwjgl.util.Color glGetLwjglColor() {
+		final FloatBuffer buf = WRenderer.buf;
 		buf.clear();
 		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
 		final float r = buf.get(0);

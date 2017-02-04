@@ -2,22 +2,13 @@ package com.kamesuta.mc.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.FloatBuffer;
-
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.EnumChatFormatting;
 
 /**
@@ -27,19 +18,7 @@ import net.minecraft.util.EnumChatFormatting;
  *
  * @author TeamFruit
  */
-public class WGui extends Gui {
-	/**
-	 * Minecraftインスタンス
-	 */
-	public static final @Nonnull Minecraft mc = FMLClientHandler.instance().getClient();
-	/**
-	 * Tessellatorインスタンス
-	 * <p>
-	 * 描画に使用します
-	 */
-	public static final @Nonnull Tessellator t = WRenderer.t;
-	// public static final StencilClip clip = StencilClip.instance;
-
+public class WGui extends WRenderer {
 	/**
 	 * テクスチャ倍率
 	 * <p>
@@ -61,12 +40,12 @@ public class WGui extends Gui {
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
 	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		t.startDrawingQuads();
-		t.addVertexWithUV(vx1, vy2, 0, tx1, ty2);
-		t.addVertexWithUV(vx2, vy2, 0, tx2, ty2);
-		t.addVertexWithUV(vx2, vy1, 0, tx2, ty1);
-		t.addVertexWithUV(vx1, vy1, 0, tx1, ty1);
-		t.draw();
+		beginTextureQuads()
+				.pos(vx1, vy2, 0).tex(tx1, ty2)
+				.pos(vx2, vy2, 0).tex(tx2, ty2)
+				.pos(vx2, vy1, 0).tex(tx2, ty1)
+				.pos(vx1, vy1, 0).tex(tx1, ty1)
+				.draw();
 	}
 
 	/**
@@ -224,12 +203,12 @@ public class WGui extends Gui {
 	 * @param mode GL描画モード
 	 */
 	public static void drawAbs(final float x1, final float y1, final float x2, final float y2, final int mode) {
-		t.startDrawing(mode);
-		t.addVertex(x1, y2, 0);
-		t.addVertex(x2, y2, 0);
-		t.addVertex(x2, y1, 0);
-		t.addVertex(x1, y1, 0);
-		t.draw();
+		begin(mode)
+				.pos(x1, y2, 0)
+				.pos(x2, y2, 0)
+				.pos(x2, y1, 0)
+				.pos(x1, y1, 0)
+				.draw();
 	}
 
 	/**
@@ -288,70 +267,6 @@ public class WGui extends Gui {
 	public static void draw(final @Nonnull Area p) {
 		draw(p, GL_QUADS);
 	}
-
-	/**
-	 * テクスチャマネージャ
-	 * <p>
-	 * テクスチャをバインドする際に使用します
-	 * <br>
-	 * {@link Minecraft#renderEngine}と等価です
-	 * @return {@link Minecraft#renderEngine}
-	 */
-	public static @Nonnull TextureManager texture() {
-		return mc.renderEngine;
-	}
-
-	/**
-	 * フォントレンダラー
-	 * <p>
-	 * フォントを描画する際に使用します
-	 * <br>
-	 * {@link Minecraft#fontRenderer}と等価です
-	 * @return {@link Minecraft#fontRenderer}
-	 */
-	public static @Nonnull FontRenderer font() {
-		return mc.fontRenderer;
-	}
-
-	/**
-	 * {@link net.minecraft.client.gui.FontRenderer FontRenderer}で使用可能なカラーコードへ変換します。
-	 * @param color カラーコード
-	 * @return {@link net.minecraft.client.gui.FontRenderer FontRenderer}で使用可能なカラーコード
-	 */
-	public int toFontColor(final int color) {
-		final int alpha = Math.max(color>>24&255, 0x4)<<24;
-		return color&0xffffff|alpha;
-	}
-
-	/**
-	 * int型RGBAカラーをカラーコードに変換します
-	 * <p>
-	 * フォントカラーの範囲は0～255です
-	 * @param r カラー(赤)
-	 * @param g カラー(緑)
-	 * @param b カラー(青)
-	 * @param a カラー(不透明度)
-	 * @return カラーコード
-	 */
-	public static int toColorCode(final int r, final int g, final int b, final int a) {
-		return (a&0xff)<<24|(r&0xff)<<16|(g&0xff)<<8|(b&0xff)<<0;
-	}
-
-	/**
-	 * float型RGBAカラーをカラーコードに変換します
-	 * <p>
-	 * フォントカラーの範囲は0～1です
-	 * @param r カラー(赤)
-	 * @param g カラー(緑)
-	 * @param b カラー(青)
-	 * @param a カラー(不透明度)
-	 * @return カラーコード
-	 */
-	public static int toColorCode(final float r, final float g, final float b, final float a) {
-		return toColorCode((int) (r*255+.5f), (int) (g*255+.5f), (int) (b*255+.5f), (int) (a*255+.5f));
-	}
-
-	private static FloatBuffer buf = BufferUtils.createFloatBuffer(16);
 
 	/**
 	 * 文字列を描画します
