@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Sets;
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WBase;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
@@ -191,6 +192,7 @@ public class MChatTextField extends WBase {
 	 * テキストが変更された場合に呼び出されます。
 	 * @param oldText 変更前のテキスト
 	 */
+	@OverridablePoint
 	protected void onTextChanged(final @Nonnull String oldText) {
 	}
 
@@ -315,6 +317,7 @@ public class MChatTextField extends WBase {
 	/**
 	 * フォーカス状態が変更された場合に呼ばれます
 	 */
+	@OverridablePoint
 	protected void onFocusChanged() {
 	}
 

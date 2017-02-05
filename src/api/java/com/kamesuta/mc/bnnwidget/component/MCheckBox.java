@@ -2,6 +2,7 @@ package com.kamesuta.mc.bnnwidget.component;
 
 import javax.annotation.Nonnull;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
@@ -45,6 +46,7 @@ public class MCheckBox extends MLabel {
 	 * チェック状態が変更された際に呼ばれます
 	 * @param oldCheck
 	 */
+	@OverridablePoint
 	protected void onCheckChanged(final boolean oldCheck) {
 	}
 

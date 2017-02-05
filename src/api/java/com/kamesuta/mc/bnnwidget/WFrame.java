@@ -306,6 +306,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	 * <p>
 	 * オーバーライドしてGUIの構築を行いましょう。
 	 */
+	@OverridablePoint
 	protected void initWidget() {
 	}
 
@@ -341,6 +342,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	 * GUIの絶対透明度
 	 * @return 絶対透明度
 	 */
+	@OverridablePoint
 	protected float getOpacity() {
 		return 1f;
 	}
@@ -427,6 +429,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		sKeyTyped(c, keycode);
 	}
 
+	@OverridablePoint
 	protected void sKeyTyped(final char c, final int keycode) {
 		if (keycode==Keyboard.KEY_ESCAPE)
 			requestClose();
@@ -470,6 +473,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		super.onGuiClosed();
 	}
 
+	@OverridablePoint
 	protected void onClosed() {
 	}
 
@@ -619,6 +623,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public void onAdded() {
 	}
 
@@ -628,6 +633,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public void onInit(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
 	}
 
@@ -637,6 +643,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity) {
 	}
 
@@ -646,6 +653,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public void update(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
 	}
 
@@ -655,6 +663,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean keyTyped(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final char c, final int keycode) {
 		return false;
 	}
@@ -664,6 +673,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean mouseScrolled(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int scroll) {
 		return false;
 	}
@@ -673,6 +683,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean mouseMoved(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int button) {
 		return false;
 	}
@@ -682,6 +693,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean mouseClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
 		return false;
 	}
@@ -691,6 +703,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean mouseDragged(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button, final long time) {
 		return false;
 	}
@@ -700,6 +713,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean mouseReleased(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
 		return false;
 	}
@@ -709,6 +723,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean onCloseRequest() {
 		return true;
 	}
@@ -722,6 +737,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
 		return true;
 	}
@@ -733,6 +749,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	@Override
+	@OverridablePoint
 	public @Nullable WCommon top(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
 		return null;
 	}

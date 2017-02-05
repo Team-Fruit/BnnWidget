@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.ShortestFloatFormatter;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.WPanel;
@@ -136,6 +137,7 @@ public class MNumber extends WPanel {
 	 * @param oldText 変更前
 	 * @param newText 変更後
 	 */
+	@OverridablePoint
 	protected void onNumberChanged(final @Nonnull String oldText, final @Nonnull String newText) {
 	}
 }

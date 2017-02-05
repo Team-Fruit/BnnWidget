@@ -89,6 +89,7 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	 * <p>
 	 * オーバーライドしてGUIの構築を行いましょう。
 	 */
+	@OverridablePoint
 	protected void initWidget() {
 	}
 

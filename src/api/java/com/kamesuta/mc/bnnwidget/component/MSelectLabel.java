@@ -2,6 +2,7 @@ package com.kamesuta.mc.bnnwidget.component;
 
 import javax.annotation.Nonnull;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Coord;
@@ -60,6 +61,7 @@ public class MSelectLabel extends MSelect<String> {
 	 * 選択が変更された際に呼ばれます
 	 * @param widget ボタン
 	 */
+	@OverridablePoint
 	protected void onChanged(final @Nonnull String oldText, final @Nonnull String newText) {
 	}
 

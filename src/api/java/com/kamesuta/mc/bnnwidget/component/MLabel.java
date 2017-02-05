@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WBase;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
@@ -187,6 +188,7 @@ public class MLabel extends WBase {
 	 * テキストが変更された場合に呼び出されます。
 	 * @param oldText 変更前のテキスト
 	 */
+	@OverridablePoint
 	protected void onTextChanged(final @Nonnull String oldText) {
 	}
 
@@ -212,6 +214,7 @@ public class MLabel extends WBase {
 	 * 幅の倍率
 	 * @return f 幅の倍率
 	 */
+	@OverridablePoint
 	public float getScaleWidth(final @Nonnull Area a) {
 		return this.wscale;
 	}
@@ -232,6 +235,7 @@ public class MLabel extends WBase {
 	 * 高さの倍率
 	 * @return f 高さの倍率
 	 */
+	@OverridablePoint
 	public float getScaleHeight(final @Nonnull Area a) {
 		return this.hscale;
 	}
