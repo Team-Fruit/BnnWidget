@@ -400,7 +400,9 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		final Area gp = getAbsolute();
 		dispatchUpdate(gp, p);
 		final int m = Mouse.getEventButton();
-		if (this.lastbutton==-1&&m!=this.lastbutton&&!Mouse.isButtonDown(this.mousebutton))
+		if (!Mouse.isButtonDown(m))
+			this.lastbutton = -1;
+		if (this.lastbutton==-1&&m!=-1&&!Mouse.isButtonDown(this.mousebutton))
 			dispatchMouseReleased(gp, p, this.mousebutton);
 		this.lastbutton = m;
 		if (this.mousebutton!=m&&m!=-1)

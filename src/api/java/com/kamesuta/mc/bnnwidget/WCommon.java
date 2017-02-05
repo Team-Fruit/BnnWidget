@@ -74,7 +74,7 @@ public interface WCommon {
 	 * @param pgp 親コンポーネントの絶対座標
 	 * @param p カーソル絶対座標
 	 * @param button 入力中のボタン
-	 * @return 最後に押されたボタン
+	 * @return イベントを受け取った場合はtrue
 	 */
 	boolean mouseMoved(@Nonnull WEvent ev, @Nonnull Area pgp, @Nonnull Point p, int button);
 

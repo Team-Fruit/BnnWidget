@@ -140,13 +140,39 @@ public class MChatTextField extends WBase {
 		updateArea(new Area(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE));
 	}
 
+	private boolean drag;
+	private int drag_x = -1;
+
 	@Override
 	public boolean mouseClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
 		final Area a = getGuiPosition(pgp);
 		updateArea(a);
 		if (button==1&&a.pointInside(p))
 			setText("");
-		this.t.mouseClicked((int) p.x(), (int) p.y(), button);
+		this.drag = true;
+		this.drag_x = (int) p.x();
+		this.t.mouseClicked(this.drag_x, (int) p.y(), button);
+		return a.pointInside(p);
+	}
+
+	@Override
+	public boolean mouseReleased(final WEvent ev, final Area pgp, final Point p, final int button) {
+		this.drag = false;
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(final WEvent ev, final Area pgp, final Point p, final int button) {
+		final Area a = getGuiPosition(pgp);
+		if (this.drag) {
+			updateArea(a);
+			this.t.mouseClicked(this.drag_x, (int) p.y(), button);
+			final int start = this.t.getCursorPosition();
+			this.t.mouseClicked((int) p.x(), (int) p.y(), button);
+			final int end = this.t.getCursorPosition();
+			this.t.setCursorPosition(end);
+			this.t.setSelectionPos(start);
+		}
 		return a.pointInside(p);
 	}
 
@@ -188,6 +214,14 @@ public class MChatTextField extends WBase {
 	}
 
 	/**
+	 * フィルターを無視してテキストを設定します
+	 * @param p_146180_1_
+	 */
+	public void setTextByPassFilter(final @Nonnull String p_146180_1_) {
+		this.t.setTextByPassFilter(p_146180_1_);
+	}
+
+	/**
 	 * テキストが変更された場合に呼び出されます。
 	 * @param oldText 変更前のテキスト
 	 */
@@ -213,6 +247,10 @@ public class MChatTextField extends WBase {
 
 	public void writeText(final @Nonnull String p_146191_1_) {
 		this.t.writeText(p_146191_1_);
+	}
+
+	public void writeTextByPassFilter(final @Nonnull String p_146191_1_) {
+		this.t.writeTextByPassFilter(p_146191_1_);
 	}
 
 	@Override
@@ -379,12 +417,15 @@ public class MChatTextField extends WBase {
 		}
 
 		@Override
-		public void setText(final @Nullable String p_146180_1_) {
-			if (p_146180_1_!=null) {
-				final @Nonnull String s = getText();
-				super.setText(p_146180_1_);
-				onTextChanged(s, getText());
-			}
+		public void setText(final @Nullable String text) {
+			if (text!=null)
+				setTextByPassFilter(filerAllowedCharacters(text));
+		}
+
+		public void setTextByPassFilter(final @Nonnull String text) {
+			final @Nonnull String s = getText();
+			super.setText(text);
+			onTextChanged(s, getText());
 		}
 
 		@Override
@@ -395,12 +436,15 @@ public class MChatTextField extends WBase {
 		}
 
 		@Override
-		public void writeText(final @Nullable String p_146191_1_) {
-			if (p_146191_1_!=null) {
-				final @Nonnull String s = getText();
-				writeText0(filerAllowedCharacters(p_146191_1_));
-				onTextChanged(s, getText());
-			}
+		public void writeText(final @Nullable String text) {
+			if (text!=null)
+				writeTextByPassFilter(filerAllowedCharacters(text));
+		}
+
+		public void writeTextByPassFilter(final @Nonnull String text) {
+			final @Nonnull String s = getText();
+			writeText0(text);
+			onTextChanged(s, getText());
 		}
 
 		private void writeText0(final @Nonnull String newtext) {
@@ -440,13 +484,12 @@ public class MChatTextField extends WBase {
 			onTextChanged(s, getText());
 		}
 
-		protected @Nonnull String filerAllowedCharacters(final @Nonnull String p_71565_0_) {
+		protected @Nonnull String filerAllowedCharacters(final @Nonnull String text) {
 			final StringBuilder stringbuilder = new StringBuilder();
-			final char[] achar = p_71565_0_.toCharArray();
-			final int i = achar.length;
+			final int i = text.length();
 
 			for (int j = 0; j<i; ++j) {
-				final char c0 = achar[j];
+				final char c0 = text.charAt(j);
 
 				if (canAddChar(c0))
 					stringbuilder.append(c0);
