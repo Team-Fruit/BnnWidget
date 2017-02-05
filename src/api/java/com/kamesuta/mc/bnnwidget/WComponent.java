@@ -55,7 +55,7 @@ public class WComponent extends WGui implements WCommon {
 	}
 
 	@Override
-	public boolean mouseReleased(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse, final int button) {
+	public boolean mouseReleased(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
 		return false;
 	}
 
@@ -65,12 +65,12 @@ public class WComponent extends WGui implements WCommon {
 	}
 
 	@Override
-	public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point mouse) {
+	public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
 		return true;
 	}
 
 	@Override
-	public @Nullable WCommon top(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point point) {
+	public @Nullable WCommon top(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
 		return null;
 	}
 }

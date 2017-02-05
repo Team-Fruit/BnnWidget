@@ -26,7 +26,7 @@ import net.minecraft.client.gui.GuiScreen;
  *
  * @author TeamFruit
  */
-public class WFrame extends GuiScreen implements WContainer<WCommon> {
+public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	/**
 	 * GUIの背後に表示するGUIです
 	 * <p>
@@ -296,7 +296,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	protected void initPane() {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().onInit(this.event, gp, p);
+		dispatchOnInit(gp, p);
 	}
 
 	/**
@@ -328,7 +328,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 			OpenGL.glScalef(guiScaleX(), guiScaleY(), 1f);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().draw(this.event, gp, p, f, opacity);
+		dispatchDraw(gp, p, f, opacity);
 		OpenGL.glPopMatrix();
 	}
 
@@ -362,7 +362,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		this.mousebutton = button;
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().mouseClicked(this.event, gp, p, button);
+		dispatchMouseClicked(gp, p, button);
 		sMouseClicked(x, y, button);
 	}
 
@@ -383,7 +383,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	protected void mouseClickMove(final int x, final int y, final int button, final long time) {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().mouseDragged(this.event, gp, p, button, time);
+		dispatchMouseDragged(gp, p, button, time);
 		sMouseClickMove(x, y, button, time);
 	}
 
@@ -396,19 +396,20 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		sUpdateScreen();
 		final Point p = getMouseAbsolute();
 		final Area gp = getAbsolute();
-		getContentPane().update(this.event, gp, p);
+		dispatchUpdate(gp, p);
 		final int m = Mouse.getEventButton();
 		if (this.lastbutton==-1&&m!=this.lastbutton&&!Mouse.isButtonDown(this.mousebutton))
-			getContentPane().mouseReleased(this.event, gp, p, this.mousebutton);
+			dispatchMouseReleased(gp, p, this.mousebutton);
 		this.lastbutton = m;
 		if (this.mousebutton!=m&&m!=-1)
 			this.mousebutton = m;
 		if (!p.equals(this.mouselast)) {
 			this.mouselast = p;
-			getContentPane().mouseMoved(this.event, gp, p, this.mousebutton);
+			dispatchMouseMoved(gp, p, this.mousebutton);
 		}
 		if (this.closeRequest)
-			onCloseRequest();
+			if (dispatchOnClosing(gp, p))
+				close();
 	}
 
 	protected void sUpdateScreen() {
@@ -422,20 +423,13 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	protected void keyTyped(final char c, final int keycode) {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().keyTyped(this.event, gp, p, c, keycode);
+		dispatchKeyTyped(gp, p, c, keycode);
 		sKeyTyped(c, keycode);
 	}
 
 	protected void sKeyTyped(final char c, final int keycode) {
 		if (keycode==Keyboard.KEY_ESCAPE)
 			requestClose();
-	}
-
-	protected void onCloseRequest() {
-		final Area gp = getAbsolute();
-		final Point p = getMouseAbsolute();
-		if (getContentPane().onClosing(this.event, gp, p))
-			close();
 	}
 
 	/**
@@ -452,7 +446,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * GUIを終了します。終了処理がある場合は終了処理を行った後、終了されます。
 	 */
 	public void requestClose() {
-		getContentPane().onCloseRequest();
+		dispatchOnCloseRequest();
 		this.closeRequest = true;
 	}
 
@@ -468,11 +462,15 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public void onGuiClosed() {
+		onClosed();
 		sOnGuiClosed();
 	}
 
 	public void sOnGuiClosed() {
 		super.onGuiClosed();
+	}
+
+	protected void onClosed() {
 	}
 
 	@Override
@@ -481,7 +479,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		if (i!=0) {
 			final Area gp = getAbsolute();
 			final Point p = getMouseAbsolute();
-			getContentPane().mouseScrolled(this.event, gp, p, i);
+			dispatchMouseScrolled(gp, p, i);
 		}
 		sHandleMouseInput();
 	}
@@ -618,5 +616,135 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 */
 	public static @Nullable GuiScreen getParentOrThis() {
 		return getParentOrThis(getCurrent());
+	}
+
+	@Override
+	public void onAdded() {
+	}
+
+	protected void dispatchOnAdded() {
+		onAdded();
+		getContentPane().onAdded();
+	}
+
+	@Override
+	public void onInit(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
+	}
+
+	protected void dispatchOnInit(final @Nonnull Area pgp, final @Nonnull Point p) {
+		onInit(this.event, pgp, p);
+		getContentPane().onInit(this.event, pgp, p);
+	}
+
+	@Override
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity) {
+	}
+
+	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+		draw(this.event, pgp, p, frame, popacity);
+		getContentPane().draw(this.event, pgp, p, frame, popacity);
+	}
+
+	@Override
+	public void update(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
+	}
+
+	protected void dispatchUpdate(final @Nonnull Area pgp, final @Nonnull Point p) {
+		update(this.event, pgp, p);
+		getContentPane().update(this.event, pgp, p);
+	}
+
+	@Override
+	public boolean keyTyped(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final char c, final int keycode) {
+		return false;
+	}
+
+	protected boolean dispatchKeyTyped(final @Nonnull Area pgp, final @Nonnull Point p, final char c, final int keycode) {
+		return getContentPane().keyTyped(this.event, pgp, p, c, keycode)||keyTyped(this.event, pgp, p, c, keycode);
+	}
+
+	@Override
+	public boolean mouseScrolled(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int scroll) {
+		return false;
+	}
+
+	protected boolean dispatchMouseScrolled(final @Nonnull Area pgp, final @Nonnull Point p, final int scroll) {
+		return getContentPane().mouseScrolled(this.event, pgp, p, scroll)||mouseScrolled(this.event, pgp, p, scroll);
+	}
+
+	@Override
+	public boolean mouseMoved(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseMoved(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseMoved(this.event, pgp, p, button)||mouseMoved(this.event, pgp, p, button);
+	}
+
+	@Override
+	public boolean mouseClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseClicked(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseClicked(this.event, pgp, p, button)||mouseClicked(this.event, pgp, p, button);
+	}
+
+	@Override
+	public boolean mouseDragged(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button, final long time) {
+		return false;
+	}
+
+	protected boolean dispatchMouseDragged(final @Nonnull Area pgp, final @Nonnull Point p, final int button, final long time) {
+		return getContentPane().mouseDragged(this.event, pgp, p, button, time)||mouseDragged(this.event, pgp, p, button, time);
+	}
+
+	@Override
+	public boolean mouseReleased(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseReleased(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseReleased(this.event, pgp, p, button)||mouseReleased(this.event, pgp, p, button);
+	}
+
+	@Override
+	public boolean onCloseRequest() {
+		return true;
+	}
+
+	private boolean isDispatchClosable = true;
+
+	protected boolean dispatchOnCloseRequest() {
+		final boolean a = getContentPane().onCloseRequest();
+		final boolean b = this.isDispatchClosable = onCloseRequest();
+		return a&&b;
+	}
+
+	@Override
+	public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
+		return true;
+	}
+
+	protected boolean dispatchOnClosing(final @Nonnull Area pgp, final @Nonnull Point p) {
+		final boolean a = getContentPane().onClosing(this.event, pgp, p);
+		final boolean b = this.isDispatchClosable = this.isDispatchClosable||onClosing(this.event, pgp, p);
+		return a&&b;
+	}
+
+	@Override
+	public @Nullable WCommon top(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
+		return null;
+	}
+
+	protected @Nullable WCommon dispatchTop(final @Nonnull Area pgp, final @Nonnull Point p) {
+		if (pgp.pointInside(p)) {
+			final WCommon a = top(this.event, pgp, p);
+			final WCommon b = getContentPane().top(this.event, pgp, p);
+			if (b!=null)
+				return b;
+			return a;
+		}
+		return null;
 	}
 }
