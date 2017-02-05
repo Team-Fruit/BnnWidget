@@ -100,7 +100,6 @@ public class MChatTextField extends WBase {
 	 */
 	public @Nonnull MChatTextField setFilter(final @Nonnull CharacterFilter filter) {
 		this.filter = filter;
-		;
 		return this;
 	}
 
@@ -399,9 +398,39 @@ public class MChatTextField extends WBase {
 		public void writeText(final @Nullable String p_146191_1_) {
 			if (p_146191_1_!=null) {
 				final @Nonnull String s = getText();
-				super.writeText(filerAllowedCharacters(p_146191_1_));
+				writeText0(filerAllowedCharacters(p_146191_1_));
 				onTextChanged(s, getText());
 			}
+		}
+
+		private void writeText0(final @Nonnull String newtext) {
+			String s1 = "";
+			final int cpos = getCursorPosition();
+			final int send = getSelectionEnd();
+			final String text = getText();
+			final int textlen = text.length();
+			final int i = cpos<send ? cpos : send;
+			final int j = cpos<send ? send : cpos;
+			final int k = getMaxStringLength()-textlen-(i-send);
+
+			if (textlen>0)
+				s1 = s1+text.substring(0, i);
+
+			int l;
+
+			if (k<newtext.length()) {
+				s1 = s1+newtext.substring(0, k);
+				l = k;
+			} else {
+				s1 = s1+newtext;
+				l = newtext.length();
+			}
+
+			if (textlen>0&&j<textlen)
+				s1 = s1+text.substring(j);
+
+			super.setText(s1);
+			moveCursorBy(i-getSelectionEnd()+l);
 		}
 
 		@Override
