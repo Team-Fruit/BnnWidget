@@ -12,7 +12,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
-import com.kamesuta.mc.bnnwidget.render.WGui;
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -56,6 +56,10 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @see GuiScreen#doesGuiPauseGame()
 	 */
 	protected boolean doesPauseGui = true;
+	/**
+	 * このフラグをtrueにするとこのGUIの一切の処理が行われなくなります。
+	 */
+	protected boolean closed = false;
 	private float width;
 	private float height;
 
@@ -143,7 +147,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @return Minecraftの画面の幅
 	 */
 	protected static float getDisplayWidth() {
-		return WGui.mc.displayWidth;
+		return WRenderer.mc.displayWidth;
 	}
 
 	/**
@@ -151,7 +155,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @return Minecraftの画面の高さ
 	 */
 	protected static float getDisplayHeight() {
-		return WGui.mc.displayHeight;
+		return WRenderer.mc.displayHeight;
 	}
 
 	/**
@@ -218,7 +222,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 */
 	public WFrame(final @Nullable GuiScreen parent) {
 		this.parent = parent;
-		this.mc = WGui.mc;
+		this.mc = WRenderer.mc;
 	}
 
 	public WFrame() {
@@ -275,20 +279,21 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	@Override
 	public void initGui() {
 		sInitGui();
-	}
-
-	protected void sInitGui() {
-		if (this.parent!=null)
-			this.parent.initGui();
-		super.initGui();
 		if (!this.initialized) {
-			init();
+			initPane();
 			initWidget();
 			this.initialized = true;
 		}
 	}
 
-	protected void init() {
+	protected void sInitGui() {
+		checkParentAndClose();
+		if (this.parent!=null)
+			this.parent.initGui();
+		super.initGui();
+	}
+
+	protected void initPane() {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
 		getContentPane().onInit(this.event, gp, p);
@@ -306,10 +311,11 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public void setWorldAndResolution(final @Nullable Minecraft mc, final int i, final int j) {
-		sSetWorldAndResolution(WGui.mc, i, j);
+		sSetWorldAndResolution(WRenderer.mc, i, j);
 	}
 
 	protected void sSetWorldAndResolution(final @Nonnull Minecraft mc, final int i, final int j) {
+		checkParentAndClose();
 		if (this.parent!=null)
 			this.parent.setWorldAndResolution(mc, i, j);
 		super.setWorldAndResolution(mc, i, j);
@@ -340,6 +346,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	}
 
 	protected void sDrawScreen(final int mousex, final int mousey, final float f) {
+		checkParentAndClose();
 		final GuiScreen parent = this.parent;
 		if (parent!=null) {
 			OpenGL.glPushMatrix();
@@ -405,6 +412,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	}
 
 	protected void sUpdateScreen() {
+		checkParentAndClose();
 		if (this.parent!=null)
 			this.parent.updateScreen();
 		super.updateScreen();
@@ -434,7 +442,10 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * GUIが終了される最終フェーズで呼び出されます。
 	 */
 	protected void close() {
-		WGui.mc.displayGuiScreen(this.parent);
+		if (WRenderer.mc.currentScreen==this)
+			WRenderer.mc.displayGuiScreen(this.parent);
+		else
+			this.closed = true;
 	}
 
 	/**
@@ -490,10 +501,15 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public boolean doesGuiPauseGame() {
+		return sDoesGuiPauseGame();
+	}
+
+	protected boolean sDoesGuiPauseGame() {
 		return this.doesPauseGui||parentDoesGuiPauseGame();
 	}
 
 	protected boolean parentDoesGuiPauseGame() {
+		checkParentAndClose();
 		return this.parent!=null&&this.parent.doesGuiPauseGame();
 	}
 
@@ -515,5 +531,92 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	public @Nonnull WFrame setGuiPauseGame(final boolean doesPause) {
 		this.doesPauseGui = doesPause;
 		return this;
+	}
+
+	/**
+	 * 親GUIが閉じられているのを確認します
+	 */
+	public boolean isParentClosed() {
+		if (this.parent instanceof WFrame)
+			return ((WFrame) this.parent).closed;
+		return false;
+	}
+
+	/**
+	 * 親GUIを閉じます
+	 */
+	public void closeParent() {
+		this.parent = getParentOrNull(this.parent);
+	}
+
+	/**
+	 * 親GUIが閉じられているのを確認し、親GUIを閉じます
+	 */
+	public void checkParentAndClose() {
+		if (isParentClosed())
+			closeParent();
+	}
+
+	/**
+	 * 親GUIを返します
+	 * @return 親
+	 */
+	public @Nullable GuiScreen getParent() {
+		return this.parent;
+	}
+
+	/**
+	 * 現在のGUIを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getCurrent() {
+		return WRenderer.mc.currentScreen;
+	}
+
+	/**
+	 * 親GUIを返します
+	 * <p>
+	 * screenがWFrameでない場合はnullを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrNull(@Nullable final GuiScreen screen) {
+		if (screen instanceof WFrame)
+			return ((WFrame) screen).parent;
+		return null;
+	}
+
+	/**
+	 * 親GUIを返します
+	 * <p>
+	 * screenがWFrameでない場合はscreenを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrThis(@Nullable final GuiScreen screen) {
+		if (screen instanceof WFrame)
+			return ((WFrame) screen).parent;
+		return screen;
+	}
+
+	/**
+	 * 現在のGUIの親GUIを返します
+	 * <p>
+	 * 現在のGUIがWFrameでない場合はnullを返します
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrNull() {
+		return getParentOrNull(getCurrent());
+	}
+
+	/**
+	 * 現在のGUIの親GUIを返します
+	 * <p>
+	 * 現在のGUIがWFrameでない場合は現在のGUIを返します
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrThis() {
+		return getParentOrThis(getCurrent());
 	}
 }
