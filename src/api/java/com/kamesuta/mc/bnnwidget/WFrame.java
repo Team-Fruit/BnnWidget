@@ -1,6 +1,8 @@
 package com.kamesuta.mc.bnnwidget;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,6 +10,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.google.common.collect.Sets;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
@@ -63,18 +66,6 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	private float width;
 	private float height;
 
-	/**
-	 * 入力されたマウスボタンを保持します
-	 */
-	protected int mousebutton = -1;
-	/**
-	 * 最後に入力されたカーソル位置を保持します
-	 */
-	protected @Nullable Point mouselast;
-	/**
-	 * 最後に入力されたマウスボタンを保持します
-	 */
-	protected int lastbutton = -1;
 	/**
 	 * ウィジェットを終了する際のフラグです。
 	 */
@@ -361,7 +352,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 
 	@Override
 	protected void mouseClicked(final int x, final int y, final int button) {
-		this.mousebutton = button;
+		this.mousebutton.addButton(button);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
 		dispatchMouseClicked(gp, p, button);
@@ -393,23 +384,72 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		super.mouseClickMove(x, y, button, time);
 	}
 
+	/**
+	 * マウスボタン
+	 */
+	public static class MouseButton {
+		private final @Nonnull Set<Integer> pressed = Sets.newHashSet();
+
+		private final @Nonnull MouseState state = new MouseState();
+
+		public @Nonnull MouseState checkButton() {
+			this.state.reset();
+			for (final Iterator<Integer> itr = this.pressed.iterator(); itr.hasNext();) {
+				final Integer button = itr.next();
+				if (!Mouse.isButtonDown(button)) {
+					this.state.removed.add(button);
+					this.state.lastRemoved = button;
+					itr.remove();
+				} else {
+					this.state.pressed.add(button);
+					this.state.lastPressed = button;
+				}
+			}
+			return this.state;
+		}
+
+		public void addButton(final int button) {
+			this.pressed.add(button);
+		}
+
+		public static class MouseState {
+			public final @Nonnull Set<Integer> removed = Sets.newHashSet();
+			public @Nullable Integer lastRemoved;
+			public final @Nonnull Set<Integer> pressed = Sets.newHashSet();
+			public @Nullable Integer lastPressed;
+
+			public void reset() {
+				this.removed.clear();
+				this.lastRemoved = null;
+				this.pressed.clear();
+				this.lastPressed = null;
+			}
+		}
+	}
+
+	/**
+	 * 最後に入力されたカーソル位置を保持します
+	 */
+	protected @Nullable Point mouselast;
+
+	/**
+	 * 最後に入力されたマウスボタンを保持します
+	 */
+	protected final @Nonnull MouseButton mousebutton = new MouseButton();
+
 	@Override
 	public void updateScreen() {
 		sUpdateScreen();
 		final Point p = getMouseAbsolute();
 		final Area gp = getAbsolute();
 		dispatchUpdate(gp, p);
-		final int m = Mouse.getEventButton();
-		if (!Mouse.isButtonDown(m))
-			this.lastbutton = -1;
-		if (this.lastbutton==-1&&m!=-1&&!Mouse.isButtonDown(this.mousebutton))
-			dispatchMouseReleased(gp, p, this.mousebutton);
-		this.lastbutton = m;
-		if (this.mousebutton!=m&&m!=-1)
-			this.mousebutton = m;
+		final MouseButton.MouseState button = this.mousebutton.checkButton();
+		final Integer lastRemoved = button.lastRemoved;
+		if (lastRemoved!=null)
+			dispatchMouseReleased(gp, p, lastRemoved);
 		if (!p.equals(this.mouselast)) {
 			this.mouselast = p;
-			dispatchMouseMoved(gp, p, this.mousebutton);
+			dispatchMouseMoved(gp, p, button.lastPressed!=null ? button.lastPressed : -1);
 		}
 		if (this.closeRequest)
 			if (dispatchOnClosing(gp, p))
