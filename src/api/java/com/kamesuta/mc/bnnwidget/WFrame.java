@@ -353,6 +353,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	@Override
 	protected void mouseClicked(final int x, final int y, final int button) {
 		this.mousebutton.addButton(button);
+		this.event.updateDoubleClick();
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
 		dispatchMouseClicked(gp, p, button);
@@ -377,6 +378,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
 		dispatchMouseDragged(gp, p, button, time);
+		this.event.updateDoubleClick();
 		sMouseClickMove(x, y, button, time);
 	}
 

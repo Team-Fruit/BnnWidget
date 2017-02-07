@@ -1,11 +1,14 @@
 package com.kamesuta.mc.bnnwidget;
 
+import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.kamesuta.mc.bnnwidget.render.WGui;
+import org.lwjgl.util.Timer;
+
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import cpw.mods.fml.common.eventhandler.EventBus;
 
@@ -20,6 +23,22 @@ import cpw.mods.fml.common.eventhandler.EventBus;
  */
 public class WEvent {
 	/**
+	 * デフォルトのダブルクリック間隔です。
+	 */
+	public static final int DefaultMultiClickInterval = 500;
+
+	/**
+	 * ユーザー設定のダブルクリック間隔を取得します。
+	 * @return ユーザー設定のダブルクリック間隔
+	 */
+	public static int getUserMultiClickInterval() {
+		final Object o = Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
+		if (o instanceof Integer)
+			return (Integer) o;
+		return DefaultMultiClickInterval;
+	}
+
+	/**
 	 * このイベントインスタンスを管理しているGUIです。
 	 */
 	public final @Nonnull WFrame owner;
@@ -31,11 +50,18 @@ public class WEvent {
 	 * GUIで管理されるイベントバスです。
 	 */
 	public final @Nonnull EventBus bus;
+	/**
+	 * ユーザー設定のダブルクリック間隔を取得します。
+	 */
+	public final int multiClickInterval;
+	private Timer lastClickedTime = new Timer();
+	private boolean isDoubleClicked;
 
 	public WEvent(final @Nonnull WFrame owner) {
 		this.owner = owner;
 		this.data = new HashMap<String, Object>();
 		this.bus = new EventBus();
+		this.multiClickInterval = getUserMultiClickInterval();
 	}
 
 	/**
@@ -43,6 +69,23 @@ public class WEvent {
 	 * @return
 	 */
 	public boolean isCurrent() {
-		return WGui.mc.currentScreen==this.owner;
+		return WRenderer.mc.currentScreen==this.owner;
+	}
+
+	/**
+	 * このクリックがダブルクリックかどうか
+	 * @return このクリックがダブルクリックの場合true
+	 */
+	public boolean isDoubleClick() {
+		return this.isDoubleClicked;
+	}
+
+	protected void updateDoubleClick() {
+		if (this.lastClickedTime.getTime()*1000<this.multiClickInterval)
+			this.isDoubleClicked = true;
+		else {
+			this.lastClickedTime.reset();
+			this.isDoubleClicked = false;
+		}
 	}
 }
