@@ -604,6 +604,14 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	}
 
 	/**
+	 * 親GUIを設定します
+	 * @param parent 親
+	 */
+	public void setParent(@Nullable final GuiScreen parent) {
+		this.parent = parent;
+	}
+
+	/**
 	 * 親GUIを返します
 	 * @return 親
 	 */
