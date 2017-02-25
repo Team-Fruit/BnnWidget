@@ -258,6 +258,11 @@ public class MChatTextField extends WBase {
 		return this.t.equals(obj);
 	}
 
+	@Override
+	public int hashCode() {
+		return this.t.hashCode();
+	}
+
 	public void deleteWords(final int p_146177_1_) {
 		this.t.deleteWords(p_146177_1_);
 	}
