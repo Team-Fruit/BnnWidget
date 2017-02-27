@@ -92,6 +92,32 @@ public class WGui extends WRenderer {
 
 	/**
 	 * 4つの絶対座標からテクスチャを描画します
+	 * @param vx1 1つ目のX絶対座標
+	 * @param vy1 1つ目のY絶対座標
+	 * @param vx2 2つ目のX絶対座標
+	 * @param vy2 2つ目のY絶対座標
+	 * @param tx1 1つ目のXトリミング絶対座標
+	 * @param ty1 1つ目のYトリミング絶対座標
+	 * @param tx2 2つ目のXトリミング絶対座標
+	 * @param ty2 2つ目のYトリミング絶対座標
+	 */
+	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		final float ox = vx2-vx1;
+		final float oy = vy2-vy1;
+		final float ox1 = (tx2-tx1)/ox;
+		final float oy1 = (ty2-ty1)/oy;
+		final float ox2 = 1f/ox;
+		final float oy2 = 1f/oy;
+		beginTextureQuads()
+				.pos(tx1+vx1*ox1, ty1+vy2*oy1, 0).tex(tx1*ox2, ty2*oy2)
+				.pos(tx1+vx2*ox1, ty1+vy2*oy1, 0).tex(tx2*ox2, ty2*oy2)
+				.pos(tx1+vx2*ox1, ty1+vy1*oy1, 0).tex(tx2*ox2, ty1*oy2)
+				.pos(tx1+vx1*ox1, ty1+vy1*oy1, 0).tex(tx1*ox2, ty1*oy2)
+				.draw();
+	}
+
+	/**
+	 * 4つの絶対座標からテクスチャを描画します
 	 * <p>
 	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)が使用されます
 	 * @param vx1 1つ目のX絶対座標
@@ -122,6 +148,21 @@ public class WGui extends WRenderer {
 
 	/**
 	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
+	 * @param vx X絶対座標
+	 * @param vy Y絶対座標
+	 * @param vw 絶対幅
+	 * @param vh 絶対高さ
+	 * @param tx Xトリミング絶対座標
+	 * @param ty Yトリミング絶対座標
+	 * @param tw トリミング絶対幅
+	 * @param th トリミング絶対高さ
+	 */
+	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
+		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
+	}
+
+	/**
+	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
 	 * <p>
 	 * テクスチャ座標(倍率)は(0, 0)：(1×1)が使用されます
 	 * @param vx X絶対座標
@@ -142,6 +183,15 @@ public class WGui extends WRenderer {
 	 */
 	public static void drawTexture(final @Nonnull Area vertex, final @Nonnull Area textrue) {
 		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
+	}
+
+	/**
+	 * 絶対範囲からテクスチャを描画します
+	 * @param vertex 絶対範囲
+	 * @param trim トリミング範囲
+	 */
+	public static void drawTextureTrim(final @Nonnull Area vertex, final @Nonnull Area trim) {
+		drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2());
 	}
 
 	/**
@@ -170,6 +220,24 @@ public class WGui extends WRenderer {
 	public static void drawTextureModalAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		final float f = textureScale;
 		drawTextureAbs(vx1, vy1, vx2, vy2, f*tx1, f*ty1, f*tx2, f*ty2);
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbsTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vx1 1つ目のX絶対座標
+	 * @param vy1 1つ目のY絶対座標
+	 * @param vx2 2つ目のX絶対座標
+	 * @param vy2 2つ目のY絶対座標
+	 * @param tx1 1つ目のXトリミング絶対座標
+	 * @param ty1 1つ目のYトリミング絶対座標
+	 * @param tx2 2つ目のXトリミング絶対座標
+	 * @param ty2 2つ目のYトリミング絶対座標
+	 */
+	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		final float f = textureScale;
+		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*tx1, f*ty1, f*tx2, f*ty2);
 	}
 
 	/**
@@ -203,7 +271,24 @@ public class WGui extends WRenderer {
 	}
 
 	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModalAbs(float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSizeTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vx X絶対座標
+	 * @param vy Y絶対座標
+	 * @param vw 絶対幅
+	 * @param vh 絶対高さ
+	 * @param tx Xトリミング絶対座標
+	 * @param ty Yトリミング絶対座標
+	 * @param tw トリミング絶対幅
+	 * @param th トリミング絶対高さ
+	 */
+	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
+		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vx X絶対座標
@@ -216,7 +301,7 @@ public class WGui extends WRenderer {
 	}
 
 	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModal(Area, Area)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area, Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲
@@ -227,7 +312,18 @@ public class WGui extends WRenderer {
 	}
 
 	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModal(Area)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureTrim(Area, Area)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vertex 絶対範囲
+	 * @param trim トリミング範囲
+	 */
+	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area textrue) {
+		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲
