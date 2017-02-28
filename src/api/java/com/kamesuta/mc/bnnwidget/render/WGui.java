@@ -96,23 +96,61 @@ public class WGui extends WRenderer {
 	 * @param vy1 1つ目のY絶対座標
 	 * @param vx2 2つ目のX絶対座標
 	 * @param vy2 2つ目のY絶対座標
-	 * @param tx1 1つ目のXトリミング絶対座標
-	 * @param ty1 1つ目のYトリミング絶対座標
-	 * @param tx2 2つ目のXトリミング絶対座標
-	 * @param ty2 2つ目のYトリミング絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
+	 * @param tx1 1つ目のXテクスチャ座標(倍率)
+	 * @param ty1 1つ目のYテクスチャ座標(倍率)
+	 * @param tx2 2つ目のXテクスチャ座標(倍率)
+	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		final float ox1 = tx2-tx1;
+		final float oy1 = ty2-ty1;
+		final float ox2 = vx1/ox1;
+		final float oy2 = vy1/oy1;
+		final float ox3 = vx2/ox1;
+		final float oy3 = vy2/oy1;
+		final float ox4 = ox3-ox2;
+		final float oy4 = oy3-oy2;
+		final float ox5 = rx2-rx1;
+		final float oy5 = ry2-ry1;
+		final float ox6 = ox5/ox4;
+		final float oy6 = oy5/oy4;
+		final float ox7 = 1f/ox4;
+		final float oy7 = 1f/oy4;
+		beginTextureQuads()
+				.pos(rx1+ox2*ox6, ry1+oy3*oy6, 0).tex(rx1*ox7+tx1, ry2*oy7+ty1)
+				.pos(rx1+ox3*ox6, ry1+oy3*oy6, 0).tex(rx2*ox7+tx1, ry2*oy7+ty1)
+				.pos(rx1+ox3*ox6, ry1+oy2*oy6, 0).tex(rx2*ox7+tx1, ry1*oy7+ty1)
+				.pos(rx1+ox2*ox6, ry1+oy2*oy6, 0).tex(rx1*ox7+tx1, ry1*oy7+ty1)
+				.draw();
+	}
+
+	/**
+	 * 4つの絶対座標からテクスチャを描画します
+	 * @param vx1 1つ目のX絶対座標
+	 * @param vy1 1つ目のY絶対座標
+	 * @param vx2 2つ目のX絶対座標
+	 * @param vy2 2つ目のY絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
+	 */
+	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2) {
 		final float ox = vx2-vx1;
 		final float oy = vy2-vy1;
-		final float ox1 = (tx2-tx1)/ox;
-		final float oy1 = (ty2-ty1)/oy;
+		final float ox1 = (rx2-rx1)/ox;
+		final float oy1 = (ry2-ry1)/oy;
 		final float ox2 = 1f/ox;
 		final float oy2 = 1f/oy;
 		beginTextureQuads()
-				.pos(tx1+vx1*ox1, ty1+vy2*oy1, 0).tex(tx1*ox2, ty2*oy2)
-				.pos(tx1+vx2*ox1, ty1+vy2*oy1, 0).tex(tx2*ox2, ty2*oy2)
-				.pos(tx1+vx2*ox1, ty1+vy1*oy1, 0).tex(tx2*ox2, ty1*oy2)
-				.pos(tx1+vx1*ox1, ty1+vy1*oy1, 0).tex(tx1*ox2, ty1*oy2)
+				.pos(rx1+vx1*ox1, ry1+vy2*oy1, 0).tex(rx1*ox2, ry2*oy2)
+				.pos(rx1+vx2*ox1, ry1+vy2*oy1, 0).tex(rx2*ox2, ry2*oy2)
+				.pos(rx1+vx2*ox1, ry1+vy1*oy1, 0).tex(rx2*ox2, ry1*oy2)
+				.pos(rx1+vx1*ox1, ry1+vy1*oy1, 0).tex(rx1*ox2, ry1*oy2)
 				.draw();
 	}
 
@@ -152,13 +190,32 @@ public class WGui extends WRenderer {
 	 * @param vy Y絶対座標
 	 * @param vw 絶対幅
 	 * @param vh 絶対高さ
-	 * @param tx Xトリミング絶対座標
-	 * @param ty Yトリミング絶対座標
-	 * @param tw トリミング絶対幅
-	 * @param th トリミング絶対高さ
+	 * @param rx Xトリミング絶対座標
+	 * @param ry Yトリミング絶対座標
+	 * @param rw トリミング絶対幅
+	 * @param rh トリミング絶対高さ
+	 * @param tx Xテクスチャ座標(倍率)
+	 * @param ty Yテクスチャ座標(倍率)
+	 * @param tw テクスチャ幅(倍率)
+	 * @param th テクスチャ高さ(倍率)
 	 */
-	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
+	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh, final float tx, final float ty, final float tw, final float th) {
+		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh, tx, ty, tx+tw, ty+th);
+	}
+
+	/**
+	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
+	 * @param vx X絶対座標
+	 * @param vy Y絶対座標
+	 * @param vw 絶対幅
+	 * @param vh 絶対高さ
+	 * @param rx Xトリミング絶対座標
+	 * @param ry Yトリミング絶対座標
+	 * @param rw トリミング絶対幅
+	 * @param rh トリミング絶対高さ
+	 */
+	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh) {
+		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh);
 	}
 
 	/**
@@ -183,6 +240,16 @@ public class WGui extends WRenderer {
 	 */
 	public static void drawTexture(final @Nonnull Area vertex, final @Nonnull Area textrue) {
 		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
+	}
+
+	/**
+	 * 絶対範囲からテクスチャを描画します
+	 * @param vertex 絶対範囲
+	 * @param trim トリミング範囲
+	 * @param textrue テクスチャ範囲
+	 */
+	public static void drawTextureTrim(final @Nonnull Area vertex, final @Nonnull Area trim, final @Nonnull Area textrue) {
+		drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
 	}
 
 	/**
@@ -230,14 +297,36 @@ public class WGui extends WRenderer {
 	 * @param vy1 1つ目のY絶対座標
 	 * @param vx2 2つ目のX絶対座標
 	 * @param vy2 2つ目のY絶対座標
-	 * @param tx1 1つ目のXトリミング絶対座標
-	 * @param ty1 1つ目のYトリミング絶対座標
-	 * @param tx2 2つ目のXトリミング絶対座標
-	 * @param ty2 2つ目のYトリミング絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
+	 * @param tx1 1つ目のXテクスチャ座標(倍率)
+	 * @param ty1 1つ目のYテクスチャ座標(倍率)
+	 * @param tx2 2つ目のXテクスチャ座標(倍率)
+	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		final float f = textureScale;
-		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*tx1, f*ty1, f*tx2, f*ty2);
+		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*rx1, f*ry1, f*rx2, f*ry2, f*tx1, f*ty1, f*tx2, f*ty2);
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbsTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vx1 1つ目のX絶対座標
+	 * @param vy1 1つ目のY絶対座標
+	 * @param vx2 2つ目のX絶対座標
+	 * @param vy2 2つ目のY絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
+	 */
+	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2) {
+		final float f = textureScale;
+		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*rx1, f*ry1, f*rx2, f*ry2);
 	}
 
 	/**
@@ -278,13 +367,34 @@ public class WGui extends WRenderer {
 	 * @param vy Y絶対座標
 	 * @param vw 絶対幅
 	 * @param vh 絶対高さ
-	 * @param tx Xトリミング絶対座標
-	 * @param ty Yトリミング絶対座標
-	 * @param tw トリミング絶対幅
-	 * @param th トリミング絶対高さ
+	 * @param rx Xトリミング絶対座標
+	 * @param ry Yトリミング絶対座標
+	 * @param rw トリミング絶対幅
+	 * @param rh トリミング絶対高さ
+	 * @param tx Xテクスチャ座標(倍率)
+	 * @param ty Yテクスチャ座標(倍率)
+	 * @param tw テクスチャ幅(倍率)
+	 * @param th テクスチャ高さ(倍率)
 	 */
-	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
+	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh, final float tx, final float ty, final float tw, final float th) {
+		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh, tx, ty, tx+tw, ty+th);
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSizeTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vx X絶対座標
+	 * @param vy Y絶対座標
+	 * @param vw 絶対幅
+	 * @param vh 絶対高さ
+	 * @param rx Xトリミング絶対座標
+	 * @param ry Yトリミング絶対座標
+	 * @param rw トリミング絶対幅
+	 * @param rh トリミング絶対高さ
+	 */
+	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh) {
+		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh);
 	}
 
 	/**
@@ -317,9 +427,21 @@ public class WGui extends WRenderer {
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲
 	 * @param trim トリミング範囲
+	 * @param textrue テクスチャ範囲
 	 */
-	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area textrue) {
-		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
+	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area trim, final @Nonnull Area textrue) {
+		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
+	}
+
+	/**
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureTrim(Area, Area)}と同様に描画します。
+	 * <p>
+	 * GUIを描画する場合主にこちらを使用します。
+	 * @param vertex 絶対範囲
+	 * @param trim トリミング範囲
+	 */
+	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area trim) {
+		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2());
 	}
 
 	/**

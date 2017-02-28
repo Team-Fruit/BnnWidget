@@ -168,6 +168,15 @@ public class Area {
 		return a.minX()>=minX()&&a.minY()>=minY()&&a.maxX()<=maxX()&&a.maxY()<=maxY();
 	}
 
+	/**
+	 * 重なり合う範囲
+	 * @param a もう一つの範囲
+	 * @return 重なり合う範囲
+	 */
+	public @Nonnull Area trimArea(final @Nonnull Area c) {
+		return new Area(Math.max(minX(), c.minX()), Math.max(minY(), c.minY()), Math.min(maxX(), c.maxX()), Math.min(maxY(), c.maxY()));
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

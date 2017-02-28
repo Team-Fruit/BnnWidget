@@ -186,7 +186,11 @@ public class GuiMain extends WFrame {
 						WRenderer.startTexture();
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
 						texture().bindTexture(this.expimg);
-						drawTextureTrim(pgp, a);
+						OpenGL.glColor4f(1f, 1f, 1f, .5f);
+						final Area b = new Area(.5f, 0f, 3.5f, 2f);
+						drawTexture(pgp, b);
+						OpenGL.glColor4f(1f, 1f, 1f, 1f);
+						drawTextureTrim(pgp, a, b);
 						WRenderer.startShape();
 						OpenGL.glLineWidth(.5f);
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
