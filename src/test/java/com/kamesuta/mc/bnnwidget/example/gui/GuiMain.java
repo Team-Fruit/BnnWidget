@@ -190,9 +190,9 @@ public class GuiMain extends WFrame {
 						texture().bindTexture(this.expimg);
 						OpenGL.glColor4f(1f, 1f, 1f, .5f);
 						final Area b = Area.abs(.5f, 0f, 3.5f, 2f);
-						drawTexture(d, b);
+						drawTexture(d, null, b);
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
-						drawTextureTrimOne(d, a, b);
+						drawTexture(d, a, b);
 						WRenderer.startShape();
 						OpenGL.glLineWidth(.5f);
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);

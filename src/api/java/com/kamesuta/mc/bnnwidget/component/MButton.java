@@ -133,10 +133,10 @@ public class MButton extends WBase {
 			texture().bindTexture(button);
 			final int state = !isEnabled() ? 0 : a.pointInside(p) ? 2 : 1;
 
-			drawTextureModalSize(a.x1(), a.y1(), a.w()/2, a.h()/2, 0, state*80, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2, 256-a.w()/2, state*80, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2, 0, state*80+80-a.h()/2, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2, 256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2);
+			drawTextureModal(Area.size(a.x1(), a.y1(), a.w()/2, a.h()/2), null, Area.size(0, state*80, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(0, state*80+80-a.h()/2, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2));
 		}
 		drawText(ev, pgp, p, frame, opacity);
 	}

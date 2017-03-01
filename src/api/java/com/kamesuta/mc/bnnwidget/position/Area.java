@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 /**
  * 絶対範囲を表現します
+ * <p>
+ * x1&lt;x2, y1&lt;y2 が保証されます
  *
  * @author TeamFruit
  */
@@ -26,7 +28,7 @@ public class Area {
 	 */
 	protected final float y2;
 
-	private Area(final float ax1, final float ay1, final float ax2, final float ay2) {
+	protected Area(final float ax1, final float ay1, final float ax2, final float ay2) {
 		this.x1 = ax1;
 		this.y1 = ay1;
 		this.x2 = ax2;
@@ -41,7 +43,7 @@ public class Area {
 	 * @param ay2 絶対座標
 	 */
 	public static @Nonnull Area abs(final float ax1, final float ay1, final float ax2, final float ay2) {
-		return new Area(ax1, ay1, ax2, ay2);
+		return new Area(Math.min(ax1, ax2), Math.min(ay1, ay2), Math.max(ax1, ax2), Math.max(ay1, ay2));
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class Area {
 	 * @param ah 絶対高さ
 	 */
 	public static @Nonnull Area size(final float ax, final float ay, final float aw, final float ah) {
-		return new Area(ax, ay, ax+aw, ay+ah);
+		return Area.abs(ax, ay, ax+aw, ay+ah);
 	}
 
 	/**
@@ -101,30 +103,38 @@ public class Area {
 
 	/**
 	 * 左側のX絶対座標
+	 * @deprecated 代わりに{@link #x1()}を使用することが推奨されています
 	 */
+	@Deprecated
 	public float minX() {
-		return Math.min(x1(), x2());
+		return x1();
 	}
 
 	/**
 	 * 右側のX絶対座標
+	 * @deprecated 代わりに{@link #x2()}を使用することが推奨されています
 	 */
+	@Deprecated
 	public float maxX() {
-		return Math.max(x1(), x2());
+		return x2();
 	}
 
 	/**
 	 * 上側のY絶対座標
+	 * @deprecated 代わりに{@link #y1()}を使用することが推奨されています
 	 */
+	@Deprecated
 	public float minY() {
-		return Math.min(y1(), y2());
+		return y1();
 	}
 
 	/**
 	 * 下側のY絶対座標
+	 * @deprecated 代わりに{@link #y2()}を使用することが推奨されています
 	 */
+	@Deprecated
 	public float maxY() {
-		return Math.max(y1(), y2());
+		return y2();
 	}
 
 	/**
@@ -171,7 +181,7 @@ public class Area {
 	 * @return 範囲がもう一つの範囲に重なっている場合true
 	 */
 	public boolean areaOverlap(final @Nonnull Area a) {
-		return !(a.maxX()<minX()||a.minX()>maxX()||a.minY()>maxY()||a.maxY()<minY());
+		return !(a.x2()<x1()||a.x1()>x2()||a.y1()>y2()||a.y2()<y1());
 	}
 
 	/**
@@ -180,7 +190,7 @@ public class Area {
 	 * @return 範囲がもう一つの範囲の中に納まる場合true
 	 */
 	public boolean areaInside(final @Nonnull Area a) {
-		return a.minX()>=minX()&&a.minY()>=minY()&&a.maxX()<=maxX()&&a.maxY()<=maxY();
+		return a.x1()>=x1()&&a.y1()>=y1()&&a.x2()<=x2()&&a.y2()<=y2();
 	}
 
 	/**
@@ -190,6 +200,24 @@ public class Area {
 	 */
 	public @Nonnull Area trimArea(final @Nonnull Area c) {
 		return new Area(Math.max(minX(), c.minX()), Math.max(minY(), c.minY()), Math.min(maxX(), c.maxX()), Math.min(maxY(), c.maxY()));
+	}
+
+	/**
+	 * スケールを変更します
+	 * @param a もう一つの範囲
+	 * @return 重なり合う範囲
+	 */
+	public @Nonnull Area scale(final float scale) {
+		return Area.abs(x1()*scale, y1()*scale, x2()*scale, y2()*scale);
+	}
+
+	/**
+	 * サイズスケールを変更します
+	 * @param a もう一つの範囲
+	 * @return 重なり合う範囲
+	 */
+	public @Nonnull Area scaleSize(final float scale) {
+		return Area.size(x1(), y1(), w()*scale, h()*scale);
 	}
 
 	@Override

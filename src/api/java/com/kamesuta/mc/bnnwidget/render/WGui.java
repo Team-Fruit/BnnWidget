@@ -32,6 +32,8 @@ public class WGui extends WRenderer {
 	 */
 	public static final float textureScale = 1f/256f;
 
+	public static final @Nonnull Area defaultTextureArea = Area.abs(0f, 0f, 1f, 1f);
+
 	private static final @Nullable org.lwjgl.input.Cursor cur;
 
 	static {
@@ -81,7 +83,7 @@ public class WGui extends WRenderer {
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	private static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		beginTextureQuads()
 				.pos(vx1, vy2, 0).tex(tx1, ty2)
 				.pos(vx2, vy2, 0).tex(tx2, ty2)
@@ -107,7 +109,7 @@ public class WGui extends WRenderer {
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	private static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		final float ox1 = tx2-tx1;
 		final float oy1 = ty2-ty1;
 		final float ox2 = vx2-vx1;
@@ -147,379 +149,43 @@ public class WGui extends WRenderer {
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureAbsTrimOne(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	private static void drawTextureAbsTrimOne(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		drawTextureAbsTrim(vx1, vy1, vx2, vy2, Math.max(vx1, rx1), Math.max(vy1, ry1), Math.min(vx2, rx2), Math.min(vy2, ry2), tx1, ty1, tx2, ty2);
 	}
 
 	/**
-	 * 4つの絶対座標からテクスチャを描画します
-	 * <p>
-	 * リピートされる無限サイズのテクスチャをトリミング絶対座標でくり抜きます。
-	 * @param vx1 1つ目のX画像絶対座標
-	 * @param vy1 1つ目のY画像絶対座標
-	 * @param vx2 2つ目のX画像絶対座標
-	 * @param vy2 2つ目のY画像絶対座標
-	 * @param rx1 1つ目のXトリミング絶対座標
-	 * @param ry1 1つ目のYトリミング絶対座標
-	 * @param rx2 2つ目のXトリミング絶対座標
-	 * @param ry2 2つ目のYトリミング絶対座標
-	 */
-	public static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2) {
-		drawTextureAbsTrim(vx1, vy1, vx2, vy2, rx1, ry1, rx2, ry2, 0f, 0f, 1f, 1f);
-	}
-
-	/**
-	 * 4つの絶対座標からテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)が使用されます
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
-	 */
-	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2) {
-		drawTextureAbs(vx1, vy1, vx2, vy2, 0, 0, 1, 1);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)：(1×1)にすることでテクスチャを1枚表示できます
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureSize(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureAbs(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * <p>
-	 * リピートされる無限サイズのテクスチャをトリミング絶対座標でくり抜きます。
-	 * @param vx X画像絶対座標
-	 * @param vy Y画像絶対座標
-	 * @param vw 画像絶対幅
-	 * @param vh 画像絶対高さ
-	 * @param rx Xトリミング絶対座標
-	 * @param ry Yトリミング絶対座標
-	 * @param rw トリミング絶対幅
-	 * @param rh トリミング絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param rx Xトリミング絶対座標
-	 * @param ry Yトリミング絶対座標
-	 * @param rw トリミング絶対幅
-	 * @param rh トリミング絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureSizeTrimOne(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureAbsTrimOne(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param rx Xトリミング絶対座標
-	 * @param ry Yトリミング絶対座標
-	 * @param rw トリミング絶対幅
-	 * @param rh トリミング絶対高さ
-	 */
-	public static void drawTextureSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh) {
-		drawTextureAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)：(1×1)が使用されます
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 */
-	public static void drawTextureSize(final float vx, final float vy, final float vw, final float vh) {
-		drawTextureAbs(vx, vy, vx+vw, vy+vh, 0, 0, 1, 1);
-	}
-
-	/**
 	 * 絶対範囲からテクスチャを描画します
 	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)にすることでテクスチャを1枚表示できます
-	 * @param vertex 絶対範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTexture(final @Nonnull Area vertex, final @Nonnull Area textrue) {
-		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * 絶対範囲からテクスチャを描画します
-	 * <p>
-	 * リピートされる無限サイズのテクスチャをトリミング絶対座標でくり抜きます。
-	 * @param vertex 画像絶対範囲
-	 * @param trim トリミング範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTextureTrim(final @Nonnull Area vertex, final @Nonnull Area trim, final @Nonnull Area textrue) {
-		drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * 絶対範囲からテクスチャを描画します
-	 * @param vertex 画像絶対範囲
-	 * @param trim トリミング範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTextureTrimOne(final @Nonnull Area vertex, final @Nonnull Area trim, final @Nonnull Area textrue) {
-		drawTextureAbsTrimOne(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * 絶対範囲からテクスチャを描画します
+	 * テクスチャ範囲は(0, 0)⇒(1, 1)にすることでテクスチャを1枚表示でき、nullが指定された場合と同様です
 	 * @param vertex 絶対範囲
 	 * @param trim トリミング範囲
+	 * @param texture テクスチャ範囲
 	 */
-	public static void drawTextureTrim(final @Nonnull Area vertex, final @Nonnull Area trim) {
-		drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2());
+	public static void drawTexture(final @Nonnull Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+		if (texture==null)
+			texture = defaultTextureArea;
+		if (trim!=null)
+			drawTextureAbsTrimOne(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
+		else
+			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
 	}
 
 	/**
-	 * 絶対範囲からテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)が使用されます
-	 * @param vertex 絶対範囲
-	 */
-	public static void drawTexture(final @Nonnull Area vertex) {
-		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), 0, 0, 1, 1);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area Area Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
-	 * @param tx1 1つ目のXテクスチャ座標(倍率)
-	 * @param ty1 1つ目のYテクスチャ座標(倍率)
-	 * @param tx2 2つ目のXテクスチャ座標(倍率)
-	 * @param ty2 2つ目のYテクスチャ座標(倍率)
+	 * @param vertex 絶対範囲
+	 * @param trim トリミング範囲
+	 * @param texture テクスチャ範囲
 	 */
-	public static void drawTextureModalAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+	public static void drawTextureModal(final @Nonnull Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+		if (texture==null)
+			texture = defaultTextureArea;
 		final float f = textureScale;
-		drawTextureAbs(vx1, vy1, vx2, vy2, f*tx1, f*ty1, f*tx2, f*ty2);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbsTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX画像絶対座標
-	 * @param vy1 1つ目のY画像絶対座標
-	 * @param vx2 2つ目のX画像絶対座標
-	 * @param vy2 2つ目のY画像絶対座標
-	 * @param rx1 1つ目のXトリミング絶対座標
-	 * @param ry1 1つ目のYトリミング絶対座標
-	 * @param rx2 2つ目のXトリミング絶対座標
-	 * @param ry2 2つ目のYトリミング絶対座標
-	 * @param tx1 1つ目のXテクスチャ座標(倍率)
-	 * @param ty1 1つ目のYテクスチャ座標(倍率)
-	 * @param tx2 2つ目のXテクスチャ座標(倍率)
-	 * @param ty2 2つ目のYテクスチャ座標(倍率)
-	 */
-	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		final float f = textureScale;
-		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*rx1, f*ry1, f*rx2, f*ry2, f*tx1, f*ty1, f*tx2, f*ty2);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbsTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX画像絶対座標
-	 * @param vy1 1つ目のY画像絶対座標
-	 * @param vx2 2つ目のX画像絶対座標
-	 * @param vy2 2つ目のY画像絶対座標
-	 * @param rx1 1つ目のXトリミング絶対座標
-	 * @param ry1 1つ目のYトリミング絶対座標
-	 * @param rx2 2つ目のXトリミング絶対座標
-	 * @param ry2 2つ目のYトリミング絶対座標
-	 */
-	public static void drawTextureModalAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2) {
-		final float f = textureScale;
-		drawTextureAbsTrim(vx1, vy1, vx2, vy2, f*rx1, f*ry1, f*rx2, f*ry2);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureModalAbsTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX画像絶対座標
-	 * @param vy1 1つ目のY画像絶対座標
-	 * @param vx2 2つ目のX画像絶対座標
-	 * @param vy2 2つ目のY画像絶対座標
-	 * @param rx1 1つ目のXトリミング絶対座標
-	 * @param ry1 1つ目のYトリミング絶対座標
-	 * @param rx2 2つ目のXトリミング絶対座標
-	 * @param ry2 2つ目のYトリミング絶対座標
-	 * @param tx1 1つ目のXテクスチャ座標(倍率)
-	 * @param ty1 1つ目のYテクスチャ座標(倍率)
-	 * @param tx2 2つ目のXテクスチャ座標(倍率)
-	 * @param ty2 2つ目のYテクスチャ座標(倍率)
-	 */
-	public static void drawTextureModalAbsTrimOne(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		drawTextureModalAbsTrim(vx1, vy1, vx2, vy2, Math.max(vx1, rx1), Math.max(vy1, ry1), Math.min(vx2, rx2), Math.min(vy2, ry2), tx1, ty1, tx2, ty2);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
-	 */
-	public static void drawTextureModalAbs(final float vx1, final float vy1, final float vx2, final float vy2) {
-		drawTextureModalAbs(vx1, vy1, vx2, vy2, 0, 0, 1, 1);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSize(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureModalSize(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureModalAbs(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSizeTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx 画像X絶対座標
-	 * @param vy 画像Y絶対座標
-	 * @param vw 画像絶対幅
-	 * @param vh 画像絶対高さ
-	 * @param rx Xトリミング絶対座標
-	 * @param ry Yトリミング絶対座標
-	 * @param rw トリミング絶対幅
-	 * @param rh トリミング絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureSizeTrim(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx X画像絶対座標
-	 * @param vy Y画像絶対座標
-	 * @param vw 画像絶対幅
-	 * @param vh 画像絶対高さ
-	 * @param rx Xトリミング絶対座標
-	 * @param ry Yトリミング絶対座標
-	 * @param rw トリミング絶対幅
-	 * @param rh トリミング絶対高さ
-	 */
-	public static void drawTextureModalSizeTrim(final float vx, final float vy, final float vw, final float vh, final float rx, final float ry, final float rw, final float rh) {
-		drawTextureModalAbsTrim(vx, vy, vx+vw, vy+vh, rx, ry, rx+rw, ry+rh);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 */
-	public static void drawTextureModalSize(final float vx, final float vy, final float vw, final float vh) {
-		drawTextureModalAbs(vx, vy, vx+vw, vy+vh, 0, 0, 1, 1);
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area, Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 絶対範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTextureModal(final @Nonnull Area vertex, final @Nonnull Area textrue) {
-		drawTextureModalAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureTrim(Area, Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 画像絶対範囲
-	 * @param trim トリミング範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area trim, final @Nonnull Area textrue) {
-		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTextureTrim(Area, Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 画像絶対範囲
-	 * @param trim トリミング範囲
-	 */
-	public static void drawTextureModalTrim(final @Nonnull Area vertex, final @Nonnull Area trim) {
-		drawTextureModalAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2());
-	}
-
-	/**
-	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 絶対範囲
-	 */
-	public static void drawTextureModal(final @Nonnull Area vertex) {
-		drawTextureModalAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), 0, 0, 1, 1);
+		if (trim!=null)
+			drawTextureAbsTrimOne(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1()*f, texture.y1()*f, texture.x2()*f, texture.y2()*f);
+		else
+			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1()*f, texture.y1()*f, texture.x2()*f, texture.y2()*f);
 	}
 
 	/**
@@ -530,7 +196,7 @@ public class WGui extends WRenderer {
 	 * @param y2 2つ目のY絶対座標
 	 * @param mode GL描画モード
 	 */
-	public static void drawAbs(final float x1, final float y1, final float x2, final float y2, final int mode) {
+	private static void drawAbs(final float x1, final float y1, final float x2, final float y2, final int mode) {
 		begin(mode)
 				.pos(x1, y2, 0)
 				.pos(x2, y2, 0)
@@ -540,50 +206,12 @@ public class WGui extends WRenderer {
 	}
 
 	/**
-	 * 2つの絶対座標と2つの絶対サイズとGL描画モードを使用して描画します。
-	 * @param x X絶対座標
-	 * @param y Y絶対座標
-	 * @param w 絶対幅
-	 * @param h 絶対高さ
-	 * @param mode GL描画モード
-	 */
-	public static void drawSize(final float x, final float y, final float w, final float h, final int mode) {
-		drawAbs(x, y, x+w, y+h, mode);
-	}
-
-	/**
 	 * 絶対範囲とGL描画モードを使用して描画します。
 	 * @param p 絶対範囲
 	 * @param mode GL描画モード
 	 */
 	public static void draw(final @Nonnull Area p, final int mode) {
 		drawAbs(p.x1(), p.y1(), p.x2(), p.y2(), mode);
-	}
-
-	/**
-	 * 4つの絶対座標を使用して描画します。
-	 * <p>
-	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param x1 1つ目のX絶対座標
-	 * @param y1 1つ目のY絶対座標
-	 * @param x2 2つ目のX絶対座標
-	 * @param y2 2つ目のY絶対座標
-	 */
-	public static void drawAbs(final float x1, final float y1, final float x2, final float y2) {
-		drawAbs(x1, y1, x2, y2, GL_QUADS);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズを使用して描画します。
-	 * <p>
-	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param x X絶対座標
-	 * @param y Y絶対座標
-	 * @param w 絶対幅
-	 * @param h 絶対高さ
-	 */
-	public static void drawSize(final float x, final float y, final float w, final float h) {
-		drawAbs(x, y, x+w, y+h, GL_QUADS);
 	}
 
 	/**

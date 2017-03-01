@@ -152,6 +152,7 @@ public class GuiMain2 extends WFrame {
 						super.initWidget();
 					}
 
+					@SuppressWarnings("unused")
 					private FontPosition f = new FontPosition();
 
 					private @Nullable Point point;

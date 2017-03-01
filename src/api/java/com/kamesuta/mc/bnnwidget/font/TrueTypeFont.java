@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Iterators;
 import com.kamesuta.mc.bnnwidget.font.LoadedFontShape.FontAtlas;
+import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
 import com.kamesuta.mc.bnnwidget.render.WGui;
 import com.kamesuta.mc.bnnwidget.render.WGui.Align;
@@ -192,13 +193,13 @@ public class TrueTypeFont implements WFont {
 
 		if (strikethroughStyle) {
 			OpenGL.glDisable(GL11.GL_TEXTURE_2D);
-			WGui.drawSize(x*scaleX+offsetX, (y+height/2)*scaleY+offsetY, width*scaleX, 1f*scaleY);
+			WGui.draw(Area.size(x*scaleX+offsetX, (y+height/2)*scaleY+offsetY, width*scaleX, 1f*scaleY));
 			OpenGL.glEnable(GL11.GL_TEXTURE_2D);
 		}
 
 		if (underlineStyle) {
 			OpenGL.glDisable(GL11.GL_TEXTURE_2D);
-			WGui.drawSize((x-1)*scaleX+offsetX, (y+height-3f-1f)*scaleY+offsetY, (width+1)*scaleX, 1f*scaleY);
+			WGui.draw(Area.size((x-1)*scaleX+offsetX, (y+height-3f-1f)*scaleY+offsetY, (width+1)*scaleX, 1f*scaleY));
 			OpenGL.glEnable(GL11.GL_TEXTURE_2D);
 		}
 	}
@@ -208,8 +209,8 @@ public class TrueTypeFont implements WFont {
 		WRenderer.startTexture();
 		OpenGL.glBindTexture(GL11.GL_TEXTURE_2D, intObject.location.image.textureID);
 		final float size = this.style.getFontShape(fontsize).getFontShape().textureSize;
-		WGui.drawTextureSize(x*scaleX+offsetX, y*scaleY+offsetY, intObject.size.width*scaleX, intObject.size.height*scaleY,
-				intObject.location.storedX/size, intObject.location.storedY/size, intObject.size.width/size, intObject.size.height/size);
+		WGui.drawTexture(Area.size(x*scaleX+offsetX, y*scaleY+offsetY, intObject.size.width*scaleX, intObject.size.height*scaleY), null,
+				Area.size(intObject.location.storedX/size, intObject.location.storedY/size, intObject.size.width/size, intObject.size.height/size));
 	}
 
 	@Override
