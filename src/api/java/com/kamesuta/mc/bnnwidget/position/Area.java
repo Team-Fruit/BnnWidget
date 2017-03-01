@@ -199,13 +199,23 @@ public class Area {
 	 * @return 重なり合う範囲
 	 */
 	public @Nonnull Area trimArea(final @Nonnull Area c) {
-		return new Area(Math.max(minX(), c.minX()), Math.max(minY(), c.minY()), Math.min(maxX(), c.maxX()), Math.min(maxY(), c.maxY()));
+		return new Area(Math.max(x1(), c.x1()), Math.max(y1(), c.y1()), Math.min(x2(), c.x2()), Math.min(y2(), c.y2()));
+	}
+
+	/**
+	 * 平行移動します
+	 * @param x X絶対平行移動
+	 * @param y Y絶対平行移動
+	 * @return 平行移動された範囲
+	 */
+	public @Nonnull Area translate(final float x, final float y) {
+		return Area.size(x1()+x, y1()+y, w(), h());
 	}
 
 	/**
 	 * スケールを変更します
-	 * @param a もう一つの範囲
-	 * @return 重なり合う範囲
+	 * @param scale スケール
+	 * @return スケールが変更された範囲
 	 */
 	public @Nonnull Area scale(final float scale) {
 		return Area.abs(x1()*scale, y1()*scale, x2()*scale, y2()*scale);
@@ -213,8 +223,8 @@ public class Area {
 
 	/**
 	 * サイズスケールを変更します
-	 * @param a もう一つの範囲
-	 * @return 重なり合う範囲
+	 * @param scale スケール
+	 * @return スケールが変更された範囲
 	 */
 	public @Nonnull Area scaleSize(final float scale) {
 		return Area.size(x1(), y1(), w()*scale, h()*scale);
