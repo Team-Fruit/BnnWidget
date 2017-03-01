@@ -64,7 +64,7 @@ public class MCheckBox extends MLabel {
 	@Override
 	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
 		final Area o = getGuiPosition(pgp);
-		final Area a = new Area(o.x1(), o.y1(), o.x1()+o.h(), o.y2());
+		final Area a = Area.abs(o.x1(), o.y1(), o.x1()+o.h(), o.y2());
 		drawCheckBox(a);
 		final Area b = o.child(o.x1()+o.h(), 0, o.x1()+o.h(), 0);
 		drawText(b, getGuiOpacity(popacity));

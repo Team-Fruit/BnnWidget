@@ -224,7 +224,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	 * @return GUIの絶対座標
 	 */
 	public @Nonnull Area getAbsolute() {
-		return new Area(0, 0, width(), height());
+		return Area.size(0, 0, width(), height());
 	}
 
 	/**

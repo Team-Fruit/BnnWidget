@@ -26,6 +26,13 @@ public class Area {
 	 */
 	protected final float y2;
 
+	private Area(final float ax1, final float ay1, final float ax2, final float ay2) {
+		this.x1 = ax1;
+		this.y1 = ay1;
+		this.x2 = ax2;
+		this.y2 = ay2;
+	}
+
 	/**
 	 * (ax1, ay1)⇒(ax2, ay2)の範囲
 	 * @param ax1 絶対座標
@@ -33,11 +40,19 @@ public class Area {
 	 * @param ax2 絶対座標
 	 * @param ay2 絶対座標
 	 */
-	public Area(final float ax1, final float ay1, final float ax2, final float ay2) {
-		this.x1 = ax1;
-		this.y1 = ay1;
-		this.x2 = ax2;
-		this.y2 = ay2;
+	public static @Nonnull Area abs(final float ax1, final float ay1, final float ax2, final float ay2) {
+		return new Area(ax1, ay1, ax2, ay2);
+	}
+
+	/**
+	 * (ax, ay)⇒(ax+aw, ay+ah)の範囲
+	 * @param ax 絶対座標
+	 * @param ay 絶対座標
+	 * @param aw 絶対幅
+	 * @param ah 絶対高さ
+	 */
+	public static @Nonnull Area size(final float ax, final float ay, final float aw, final float ah) {
+		return new Area(ax, ay, ax+aw, ay+ah);
 	}
 
 	/**

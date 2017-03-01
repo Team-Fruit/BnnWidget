@@ -179,18 +179,20 @@ public class GuiMain extends WFrame {
 					}
 
 					private final @Nonnull ResourceLocation expimg = new ResourceLocation("bnnwidget", "textures/expimg.png");
+					private final @Nonnull R r = new R(Coord.left(100), Coord.top(50), Coord.right(100), Coord.bottom(50));
 
 					@Override
 					public void draw(final WEvent ev, final Area pgp, final Point p, final float frame, final float popacity) {
+						final Area d = pgp.child(this.r);
 						final Area a = getGuiPosition(pgp);
 						WRenderer.startTexture();
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
 						texture().bindTexture(this.expimg);
 						OpenGL.glColor4f(1f, 1f, 1f, .5f);
-						final Area b = new Area(.5f, 0f, 3.5f, 2f);
-						drawTexture(pgp, b);
+						final Area b = Area.abs(.5f, 0f, 3.5f, 2f);
+						drawTexture(d, b);
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
-						drawTextureTrim(pgp, a, b);
+						drawTextureTrimOne(d, a, b);
 						WRenderer.startShape();
 						OpenGL.glLineWidth(.5f);
 						OpenGL.glColor4f(1f, 1f, 1f, 1f);
