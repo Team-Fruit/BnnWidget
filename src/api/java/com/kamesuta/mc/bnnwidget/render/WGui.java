@@ -157,11 +157,13 @@ public class WGui extends WRenderer {
 	 * 絶対範囲からテクスチャを描画します
 	 * <p>
 	 * テクスチャ範囲は(0, 0)⇒(1, 1)にすることでテクスチャを1枚表示でき、nullが指定された場合と同様です
-	 * @param vertex 絶対範囲
-	 * @param trim トリミング範囲
-	 * @param texture テクスチャ範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
+	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
+	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void drawTexture(final @Nonnull Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+	public static void drawTexture(@Nullable Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+		if (vertex==null)
+			vertex = defaultTextureArea;
 		if (texture==null)
 			texture = defaultTextureArea;
 		if (trim!=null)
@@ -174,11 +176,13 @@ public class WGui extends WRenderer {
 	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area Area Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 絶対範囲
-	 * @param trim トリミング範囲
-	 * @param texture テクスチャ範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
+	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
+	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void drawTextureModal(final @Nonnull Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+	public static void drawTextureModal(@Nullable Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+		if (vertex==null)
+			vertex = defaultTextureArea;
 		if (texture==null)
 			texture = defaultTextureArea;
 		final float f = textureScale;
@@ -207,21 +211,23 @@ public class WGui extends WRenderer {
 
 	/**
 	 * 絶対範囲とGL描画モードを使用して描画します。
-	 * @param p 絶対範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 * @param mode GL描画モード
 	 */
-	public static void draw(final @Nonnull Area p, final int mode) {
-		drawAbs(p.x1(), p.y1(), p.x2(), p.y2(), mode);
+	public static void draw(@Nullable Area vertex, final int mode) {
+		if (vertex==null)
+			vertex = defaultTextureArea;
+		drawAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), mode);
 	}
 
 	/**
 	 * 絶対範囲を使用して描画します。
 	 * <p>
 	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param p 絶対範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void draw(final @Nonnull Area p) {
-		draw(p, GL_QUADS);
+	public static void draw(@Nullable final Area vertex) {
+		draw(vertex, GL_QUADS);
 	}
 
 	/**
