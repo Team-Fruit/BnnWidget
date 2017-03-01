@@ -230,6 +230,24 @@ public class Area {
 		return Area.size(x1(), y1(), w()*scale, h()*scale);
 	}
 
+	/**
+	 * スケールを変更します
+	 * @param scale スケール
+	 * @return スケールが変更された範囲
+	 */
+	public @Nonnull Area scale(final float scaleX, final float scaleY) {
+		return Area.abs(x1()*scaleX, y1()*scaleY, x2()*scaleX, y2()*scaleY);
+	}
+
+	/**
+	 * サイズスケールを変更します
+	 * @param scale スケール
+	 * @return スケールが変更された範囲
+	 */
+	public @Nonnull Area scaleSize(final float scaleX, final float scaleY) {
+		return Area.size(x1(), y1(), w()*scaleX, h()*scaleY);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
