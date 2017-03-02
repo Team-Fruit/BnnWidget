@@ -22,11 +22,11 @@ public class FontShape {
 		this.font = font;
 		this.antiAlias = antiAlias;
 		this.fontSize = getFontSize(fontSize);
-		this.textureSize = getTextureSize(getFontSize(this.fontSize)*8);
+		this.textureSize = getTextureSize(getFontSize(this.fontSize)*4);
 	}
 
 	private static int getTextureSize(final int fsize) {
-		int size = 512;
+		int size = 64;
 		while (size<fsize)
 			size *= 2;
 		return size;
