@@ -210,10 +210,10 @@ public class OpenGL {
 		final FloatBuffer buf = WRenderer.buf;
 		buf.clear();
 		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
-		final float r = buf.get(0);
-		final float g = buf.get(1);
-		final float b = buf.get(2);
-		final float a = buf.get(3);
+		final float r = Math.min(1f, buf.get(0));
+		final float g = Math.min(1f, buf.get(1));
+		final float b = Math.min(1f, buf.get(2));
+		final float a = Math.min(1f, buf.get(3));
 		return new Color(r, g, b, a);
 	}
 
