@@ -1,5 +1,6 @@
 package com.kamesuta.mc.bnnwidget.font;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Iterator;
 import java.util.Random;
@@ -60,9 +61,27 @@ public class TrueTypeFont implements WFont {
 			this.styleitalic = new FontStyle.Builder(style).setFont(src.deriveFontStyle(src.style|Font.ITALIC)).build();
 	}
 
+	private final @Nonnull FontPosition fp = new FontPosition();
+
 	@Override
-	public float drawString(final FontPosition p) {
-		final int color = OpenGL.glGetColorRGBA();
+	public float drawString(final @Nonnull FontPosition p) {
+		if (p.isShadow()) {
+			float l;
+			l = drawString0(this.fp.set(p).setPosition(p.getX()+p.getShadowX(), p.getY()+p.getShadowY()), true);
+			l = Math.max(l, drawString0(p, false));
+			return l;
+		} else
+			return drawString0(p, false);
+	}
+
+	protected float drawString0(final FontPosition p, final boolean drawingShadow) {
+		final Color pcolor = OpenGL.glGetColor();
+		final int color;
+		if (drawingShadow) {
+			color = WRenderer.toColorCode(pcolor.getRed()/4, pcolor.getGreen()/4, pcolor.getBlue()/4, pcolor.getAlpha());
+			OpenGL.glColorRGBA(color);
+		} else
+			color = pcolor.getRGB();
 
 		final int startIndex = p.getStartIndex();
 		final int endIndex = p.getEndIndex();
@@ -112,6 +131,9 @@ public class TrueTypeFont implements WFont {
 						if (j<0||j>15)
 							j = 15;
 
+						if (drawingShadow)
+							j += 16;
+
 						final int k = TrueTypeFont.colorCode[j];
 						OpenGL.glColorRGB(k);
 						;
@@ -131,7 +153,7 @@ public class TrueTypeFont implements WFont {
 						strikethroughStyle = false;
 						underlineStyle = false;
 						italicStyle = false;
-						OpenGL.glColorRGB(color);
+						OpenGL.glColorRGBA(color);
 					} else
 						draw = true;
 
@@ -183,7 +205,7 @@ public class TrueTypeFont implements WFont {
 		//		WRenderer.startShape();
 		//		WGui.drawSize(x, y, totalwidth*scaleX, this.style.getFontShape(fontsize).getFontShape().fontSize*scaleY, GL11.GL_LINE_LOOP);
 		//		WRenderer.startTexture();
-		OpenGL.glColorRGBA(color);
+		OpenGL.glColor(pcolor);
 		return totalwidth*scaleX;
 	}
 

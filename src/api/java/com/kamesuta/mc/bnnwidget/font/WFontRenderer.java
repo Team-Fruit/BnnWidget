@@ -58,7 +58,7 @@ public class WFontRenderer implements WFont {
 		return this.setting;
 	}
 
-	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align) {
+	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align, final boolean shadow) {
 		final float abswidth = w/scale;
 		final float absheight = h/scale;
 		float correctscale = 1f;
@@ -75,7 +75,7 @@ public class WFontRenderer implements WFont {
 				dx = w;
 				break;
 		}
-		this.p.set(this.p).setScale(1f).setText(str).setAlign(align).setPosition(x+dx, y).setFontSize(Math.round(absheight));
+		this.p.set(this.p).setScale(1f).setText(str).setAlign(align).setPosition(x+dx, y).setFontSize(Math.round(absheight)).setShadow(shadow);
 		final float ratiowh = this.font.getWidth(this.p)/Math.round(absheight);
 		if (absheight*ratiowh>abswidth) {
 			final float newwidth = absheight*ratiowh;
@@ -87,7 +87,7 @@ public class WFontRenderer implements WFont {
 		this.font.drawString(this.p.setScale(scale*correctedscale).setFontSize((int) Math.floor(correctheight)));
 	}
 
-	public void drawString(final String str, final Area a, final float scale, final Align align) {
-		drawString(str, a.x1(), a.y1(), a.w(), a.h(), scale, align);
+	public void drawString(final String str, final Area a, final float scale, final @Nonnull Align align, final boolean shadow) {
+		drawString(str, a.x1(), a.y1(), a.w(), a.h(), scale, align, shadow);
 	}
 }

@@ -67,7 +67,7 @@ public class MCheckBox extends MLabel {
 		final Area a = Area.abs(o.x1(), o.y1(), o.x1()+o.h(), o.y2());
 		drawCheckBox(a);
 		final Area b = o.child(o.x1()+o.h(), 0, o.x1()+o.h(), 0);
-		drawText(b, getGuiOpacity(popacity));
+		drawText(ev, b, p, frame, getGuiOpacity(popacity));
 	}
 
 	/**

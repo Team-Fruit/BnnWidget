@@ -12,10 +12,12 @@ import com.kamesuta.mc.bnnwidget.render.WGui.Align;
  */
 public class FontPosition {
 	private float x, y, scaleX, scaleY;
+	private float sx = .5f, sy = .5f;
 	private int fontsize = 22;
 	private @Nullable String text;
 	private @Nonnull Align align = Align.LEFT;
 	private boolean usecode;
+	private boolean shadow;
 
 	public FontPosition() {
 		reset();
@@ -281,5 +283,64 @@ public class FontPosition {
 	 */
 	public boolean isUseCode() {
 		return this.usecode;
+	}
+
+	/**
+	 * @param shadow 影を付ける場合true
+	 * @return this
+	 */
+	public @Nonnull FontPosition setShadow(final boolean shadow) {
+		this.shadow = shadow;
+		return this;
+	}
+
+	/**
+	 * @return 影を付ける場合true
+	 */
+	public boolean isShadow() {
+		return this.shadow;
+	}
+
+	/**
+	 * @param x 絶対X座標
+	 * @return this
+	 */
+	public @Nonnull FontPosition setShadowX(final float x) {
+		this.sx = x;
+		return this;
+	}
+
+	/**
+	 * @return 絶対X座標
+	 */
+	public float getShadowX() {
+		return this.sx;
+	}
+
+	/**
+	 * @param y 絶対Y座標
+	 * @return this
+	 */
+	public @Nonnull FontPosition setShadowY(final float y) {
+		this.sy = y;
+		return this;
+	}
+
+	/**
+	 * @return 絶対Y座標
+	 */
+	public float getShadowY() {
+		return this.sy;
+	}
+
+	/**
+	 * @param x 絶対X座標
+	 * @param y 絶対Y座標
+	 * @return this
+	 */
+	public @Nonnull FontPosition setShadowPosition(final float x, final float y) {
+		setShadowX(x);
+		setShadowY(y);
+		return this;
 	}
 }

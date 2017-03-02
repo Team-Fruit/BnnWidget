@@ -194,8 +194,7 @@ public class MLabel extends WBase {
 
 	@Override
 	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
-		final Area out = getGuiPosition(pgp);
-		drawText(out, getGuiOpacity(popacity));
+		drawText(ev, getGuiPosition(pgp), p, frame, getGuiOpacity(popacity));
 	}
 
 	protected float wscale = 1f;
@@ -245,7 +244,7 @@ public class MLabel extends WBase {
 	 * @param a 絶対座標
 	 * @param opacity 絶対透明度
 	 */
-	protected void drawText(final @Nonnull Area a, final float opacity) {
+	protected void drawText(final @Nonnull WEvent ev, final @Nonnull Area a, final @Nonnull Point p, final float frame, final float opacity) {
 		OpenGL.glPushMatrix();
 		OpenGL.glTranslated(a.x1()+a.w()/2, a.y1()+a.h()/2, 0);
 		OpenGL.glScaled(getScaleWidth(a), getScaleHeight(a), 1);
