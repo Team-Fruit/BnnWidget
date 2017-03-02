@@ -1,46 +1,38 @@
 package com.kamesuta.mc.bnnwidget.component;
 
-import java.awt.Color;
-
 import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.font.WFontRenderer;
+import com.kamesuta.mc.bnnwidget.motion.Motion;
 import com.kamesuta.mc.bnnwidget.position.Area;
+import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
-import com.kamesuta.mc.bnnwidget.render.OpenGL;
-import com.kamesuta.mc.bnnwidget.render.WRenderer;
+import com.kamesuta.mc.bnnwidget.var.V;
+import com.kamesuta.mc.bnnwidget.var.VMotion;
+import com.kamesuta.mc.bnnwidget.var.VPercent;
 
-public class FontLabel extends MLabel {
-	private final @Nonnull WFontRenderer wf;
+public class FontLabel extends FontScaledLabel {
+	protected final @Nonnull VMotion height = V.pm(1f);
+	private final @Nonnull VPercent absheight = V.per(V.a(0f), V.a(font().FONT_HEIGHT), this.height);
+	private final @Nonnull R limit = new R(Coord.height(this.absheight));
 
 	public FontLabel(final @Nonnull R position, final @Nonnull WFontRenderer wf) {
-		super(position);
-		this.wf = wf;
+		super(position, wf);
 	}
 
 	@Override
 	protected void drawText(final @Nonnull WEvent ev, final @Nonnull Area a, final @Nonnull Point p, final float frame, final float opacity) {
-		OpenGL.glPushMatrix();
-		OpenGL.glTranslated(a.x1()+a.w()/2, a.y1()+a.h()/2, 0);
-		OpenGL.glScaled(getScaleWidth(a), getScaleHeight(a), 1);
-		OpenGL.glTranslated(-(a.x1()+a.w()/2), -(a.y1()+a.h()/2), 0);
-		WRenderer.startTexture();
-		drawString(getText(), a, getAlign(), getVerticalAlign(), isShadow());
+		super.drawText(ev, a.child(this.limit), p, frame, opacity);
+	}
 
-		OpenGL.glPopMatrix();
+	public float getScale() {
+		return this.height.get();
+	}
 
-		final Color c = new Color(getColor());
-		OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
-		this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), isShadow());
-		final String watermark = getWatermark();
-		if (watermark!=null&&!StringUtils.isEmpty(watermark)&&StringUtils.isEmpty(getText())) {
-			final Color w = new Color(getWatermarkColor());
-			OpenGL.glColor4i(w.getRed(), w.getGreen(), w.getBlue(), (int) Math.max(4, opacity*c.getAlpha()));
-			this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), isShadow());
-		}
+	public @Nonnull FontLabel setScale(final float scale) {
+		this.height.add(Motion.move(scale));
+		return this;
 	}
 }
