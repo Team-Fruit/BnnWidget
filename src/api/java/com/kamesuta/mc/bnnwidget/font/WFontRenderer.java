@@ -6,7 +6,13 @@ import javax.annotation.Nonnull;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.render.WGui.Align;
+import com.kamesuta.mc.bnnwidget.render.WGui.VerticalAlign;
 
+/**
+ * 範囲に沿って適切なサイズのフォントを描画します。
+ *
+ * @author TeamFruit
+ */
 public class WFontRenderer implements WFont {
 	public static final @Nonnull WFont defaultFont;
 
@@ -49,16 +55,29 @@ public class WFontRenderer implements WFont {
 		return this.font.getStyle();
 	}
 
+	/**
+	 * 設定を設定
+	 * @param setting 設定
+	 * @return this
+	 */
 	public @Nonnull WFontRenderer setSetting(@Nonnull final FontPosition setting) {
 		this.setting = setting;
 		return this;
 	}
 
+	/**
+	 * 設定を取得します
+	 * @return
+	 */
 	public @Nonnull FontPosition getSetting() {
 		return this.setting;
 	}
 
-	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align, final boolean shadow) {
+	/**
+	 * use {@link #drawString(String, Area, float, Align, VerticalAlign, boolean)}
+	 */
+	@Deprecated
+	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align, final @Nonnull VerticalAlign valign, final boolean shadow) {
 		final float abswidth = w/scale;
 		final float absheight = h/scale;
 		float correctscale = 1f;
@@ -87,7 +106,28 @@ public class WFontRenderer implements WFont {
 		this.font.drawString(this.p.setScale(scale*correctedscale).setFontSize((int) Math.floor(correctheight)));
 	}
 
+	/**
+	 * 文字を範囲内に描画します
+	 * @param str 文字列
+	 * @param a 絶対範囲
+	 * @param scale 解像度
+	 * @param align 横寄せ
+	 * @param valign 縦寄せ
+	 * @param shadow 影
+	 */
+	public void drawString(final String str, final Area a, final float scale, final @Nonnull Align align, final @Nonnull VerticalAlign valign, final boolean shadow) {
+		drawString(str, a.x1(), a.y1(), a.w(), a.h(), scale, align, valign, shadow);
+	}
+
+	/**
+	 * 文字を範囲内に描画します
+	 * @param str 文字列
+	 * @param a 絶対範囲
+	 * @param scale 解像度
+	 * @param align 横寄せ
+	 * @param shadow 影
+	 */
 	public void drawString(final String str, final Area a, final float scale, final @Nonnull Align align, final boolean shadow) {
-		drawString(str, a.x1(), a.y1(), a.w(), a.h(), scale, align, shadow);
+		drawString(str, a, scale, align, VerticalAlign.TOP, shadow);
 	}
 }

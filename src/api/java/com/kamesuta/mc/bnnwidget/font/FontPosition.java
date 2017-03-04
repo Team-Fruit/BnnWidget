@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.kamesuta.mc.bnnwidget.render.WGui.Align;
+import com.kamesuta.mc.bnnwidget.render.WGui.VerticalAlign;
 
 /**
  * 文字描画時の設定
@@ -16,6 +17,7 @@ public class FontPosition {
 	private int fontsize = 22;
 	private @Nullable String text;
 	private @Nonnull Align align = Align.LEFT;
+	private @Nonnull VerticalAlign valign = VerticalAlign.TOP;
 	private boolean usecode;
 	private boolean shadow;
 
@@ -267,6 +269,22 @@ public class FontPosition {
 	 */
 	public @Nonnull Align getAlign() {
 		return this.align;
+	}
+
+	/**
+	 * @param valign 縦文字揃え
+	 * @return this
+	 */
+	public @Nonnull FontPosition setVAlign(final @Nonnull VerticalAlign valign) {
+		this.valign = valign;
+		return this;
+	}
+
+	/**
+	 * @return 縦文字揃え
+	 */
+	public @Nonnull VerticalAlign getVAlign() {
+		return this.valign;
 	}
 
 	/**

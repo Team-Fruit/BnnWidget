@@ -16,6 +16,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
 import com.kamesuta.mc.bnnwidget.render.WGui;
 import com.kamesuta.mc.bnnwidget.render.WGui.Align;
+import com.kamesuta.mc.bnnwidget.render.WGui.VerticalAlign;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 /**
@@ -93,6 +94,7 @@ public class TrueTypeFont implements WFont {
 		final float scaleY = p.getScaleY();
 		final int fontsize = p.getFontSize();
 		final Align align = p.getAlign();
+		final VerticalAlign valign = p.getVAlign();
 
 		char charCurrent;
 
@@ -101,7 +103,19 @@ public class TrueTypeFont implements WFont {
 		final Iterator<String> lineitr = Iterators.forArray(line);
 		float guesswidth = lineitr.hasNext() ? getWidth(new FontPosition(p).setText(lineitr.next())) : 0;
 		int i = startIndex;
-		float startY = 0;
+		float startY;
+		switch (valign) {
+			default:
+			case TOP:
+				startY = 0;
+				break;
+			case MIDDLE:
+				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize/2f;
+				break;
+			case BOTTOM:
+				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize;
+				break;
+		}
 
 		boolean randomStyle = false;
 		boolean boldStyle = false;
