@@ -135,7 +135,7 @@ public class TrueTypeFont implements WFont {
 							j += 16;
 
 						final int k = TrueTypeFont.colorCode[j];
-						OpenGL.glColorRGB(k);
+						OpenGL.glColorRGBA(k|pcolor.getAlpha()<<24);
 						;
 					} else if (j==16)
 						randomStyle = true;
