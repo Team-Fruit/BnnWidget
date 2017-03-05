@@ -110,10 +110,10 @@ public class TrueTypeFont implements WFont {
 				startY = 0;
 				break;
 			case MIDDLE:
-				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize/2f;
+				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize/2f-12f;
 				break;
 			case BOTTOM:
-				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize;
+				startY = -StringUtils.countMatches(whatchars, "\n")*this.style.getFontShape(fontsize).getFontShape().fontSize-4f;
 				break;
 		}
 

@@ -24,13 +24,13 @@ public class FontScaledLabel extends MLabel {
 	@Override
 	protected void drawText(final @Nonnull WEvent ev, final @Nonnull Area a, final @Nonnull Point p, final float frame, final float opacity) {
 		final Color c = new Color(getColor());
-		OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) opacity*c.getAlpha());
-		this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), isShadow());
+		OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) (opacity*c.getAlpha()));
+		this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), getVerticalAlign(), isShadow());
 		final String watermark = getWatermark();
 		if (watermark!=null&&!StringUtils.isEmpty(watermark)&&StringUtils.isEmpty(getText())) {
 			final Color w = new Color(getWatermarkColor());
-			OpenGL.glColor4i(w.getRed(), w.getGreen(), w.getBlue(), (int) opacity*c.getAlpha());
-			this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), isShadow());
+			OpenGL.glColor4i(w.getRed(), w.getGreen(), w.getBlue(), (int) (opacity*c.getAlpha()));
+			this.wf.drawString(getText(), a, ev.owner.guiScale(), getAlign(), getVerticalAlign(), isShadow());
 		}
 	}
 }
