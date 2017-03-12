@@ -28,6 +28,8 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	/**
 	 * ウィジェットが初期化されたかどうかを保持します。
 	 * <p>
+	 * {@link #initWidget()}が呼び出された後trueになります。
+	 * <br>
 	 * これは{@link #initWidget()}を一度だけ呼び出すのに役立ちます。
 	 */
 	protected boolean initialized;
@@ -76,7 +78,10 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 
 	@Override
 	public void onAdded() {
-		if (!this.initialized) {
+		if (this.initialized)
+			for (final W widget : getContainer())
+				widget.onAdded();
+		else {
 			initWidget();
 			this.initialized = true;
 		}
