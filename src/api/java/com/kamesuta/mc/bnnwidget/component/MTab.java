@@ -6,6 +6,7 @@ import com.kamesuta.mc.bnnwidget.WBox;
 import com.kamesuta.mc.bnnwidget.WCommon;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.WPanel;
+import com.kamesuta.mc.bnnwidget.WidgetBuilder;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.Coord.CoordSide;
@@ -118,7 +119,7 @@ public class MTab extends WPanel {
 			super(position);
 		}
 
-		public void addTab(final @Nonnull String name, final @Nonnull WCommon widget) {
+		public void addTab(final @Nonnull String name, final @Nonnull WidgetBuilder<WCommon> widget) {
 			Coord cleft;
 			Coord cwidth;
 			Coord ctop;
@@ -135,7 +136,8 @@ public class MTab extends WPanel {
 				default:
 				case Top:
 				case Bottom:
-					cleft = Coord.left((this.ileft += w)/2f);
+					cleft = Coord.left(this.ileft);
+					this.ileft += w;
 					cwidth = Coord.width(w);
 					ctop = Coord.top(0);
 					break;
@@ -150,23 +152,32 @@ public class MTab extends WPanel {
 	 * @author TeamFruit
 	 */
 	public class TabButton extends MButton {
-		public final @Nonnull WCommon widget;
+		public final @Nonnull WidgetBuilder<WCommon> widget;
 
-		public TabButton(final @Nonnull R position, final @Nonnull WCommon widget) {
+		public TabButton(final @Nonnull R position, final @Nonnull WidgetBuilder<WCommon> widget) {
 			super(position);
 			this.widget = widget;
 		}
 
 		@Override
 		protected boolean onClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
-			MTab.this.box.add(this.widget);
+			MTab.this.box.add(this.widget.build());
 			return true;
 		}
 	}
 
-	public void addTab(final @Nonnull String name, final @Nonnull WCommon widget) {
+	public void addTab(final @Nonnull String name, final @Nonnull WidgetBuilder<WCommon> widget) {
 		if (this.tab.getContainer().isEmpty())
-			this.box.add(widget);
+			this.box.add(widget.build());
 		this.tab.addTab(name, widget);
+	}
+
+	public void addTab(final @Nonnull String name, final @Nonnull WCommon widget) {
+		addTab(name, new WidgetBuilder<WCommon>() {
+			@Override
+			public WCommon build() {
+				return widget;
+			}
+		});
 	}
 }
