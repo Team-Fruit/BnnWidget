@@ -198,7 +198,9 @@ public class Area {
 	 * @param a もう一つの範囲
 	 * @return 重なり合う範囲
 	 */
-	public @Nonnull Area trimArea(final @Nonnull Area c) {
+	public @Nullable Area trimArea(final @Nonnull Area c) {
+		if (!areaOverlap(c))
+			return null;
 		return new Area(Math.max(x1(), c.x1()), Math.max(y1(), c.y1()), Math.min(x2(), c.x2()), Math.min(y2(), c.y2()));
 	}
 

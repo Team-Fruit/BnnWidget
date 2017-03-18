@@ -149,6 +149,8 @@ public class WGui extends WRenderer {
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private static void drawTextureAbsTrimOne(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
 		drawTextureAbsTrim(vx1, vy1, vx2, vy2, Math.max(vx1, rx1), Math.max(vy1, ry1), Math.min(vx2, rx2), Math.min(vy2, ry2), tx1, ty1, tx2, ty2);
 	}
@@ -161,14 +163,16 @@ public class WGui extends WRenderer {
 	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
 	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void drawTexture(@Nullable Area vertex, final @Nullable Area trim, @Nullable Area texture) {
+	public static void drawTexture(@Nullable Area vertex, @Nullable Area trim, @Nullable Area texture) {
 		if (vertex==null)
 			vertex = defaultTextureArea;
 		if (texture==null)
 			texture = defaultTextureArea;
-		if (trim!=null)
-			drawTextureAbsTrimOne(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
-		else
+		if (trim!=null) {
+			trim = vertex.trimArea(trim);
+			if (trim!=null)
+				drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
+		} else
 			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
 	}
 
@@ -178,18 +182,10 @@ public class WGui extends WRenderer {
 	 * GUIを描画する場合主にこちらを使用します。
 	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
-	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
+	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒((1/256), (1/256))
 	 */
-	public static void drawTextureModal(@Nullable Area vertex, final @Nullable Area trim, @Nullable Area texture) {
-		if (vertex==null)
-			vertex = defaultTextureArea;
-		if (texture==null)
-			texture = defaultTextureArea;
-		final float f = textureScale;
-		if (trim!=null)
-			drawTextureAbsTrimOne(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1()*f, texture.y1()*f, texture.x2()*f, texture.y2()*f);
-		else
-			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1()*f, texture.y1()*f, texture.x2()*f, texture.y2()*f);
+	public static void drawTextureModal(@Nullable final Area vertex, final @Nullable Area trim, @Nullable final Area texture) {
+		drawTexture(vertex, trim, (texture!=null ? texture : defaultTextureArea).scale(textureScale));
 	}
 
 	/**
