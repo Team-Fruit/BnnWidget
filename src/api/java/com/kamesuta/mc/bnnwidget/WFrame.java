@@ -697,7 +697,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 
 	@Override
 	@OverridablePoint
-	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
 	}
 
 	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
