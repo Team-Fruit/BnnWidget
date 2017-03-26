@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 
 /**
  * 全ての軽量コンポーネントの基盤となるインターフェイスです。
@@ -37,7 +38,7 @@ public interface WCommon {
 	 * @param frame 描画されるタイミングのpartialTicksです。
 	 * @param popacity 親コンポーネントの絶対透明度
 	 */
-	void draw(@Nonnull WEvent ev, @Nonnull Area pgp, @Nonnull Point p, float frame, float popacity);
+	void draw(@Nonnull WEvent ev, @Nonnull Area pgp, @Nonnull Point p, float frame, float popacity, @Nullable RenderOption opt);
 
 	/**
 	 * コンポーネントが更新されるときに呼ばれます。

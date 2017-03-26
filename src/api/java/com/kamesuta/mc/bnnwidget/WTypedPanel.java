@@ -13,6 +13,7 @@ import com.google.common.collect.Queues;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 
 /**
  * {@link W}型のコンポーネントを含むことのできるパネルです。
@@ -106,11 +107,11 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
 		final Area gp = getGuiPosition(pgp);
 		final float opacity = getGuiOpacity(popacity);
 		for (final W widget : getContainer())
-			widget.draw(ev, gp, p, frame, opacity);
+			widget.draw(ev, gp, p, frame, opacity, opt);
 	}
 
 	@Override

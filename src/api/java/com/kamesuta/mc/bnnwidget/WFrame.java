@@ -15,6 +15,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import net.minecraft.client.Minecraft;
@@ -313,20 +314,20 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		super.setWorldAndResolution(mc, i, j);
 	}
 
-	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity) {
+	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity, @Nullable final RenderOption opt) {
 		sDrawScreen(mousex, mousey, f);
 		OpenGL.glPushMatrix();
 		if (this.fixGuiScale)
 			OpenGL.glScalef(guiScaleX(), guiScaleY(), 1f);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		dispatchDraw(gp, p, f, opacity);
+		dispatchDraw(gp, p, f, opacity, opt);
 		OpenGL.glPopMatrix();
 	}
 
 	@Override
 	public void drawScreen(final int mousex, final int mousey, final float f) {
-		drawScreen(mousex, mousey, f, getOpacity());
+		drawScreen(mousex, mousey, f, getOpacity(), null);
 	}
 
 	/**
@@ -696,12 +697,12 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 
 	@Override
 	@OverridablePoint
-	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity) {
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
 	}
 
-	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
-		draw(this.event, pgp, p, frame, popacity);
-		getContentPane().draw(this.event, pgp, p, frame, popacity);
+	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
+		draw(this.event, pgp, p, frame, popacity, opt);
+		getContentPane().draw(this.event, pgp, p, frame, popacity, opt);
 	}
 
 	@Override
