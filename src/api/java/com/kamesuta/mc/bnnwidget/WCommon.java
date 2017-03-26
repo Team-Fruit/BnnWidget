@@ -39,7 +39,7 @@ public interface WCommon {
 	 * @param popacity 親コンポーネントの絶対透明度
 	 * @param opt レンダリングオプション
 	 */
-	void draw(@Nonnull WEvent ev, @Nonnull Area pgp, @Nonnull Point p, float frame, float popacity, @Nullable RenderOption opt);
+	void draw(@Nonnull WEvent ev, @Nonnull Area pgp, @Nonnull Point p, float frame, float popacity, @Nonnull RenderOption opt);
 
 	/**
 	 * コンポーネントが更新されるときに呼ばれます。

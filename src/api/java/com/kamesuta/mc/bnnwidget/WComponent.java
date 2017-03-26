@@ -31,7 +31,7 @@ public class WComponent extends WGui implements WCommon {
 
 	@Override
 	@OverridablePoint
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final @Nonnull float frame, final float popacity, final @Nullable RenderOption opt) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final @Nonnull float frame, final float popacity, final @Nonnull RenderOption opt) {
 		draw(ev, pgp, p, frame, popacity);
 	}
 

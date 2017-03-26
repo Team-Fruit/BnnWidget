@@ -321,7 +321,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 			OpenGL.glScalef(guiScaleX(), guiScaleY(), 1f);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		dispatchDraw(gp, p, f, opacity, opt);
+		dispatchDraw(gp, p, f, opacity, opt!=null ? opt : new RenderOption());
 		OpenGL.glPopMatrix();
 	}
 
@@ -700,7 +700,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
 	}
 
-	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
+	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
 		draw(this.event, pgp, p, frame, popacity, opt);
 		getContentPane().draw(this.event, pgp, p, frame, popacity, opt);
 	}

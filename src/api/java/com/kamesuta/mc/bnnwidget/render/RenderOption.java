@@ -9,16 +9,23 @@ import com.google.common.collect.Maps;
 
 public class RenderOption {
 
-	private final @Nonnull Map<String, Object> data = Maps.newHashMap();
+	private @Nullable Map<String, Object> data = null;
+
+	public @Nonnull Map<String, Object> getData() {
+		if (this.data!=null)
+			return this.data;
+		return this.data = Maps.newHashMap();
+	}
 
 	public @Nullable <T> T get(final @Nonnull String key, final @Nonnull Class<T> clazz) {
-		final Object obj = this.data.get(key);
+		final Object obj = getData().get(key);
 		if (clazz.isInstance(obj))
 			return (T) obj;
 		return null;
 	}
 
-	public void set(final @Nonnull String key, final @Nonnull Object obj) {
-		this.data.put(key, obj);
+	public void put(final @Nonnull String key, final @Nonnull Object obj) {
+		getData().put(key, obj);
 	}
+
 }

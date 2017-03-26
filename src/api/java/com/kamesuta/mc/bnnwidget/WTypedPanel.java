@@ -107,7 +107,7 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nullable final RenderOption opt) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
 		final Area gp = getGuiPosition(pgp);
 		final float opacity = getGuiOpacity(popacity);
 		for (final W widget : getContainer())
