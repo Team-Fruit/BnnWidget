@@ -314,7 +314,7 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		super.setWorldAndResolution(mc, i, j);
 	}
 
-	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity, @Nullable final RenderOption opt) {
+	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity, final @Nullable RenderOption opt) {
 		sDrawScreen(mousex, mousey, f);
 		OpenGL.glPushMatrix();
 		if (this.fixGuiScale)
