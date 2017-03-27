@@ -112,6 +112,7 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 		final float opacity = getGuiOpacity(popacity);
 		for (final W widget : getContainer())
 			widget.draw(ev, gp, p, frame, opacity, opt);
+		super.draw(ev, pgp, p, frame, popacity, opt);
 	}
 
 	@Override

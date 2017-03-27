@@ -695,9 +695,15 @@ public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 		getContentPane().onInit(this.event, pgp, p);
 	}
 
+	@Deprecated
+	@OverridablePoint
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity) {
+	}
+
 	@Override
 	@OverridablePoint
 	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
+		draw(ev, pgp, p, frame, popacity);
 	}
 
 	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
