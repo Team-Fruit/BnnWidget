@@ -36,6 +36,12 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 */
 	public void setList(final @Nonnull IModCount<T> check) {
 		this.check = check;
+		this.cachedModCount = -1;
+		this.toT.clear();
+		this.toW.clear();
+		this.Tindex.clear();
+		this.cws.clear();
+		this.removelist.addAll(getContainer());
 	}
 
 	/**
