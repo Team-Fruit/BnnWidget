@@ -326,6 +326,19 @@ public enum Easings implements Easing {
 		return easing;
 	}
 
+	/**
+	 * StringからEasingを取得します<br>
+	 * 大文字と小文字を区別しません
+	 * @param easing
+	 * @return
+	 */
+	public static Easings fromString(final String easing) {
+		for (final Easings line : values())
+			if (line.name().equalsIgnoreCase(easing))
+				return line;
+		throw new IllegalArgumentException();
+	}
+
 	static {
 		final Builder<Integer, Easings> builder = ImmutableMap.builder();
 		for (final Easings easing : Easings.values())
