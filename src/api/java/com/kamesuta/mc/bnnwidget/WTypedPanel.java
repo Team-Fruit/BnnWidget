@@ -13,6 +13,7 @@ import com.google.common.collect.Queues;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 
 /**
  * {@link W}型のコンポーネントを含むことのできるパネルです。
@@ -28,6 +29,8 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	/**
 	 * ウィジェットが初期化されたかどうかを保持します。
 	 * <p>
+	 * {@link #initWidget()}が呼び出された後trueになります。
+	 * <br>
 	 * これは{@link #initWidget()}を一度だけ呼び出すのに役立ちます。
 	 */
 	protected boolean initialized;
@@ -76,7 +79,10 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 
 	@Override
 	public void onAdded() {
-		if (!this.initialized) {
+		if (this.initialized)
+			for (final W widget : getContainer())
+				widget.onAdded();
+		else {
 			initWidget();
 			this.initialized = true;
 		}
@@ -89,6 +95,7 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	 * <p>
 	 * オーバーライドしてGUIの構築を行いましょう。
 	 */
+	@OverridablePoint
 	protected void initWidget() {
 	}
 
@@ -100,11 +107,12 @@ public abstract class WTypedPanel<W extends WCommon> extends WBase implements WC
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
 		final Area gp = getGuiPosition(pgp);
 		final float opacity = getGuiOpacity(popacity);
 		for (final W widget : getContainer())
-			widget.draw(ev, gp, p, frame, opacity);
+			widget.draw(ev, gp, p, frame, opacity, opt);
+		super.draw(ev, pgp, p, frame, popacity, opt);
 	}
 
 	@Override

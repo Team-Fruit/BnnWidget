@@ -2,11 +2,13 @@ package com.kamesuta.mc.bnnwidget.component;
 
 import javax.annotation.Nonnull;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 /**
@@ -45,6 +47,7 @@ public class MCheckBox extends MLabel {
 	 * チェック状態が変更された際に呼ばれます
 	 * @param oldCheck
 	 */
+	@OverridablePoint
 	protected void onCheckChanged(final boolean oldCheck) {
 	}
 
@@ -60,12 +63,12 @@ public class MCheckBox extends MLabel {
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, final @Nonnull RenderOption opt) {
 		final Area o = getGuiPosition(pgp);
-		final Area a = new Area(o.x1(), o.y1(), o.x1()+o.h(), o.y2());
+		final Area a = Area.abs(o.x1(), o.y1(), o.x1()+o.h(), o.y2());
 		drawCheckBox(a);
 		final Area b = o.child(o.x1()+o.h(), 0, o.x1()+o.h(), 0);
-		drawText(b, getGuiOpacity(popacity));
+		drawText(ev, b, p, frame, getGuiOpacity(popacity));
 	}
 
 	/**

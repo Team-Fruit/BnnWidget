@@ -33,6 +33,7 @@ sourceCompatibility = targetCompatibility = "1.8"
 compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
 }
+compileApiJava.options.encoding = 'UTF-8'
 
 idea {
     module {

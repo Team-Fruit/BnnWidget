@@ -1,7 +1,9 @@
 package com.kamesuta.mc.bnnwidget;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,11 +11,13 @@ import javax.annotation.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.google.common.collect.Sets;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
-import com.kamesuta.mc.bnnwidget.render.WGui;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
+import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -28,7 +32,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
  *
  * @author TeamFruit
  */
-public class WFrame extends GuiScreen implements WContainer<WCommon> {
+public class WFrame extends GuiScreen implements WCommon, WContainer<WCommon> {
 	/**
 	 * GUIの背後に表示するGUIです
 	 * <p>
@@ -50,25 +54,21 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 */
 	protected boolean initialized;
 	/**
+	 * 画面サイズによるサイズ変更の影響を受けなくする場合はtrue
+	 */
+	protected boolean fixGuiScale;
+	/**
 	 * シングルプレイ時にゲームを一時停止させる場合はtrue
 	 * @see GuiScreen#doesGuiPauseGame()
 	 */
 	protected boolean doesPauseGui = true;
+	/**
+	 * このフラグをtrueにするとこのGUIの一切の処理が行われなくなります。
+	 */
+	protected boolean closed = false;
 	private float width;
 	private float height;
 
-	/**
-	 * 入力されたマウスボタンを保持します
-	 */
-	protected int mousebutton = -1;
-	/**
-	 * 最後に入力されたカーソル位置を保持します
-	 */
-	protected @Nullable Point mouselast;
-	/**
-	 * 最後に入力されたマウスボタンを保持します
-	 */
-	protected int lastbutton = -1;
 	/**
 	 * ウィジェットを終了する際のフラグです。
 	 */
@@ -100,7 +100,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * float精度の幅
 	 * @return float精度の幅
 	 */
-	public float width() {
+	public float guiWidth() {
 		if (super.width!=(int) this.width)
 			this.width = super.width;
 		return this.width;
@@ -110,10 +110,104 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * float精度の高さ
 	 * @return float精度の高さ
 	 */
-	public float height() {
+	public float guiHeight() {
 		if (super.height!=(int) this.height)
 			this.height = super.height;
 		return this.height;
+	}
+
+	/**
+	 * float精度の幅 (GUIスケールが固定されている場合はMinecraftの画面の幅)
+	 * @return float精度の幅
+	 */
+	public float width() {
+		if (this.fixGuiScale)
+			return getDisplayWidth();
+		return guiWidth();
+	}
+
+	/**
+	 * float精度の高さ (GUIスケールが固定されている場合はMinecraftの画面の高さ)
+	 * @return float精度の高さ
+	 */
+	public float height() {
+		if (this.fixGuiScale)
+			return getDisplayHeight();
+		return guiHeight();
+	}
+
+	/**
+	 * Minecraftの画面の幅
+	 * @return Minecraftの画面の幅
+	 */
+	protected static float getDisplayWidth() {
+		return WRenderer.mc.displayWidth;
+	}
+
+	/**
+	 * Minecraftの画面の高さ
+	 * @return Minecraftの画面の高さ
+	 */
+	protected static float getDisplayHeight() {
+		return WRenderer.mc.displayHeight;
+	}
+
+	/**
+	 * このGUIの幅がMinecraftの画面の幅よりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * @return このGUIの幅がMinecraftの画面の幅よりも何倍であるか
+	 */
+	public float guiScaleX() {
+		return guiWidth()/getDisplayWidth();
+	}
+
+	/**
+	 * このGUIの高さがMinecraftの画面の高さよりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * @return このGUIの高さがMinecraftの画面の高さよりも何倍であるか
+	 */
+	public float guiScaleY() {
+		return guiHeight()/getDisplayHeight();
+	}
+
+	/**
+	 * このGUIの大きさがMinecraftの画面の大きさよりも何倍であるか
+	 * <p>
+	 * この時、GUIは1/n倍されています。
+	 * <br>
+	 * 縦と横の比率が違うことは考え難いですが、違う場合は小さい方の値が返されます。
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float guiScale() {
+		return Math.min(guiScaleX(), guiScaleY());
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scaleX() {
+		return 1f/guiScaleX();
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scaleY() {
+		return 1f/guiScaleY();
+	}
+
+	/**
+	 * GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 * <p>
+	 * 縦と横の比率が違うことは考え難いですが、違う場合は大きい方の値が返されます。
+	 * @return GUIのコンテンツが、Minecraftの画面の何分の1で描画されるか
+	 */
+	public float scale() {
+		return 1f/guiScale();
 	}
 
 	/**
@@ -122,7 +216,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 */
 	public WFrame(final @Nullable GuiScreen parent) {
 		this.parent = parent;
-		this.mc = WGui.mc;
+		this.mc = WRenderer.mc;
 	}
 
 	public WFrame() {
@@ -133,7 +227,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @return GUIの絶対座標
 	 */
 	public @Nonnull Area getAbsolute() {
-		return new Area(0, 0, width(), height());
+		return Area.size(0, 0, width(), height());
 	}
 
 	/**
@@ -179,23 +273,24 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	@Override
 	public void initGui() {
 		sInitGui();
-	}
-
-	protected void sInitGui() {
-		if (this.parent!=null)
-			this.parent.initGui();
-		super.initGui();
 		if (!this.initialized) {
-			init();
+			initPane();
 			initWidget();
 			this.initialized = true;
 		}
 	}
 
-	protected void init() {
+	protected void sInitGui() {
+		checkParentAndClose();
+		if (this.parent!=null)
+			this.parent.initGui();
+		super.initGui();
+	}
+
+	protected void initPane() {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().onInit(this.event, gp, p);
+		dispatchOnInit(gp, p);
 	}
 
 	/**
@@ -205,41 +300,49 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * <p>
 	 * オーバーライドしてGUIの構築を行いましょう。
 	 */
+	@OverridablePoint
 	protected void initWidget() {
 	}
 
 	@Override
 	public void setWorldAndResolution(final @Nullable Minecraft mc, final int i, final int j) {
-		sSetWorldAndResolution(mc, i, j);
+		sSetWorldAndResolution(WRenderer.mc, i, j);
 	}
 
-	protected void sSetWorldAndResolution(final @Nullable Minecraft mc, final int i, final int j) {
+	protected void sSetWorldAndResolution(final @Nonnull Minecraft mc, final int i, final int j) {
+		checkParentAndClose();
 		if (this.parent!=null)
 			this.parent.setWorldAndResolution(mc, i, j);
 		super.setWorldAndResolution(mc, i, j);
 	}
 
-	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity) {
+	public void drawScreen(final int mousex, final int mousey, final float f, final float opacity, final @Nullable RenderOption opt) {
 		sDrawScreen(mousex, mousey, f);
+		OpenGL.glPushMatrix();
+		if (this.fixGuiScale)
+			OpenGL.glScalef(guiScaleX(), guiScaleY(), 1f);
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().draw(this.event, gp, p, f, opacity);
+		dispatchDraw(gp, p, f, opacity, opt!=null ? opt : new RenderOption());
+		OpenGL.glPopMatrix();
 	}
 
 	@Override
 	public void drawScreen(final int mousex, final int mousey, final float f) {
-		drawScreen(mousex, mousey, f, getOpacity());
+		drawScreen(mousex, mousey, f, getOpacity(), null);
 	}
 
 	/**
 	 * GUIの絶対透明度
 	 * @return 絶対透明度
 	 */
+	@OverridablePoint
 	protected float getOpacity() {
 		return 1f;
 	}
 
 	protected void sDrawScreen(final int mousex, final int mousey, final float f) {
+		checkParentAndClose();
 		final GuiScreen parent = this.parent;
 		if (parent!=null) {
 			OpenGL.glPushMatrix();
@@ -252,10 +355,11 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	protected void mouseClicked(final int x, final int y, final int button) throws IOException {
-		this.mousebutton = button;
+		this.mousebutton.addButton(button);
+		this.event.updateDoubleClick();
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().mouseClicked(this.event, gp, p, button);
+		dispatchMouseClicked(gp, p, button);
 		sMouseClicked(x, y, button);
 	}
 
@@ -276,7 +380,8 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	protected void mouseClickMove(final int x, final int y, final int button, final long time) {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().mouseDragged(this.event, gp, p, button, time);
+		dispatchMouseDragged(gp, p, button, time);
+		this.event.updateDoubleClick();
 		sMouseClickMove(x, y, button, time);
 	}
 
@@ -284,27 +389,80 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		super.mouseClickMove(x, y, button, time);
 	}
 
+	/**
+	 * マウスボタン
+	 */
+	public static class MouseButton {
+		private final @Nonnull Set<Integer> pressed = Sets.newHashSet();
+
+		private final @Nonnull MouseState state = new MouseState();
+
+		public @Nonnull MouseState checkButton() {
+			this.state.reset();
+			for (final Iterator<Integer> itr = this.pressed.iterator(); itr.hasNext();) {
+				final Integer button = itr.next();
+				if (!Mouse.isButtonDown(button)) {
+					this.state.removed.add(button);
+					this.state.lastRemoved = button;
+					itr.remove();
+				} else {
+					this.state.pressed.add(button);
+					this.state.lastPressed = button;
+				}
+			}
+			return this.state;
+		}
+
+		public void addButton(final int button) {
+			this.pressed.add(button);
+		}
+
+		public static class MouseState {
+			public final @Nonnull Set<Integer> removed = Sets.newHashSet();
+			public @Nullable Integer lastRemoved;
+			public final @Nonnull Set<Integer> pressed = Sets.newHashSet();
+			public @Nullable Integer lastPressed;
+
+			public void reset() {
+				this.removed.clear();
+				this.lastRemoved = null;
+				this.pressed.clear();
+				this.lastPressed = null;
+			}
+		}
+	}
+
+	/**
+	 * 最後に入力されたカーソル位置を保持します
+	 */
+	protected @Nullable Point mouselast;
+
+	/**
+	 * 最後に入力されたマウスボタンを保持します
+	 */
+	protected final @Nonnull MouseButton mousebutton = new MouseButton();
+
 	@Override
 	public void updateScreen() {
 		sUpdateScreen();
 		final Point p = getMouseAbsolute();
 		final Area gp = getAbsolute();
-		getContentPane().update(this.event, gp, p);
-		final int m = Mouse.getEventButton();
-		if (this.lastbutton==-1&&m!=this.lastbutton||!Mouse.isButtonDown(this.mousebutton))
-			getContentPane().mouseReleased(this.event, gp, p, this.mousebutton);
-		this.lastbutton = m;
-		if (this.mousebutton!=m&&m!=-1)
-			this.mousebutton = m;
+		dispatchUpdate(gp, p);
+		final MouseButton.MouseState button = this.mousebutton.checkButton();
+		final Integer lastRemoved = button.lastRemoved;
+		if (lastRemoved!=null)
+			dispatchMouseReleased(gp, p, lastRemoved);
 		if (!p.equals(this.mouselast)) {
 			this.mouselast = p;
-			getContentPane().mouseMoved(this.event, gp, p, this.mousebutton);
+			dispatchMouseMoved(gp, p, button.lastPressed!=null ? button.lastPressed : -1);
 		}
 		if (this.closeRequest)
-			onCloseRequest();
+			if (dispatchOnClosing(gp, p))
+				close();
 	}
 
 	protected void sUpdateScreen() {
+		checkParentAndClose();
 		if (this.parent!=null)
 			this.parent.updateScreen();
 		super.updateScreen();
@@ -314,34 +472,31 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	protected void keyTyped(final char c, final int keycode) {
 		final Area gp = getAbsolute();
 		final Point p = getMouseAbsolute();
-		getContentPane().keyTyped(this.event, gp, p, c, keycode);
+		dispatchKeyTyped(gp, p, c, keycode);
 		sKeyTyped(c, keycode);
 	}
 
+	@OverridablePoint
 	protected void sKeyTyped(final char c, final int keycode) {
 		if (keycode==Keyboard.KEY_ESCAPE)
 			requestClose();
-	}
-
-	protected void onCloseRequest() {
-		final Area gp = getAbsolute();
-		final Point p = getMouseAbsolute();
-		if (getContentPane().onClosing(this.event, gp, p))
-			close();
 	}
 
 	/**
 	 * GUIが終了される最終フェーズで呼び出されます。
 	 */
 	protected void close() {
-		this.mc.displayGuiScreen(this.parent);
+		if (WRenderer.mc.currentScreen==this)
+			WRenderer.mc.displayGuiScreen(this.parent);
+		else
+			this.closed = true;
 	}
 
 	/**
 	 * GUIを終了します。終了処理がある場合は終了処理を行った後、終了されます。
 	 */
 	public void requestClose() {
-		getContentPane().onCloseRequest();
+		dispatchOnCloseRequest();
 		this.closeRequest = true;
 	}
 
@@ -357,11 +512,16 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public void onGuiClosed() {
+		onClosed();
 		sOnGuiClosed();
 	}
 
 	public void sOnGuiClosed() {
 		super.onGuiClosed();
+	}
+
+	@OverridablePoint
+	protected void onClosed() {
 	}
 
 	@Override
@@ -370,7 +530,7 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 		if (i!=0) {
 			final Area gp = getAbsolute();
 			final Point p = getMouseAbsolute();
-			getContentPane().mouseScrolled(this.event, gp, p, i);
+			dispatchMouseScrolled(gp, p, i);
 		}
 		sHandleMouseInput();
 	}
@@ -390,11 +550,26 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 
 	@Override
 	public boolean doesGuiPauseGame() {
+		return sDoesGuiPauseGame();
+	}
+
+	protected boolean sDoesGuiPauseGame() {
 		return this.doesPauseGui||parentDoesGuiPauseGame();
 	}
 
 	protected boolean parentDoesGuiPauseGame() {
+		checkParentAndClose();
 		return this.parent!=null&&this.parent.doesGuiPauseGame();
+	}
+
+	/**
+	 * 画面サイズによるサイズ変更の影響を受けなくします
+	 * @param doesFixScale 画面サイズによるサイズ変更の影響を受けなくする場合はtrue
+	 * @return this
+	 */
+	public @Nonnull WFrame setFixGuiScale(final boolean doesFixScale) {
+		this.fixGuiScale = doesFixScale;
+		return this;
 	}
 
 	/**
@@ -405,5 +580,249 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	public @Nonnull WFrame setGuiPauseGame(final boolean doesPause) {
 		this.doesPauseGui = doesPause;
 		return this;
+	}
+
+	/**
+	 * 親GUIが閉じられているのを確認します
+	 */
+	public boolean isParentClosed() {
+		if (this.parent instanceof WFrame)
+			return ((WFrame) this.parent).closed;
+		return false;
+	}
+
+	/**
+	 * 親GUIを閉じます
+	 */
+	public void closeParent() {
+		this.parent = getParentOrNull(this.parent);
+	}
+
+	/**
+	 * 親GUIが閉じられているのを確認し、親GUIを閉じます
+	 */
+	public void checkParentAndClose() {
+		if (isParentClosed())
+			closeParent();
+	}
+
+	/**
+	 * 親GUIを設定します
+	 * @param parent 親
+	 */
+	public void setParent(@Nullable final GuiScreen parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * 親GUIを返します
+	 * @return 親
+	 */
+	public @Nullable GuiScreen getParent() {
+		return this.parent;
+	}
+
+	/**
+	 * 現在のGUIを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getCurrent() {
+		return WRenderer.mc.currentScreen;
+	}
+
+	/**
+	 * 親GUIを返します
+	 * <p>
+	 * screenがWFrameでない場合はnullを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrNull(@Nullable final GuiScreen screen) {
+		if (screen instanceof WFrame)
+			return ((WFrame) screen).parent;
+		return null;
+	}
+
+	/**
+	 * 親GUIを返します
+	 * <p>
+	 * screenがWFrameでない場合はscreenを返します
+	 * @param screen GUI
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrThis(@Nullable final GuiScreen screen) {
+		if (screen instanceof WFrame)
+			return ((WFrame) screen).parent;
+		return screen;
+	}
+
+	/**
+	 * 現在のGUIの親GUIを返します
+	 * <p>
+	 * 現在のGUIがWFrameでない場合はnullを返します
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrNull() {
+		return getParentOrNull(getCurrent());
+	}
+
+	/**
+	 * 現在のGUIの親GUIを返します
+	 * <p>
+	 * 現在のGUIがWFrameでない場合は現在のGUIを返します
+	 * @return 親
+	 */
+	public static @Nullable GuiScreen getParentOrThis() {
+		return getParentOrThis(getCurrent());
+	}
+
+	@Override
+	@OverridablePoint
+	public void onAdded() {
+	}
+
+	protected void dispatchOnAdded() {
+		onAdded();
+		getContentPane().onAdded();
+	}
+
+	@Override
+	@OverridablePoint
+	public void onInit(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
+	}
+
+	protected void dispatchOnInit(final @Nonnull Area pgp, final @Nonnull Point p) {
+		onInit(this.event, pgp, p);
+		getContentPane().onInit(this.event, pgp, p);
+	}
+
+	@Deprecated
+	@OverridablePoint
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity) {
+	}
+
+	@Override
+	@OverridablePoint
+	public void draw(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
+		draw(ev, pgp, p, frame, popacity);
+	}
+
+	protected void dispatchDraw(final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, @Nonnull final RenderOption opt) {
+		draw(this.event, pgp, p, frame, popacity, opt);
+		getContentPane().draw(this.event, pgp, p, frame, popacity, opt);
+	}
+
+	@Override
+	@OverridablePoint
+	public void update(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p) {
+	}
+
+	protected void dispatchUpdate(final @Nonnull Area pgp, final @Nonnull Point p) {
+		update(this.event, pgp, p);
+		getContentPane().update(this.event, pgp, p);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean keyTyped(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final char c, final int keycode) {
+		return false;
+	}
+
+	protected boolean dispatchKeyTyped(final @Nonnull Area pgp, final @Nonnull Point p, final char c, final int keycode) {
+		return getContentPane().keyTyped(this.event, pgp, p, c, keycode)||keyTyped(this.event, pgp, p, c, keycode);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean mouseScrolled(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int scroll) {
+		return false;
+	}
+
+	protected boolean dispatchMouseScrolled(final @Nonnull Area pgp, final @Nonnull Point p, final int scroll) {
+		return getContentPane().mouseScrolled(this.event, pgp, p, scroll)||mouseScrolled(this.event, pgp, p, scroll);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean mouseMoved(@Nonnull final WEvent ev, @Nonnull final Area pgp, @Nonnull final Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseMoved(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseMoved(this.event, pgp, p, button)||mouseMoved(this.event, pgp, p, button);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean mouseClicked(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseClicked(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseClicked(this.event, pgp, p, button)||mouseClicked(this.event, pgp, p, button);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean mouseDragged(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button, final long time) {
+		return false;
+	}
+
+	protected boolean dispatchMouseDragged(final @Nonnull Area pgp, final @Nonnull Point p, final int button, final long time) {
+		return getContentPane().mouseDragged(this.event, pgp, p, button, time)||mouseDragged(this.event, pgp, p, button, time);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean mouseReleased(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return false;
+	}
+
+	protected boolean dispatchMouseReleased(final @Nonnull Area pgp, final @Nonnull Point p, final int button) {
+		return getContentPane().mouseReleased(this.event, pgp, p, button)||mouseReleased(this.event, pgp, p, button);
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean onCloseRequest() {
+		return true;
+	}
+
+	private boolean isDispatchClosable = true;
+
+	protected boolean dispatchOnCloseRequest() {
+		final boolean a = getContentPane().onCloseRequest();
+		final boolean b = this.isDispatchClosable = onCloseRequest();
+		return a&&b;
+	}
+
+	@Override
+	@OverridablePoint
+	public boolean onClosing(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
+		return true;
+	}
+
+	protected boolean dispatchOnClosing(final @Nonnull Area pgp, final @Nonnull Point p) {
+		final boolean a = getContentPane().onClosing(this.event, pgp, p);
+		final boolean b = this.isDispatchClosable = this.isDispatchClosable||onClosing(this.event, pgp, p);
+		return a&&b;
+	}
+
+	@Override
+	@OverridablePoint
+	public @Nullable WCommon top(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
+		return null;
+	}
+
+	protected @Nullable WCommon dispatchTop(final @Nonnull Area pgp, final @Nonnull Point p) {
+		if (pgp.pointInside(p)) {
+			final WCommon a = top(this.event, pgp, p);
+			final WCommon b = getContentPane().top(this.event, pgp, p);
+			if (b!=null)
+				return b;
+			return a;
+		}
+		return null;
 	}
 }
