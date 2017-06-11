@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 
 /**
  * 基本描画準備を担当します
@@ -28,7 +28,7 @@ public class WRenderer {
 	 * <p>
 	 * 描画に使用します
 	 */
-	public static final @Nonnull VertexBuffer w = t.getBuffer();
+	public static final @Nonnull BufferBuilder w = t.getBuffer();
 
 	/**
 	 * 非テクスチャ要素を描画する前に呼び出します
