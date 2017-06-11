@@ -35,4 +35,9 @@ public class VPercent implements VCommon {
 		final float cb = this.b.getAbsCoord(a, b);
 		return this.c.getAbsCoord(ca, cb);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("VPercent [start=%s, end=%s, percent=%s]", this.a, this.b, this.c);
+	}
 }

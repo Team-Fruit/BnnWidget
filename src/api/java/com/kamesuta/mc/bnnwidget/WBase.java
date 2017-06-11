@@ -36,6 +36,7 @@ public abstract class WBase extends WComponent {
 	 * @param position コンストラクタで受け取った相対範囲
 	 * @return コンポーネントの相対範囲
 	 */
+	@OverridablePoint
 	protected @Nonnull R initPosition(final @Nonnull R position) {
 		return position;
 	}
@@ -46,6 +47,7 @@ public abstract class WBase extends WComponent {
 	 * このメソッドはコンストラクタ内で呼ばれます。サブクラスのフィールドはまだ初期化されていない可能性があります。
 	 * @return コンポーネントの相対透明度
 	 */
+	@OverridablePoint
 	protected @Nonnull VCommon initOpacity() {
 		return V.p(1f);
 	}

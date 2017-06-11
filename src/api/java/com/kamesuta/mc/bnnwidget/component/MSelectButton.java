@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WBox;
 import com.kamesuta.mc.bnnwidget.WCommon;
 import com.kamesuta.mc.bnnwidget.position.Coord;
@@ -57,6 +58,7 @@ public class MSelectButton extends MSelect<MButton> {
 	 * 選択が変更された際に呼ばれます
 	 * @param widget ボタン
 	 */
+	@OverridablePoint
 	protected void onChanged(final @Nullable WCommon widget) {
 	}
 
