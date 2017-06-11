@@ -43,4 +43,9 @@ public class VRange implements VCommon {
 		}
 		return v;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("VRange [min=%s, max=%s, var=%s]", this.min, this.max, this.var);
+	}
 }
