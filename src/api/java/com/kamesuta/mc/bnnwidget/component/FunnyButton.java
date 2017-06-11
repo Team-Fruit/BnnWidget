@@ -8,6 +8,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.var.V;
 import com.kamesuta.mc.bnnwidget.var.VMotion;
 
@@ -65,7 +66,7 @@ public class FunnyButton extends MButton {
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float opacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float opacity, final @Nonnull RenderOption opt) {
 		final Area a = getGuiPosition(pgp);
 		OpenGL.glPushMatrix();
 		OpenGL.glTranslatef(a.x1()+a.w()/2, a.y1()+a.h()/2, 0);
@@ -73,7 +74,7 @@ public class FunnyButton extends MButton {
 		OpenGL.glScalef(c, c, 1f);
 		OpenGL.glRotatef(this.m.get(), 0, 0, 1);
 		OpenGL.glTranslatef(-a.x1()-a.w()/2, -a.y1()-a.h()/2, 0);
-		super.draw(ev, pgp, p, frame, opacity);
+		super.draw(ev, pgp, p, frame, opacity, opt);
 		OpenGL.glPopMatrix();
 	}
 }

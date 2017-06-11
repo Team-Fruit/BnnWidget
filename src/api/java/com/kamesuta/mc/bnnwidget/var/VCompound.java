@@ -41,4 +41,9 @@ public class VCompound implements VCommon {
 			f += c.getAbsCoord(0, b-a);
 		return f;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("VCompound [coord=%s, coords=%s]", this.coord, this.coords);
+	}
 }

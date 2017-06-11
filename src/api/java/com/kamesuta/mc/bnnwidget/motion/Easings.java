@@ -307,6 +307,11 @@ public enum Easings implements Easing {
 		return Motion.easing(time, this, to);
 	}
 
+	@Override
+	public String toString() {
+		return name()+"("+this.id+")";
+	}
+
 	private static final @Nonnull ImmutableMap<Integer, Easings> easingIds;
 
 	/**
@@ -319,6 +324,19 @@ public enum Easings implements Easing {
 		if (easing==null)
 			easing = easeLinear;
 		return easing;
+	}
+
+	/**
+	 * StringからEasingを取得します<br>
+	 * 大文字と小文字を区別しません
+	 * @param easing
+	 * @return
+	 */
+	public static Easings fromString(final String easing) {
+		for (final Easings line : values())
+			if (line.name().equalsIgnoreCase(easing))
+				return line;
+		throw new IllegalArgumentException();
 	}
 
 	static {
