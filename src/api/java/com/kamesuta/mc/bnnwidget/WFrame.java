@@ -17,6 +17,7 @@ import com.kamesuta.mc.bnnwidget.render.WGui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
 /**
  * MinecraftのGUIとウィジェットをつなぐ重量コンポーネントです。
@@ -140,8 +141,8 @@ public class WFrame extends GuiScreen implements WContainer<WCommon> {
 	 * @return カーソルの絶対座標
 	 */
 	public @Nonnull Point getMouseAbsolute() {
-		return new Point(Mouse.getX()*width()/this.mc.displayWidth,
-				height()-Mouse.getY()*height()/this.mc.displayHeight-1);
+		return new Point(Mouse.getX()*width()/FMLClientHandler.instance().getClient().displayWidth,
+				height()-Mouse.getY()*height()/FMLClientHandler.instance().getClient().displayHeight-1);
 	}
 
 	@Override
