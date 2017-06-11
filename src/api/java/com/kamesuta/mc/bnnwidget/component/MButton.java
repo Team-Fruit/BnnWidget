@@ -14,6 +14,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 import com.kamesuta.mc.bnnwidget.var.V;
 import com.kamesuta.mc.bnnwidget.var.VMotion;
@@ -109,7 +110,7 @@ public class MButton extends WBase {
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, final @Nonnull RenderOption opt) {
 		final Area a = getGuiPosition(pgp);
 		final float opacity = getGuiOpacity(popacity);
 
@@ -133,10 +134,10 @@ public class MButton extends WBase {
 			texture().bindTexture(button);
 			final int state = !isEnabled() ? 0 : a.pointInside(p) ? 2 : 1;
 
-			drawTextureModalSize(a.x1(), a.y1(), a.w()/2, a.h()/2, 0, state*80, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2, 256-a.w()/2, state*80, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2, 0, state*80+80-a.h()/2, a.w()/2, a.h()/2);
-			drawTextureModalSize(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2, 256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2);
+			drawTextureModal(Area.size(a.x1(), a.y1(), a.w()/2, a.h()/2), null, Area.size(0, state*80, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(0, state*80+80-a.h()/2, a.w()/2, a.h()/2));
+			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2));
 		}
 		drawText(ev, pgp, p, frame, opacity);
 	}
@@ -178,7 +179,7 @@ public class MButton extends WBase {
 			final Area a = getGuiPosition(pgp);
 			WRenderer.startTexture();
 			final Color c = new Color(getTextColor(ev, pgp, mouse, frame));
-			fontColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*popacity));
+			OpenGL.glColor4i(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*popacity));
 			drawString(text, a, Align.CENTER, VerticalAlign.MIDDLE, true);
 		}
 	}

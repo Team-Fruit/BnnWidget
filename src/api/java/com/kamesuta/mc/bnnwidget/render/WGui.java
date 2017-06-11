@@ -2,23 +2,20 @@ package com.kamesuta.mc.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.awt.Color;
+import java.nio.IntBuffer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import com.kamesuta.mc.bnnwidget.position.Area;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.fml.client.FMLClientHandler;
 
 /**
  * GUI関連の描画を担当します
@@ -27,31 +24,51 @@ import net.minecraftforge.fml.client.FMLClientHandler;
  *
  * @author TeamFruit
  */
-public class WGui extends Gui {
-	/**
-	 * Minecraftインスタンス
-	 */
-	public static final @Nonnull Minecraft mc = FMLClientHandler.instance().getClient();
-	/**
-	 * Tessellatorインスタンス
-	 * <p>
-	 * 描画に使用します
-	 */
-	public static final @Nonnull Tessellator t = WRenderer.t;
-	/**
-	 * WorldRendererインスタンス
-	 * <p>
-	 * 描画に使用します
-	 */
-	public static final @Nonnull WorldRenderer w = WRenderer.w;
-	// public static final StencilClip clip = StencilClip.instance;
-
+public class WGui extends WRenderer {
 	/**
 	 * テクスチャ倍率
 	 * <p>
 	 * GUIを描画する際に使用します。
 	 */
-	public static final float textureScale = 0.00390625F;
+	public static final float textureScale = 1f/256f;
+
+	public static final @Nonnull Area defaultTextureArea = Area.abs(0f, 0f, 1f, 1f);
+
+	private static final @Nullable org.lwjgl.input.Cursor cur;
+
+	static {
+		org.lwjgl.input.Cursor cursor = null;
+		try {
+			final IntBuffer buf = GLAllocation.createDirectIntBuffer(1);
+			buf.put(0);
+			buf.flip();
+			cursor = new org.lwjgl.input.Cursor(1, 1, 0, 0, 1, buf, null);
+		} catch (final LWJGLException e) {
+		}
+		cur = cursor;
+	}
+
+	/**
+	 * カーソルの表示を切り替えます。
+	 * <p>
+	 * 状況によっては1pxの黒ドットになる場合があります。
+	 * @param b カーソルを表示する場合true
+	 */
+	public static void setCursorVisible(final boolean b) {
+		if (cur!=null)
+			try {
+				Mouse.setNativeCursor(b ? null : cur);
+			} catch (final LWJGLException e) {
+			}
+	}
+
+	public static void showCursor() {
+		setCursorVisible(true);
+	}
+
+	public static void hideCursor() {
+		setCursorVisible(false);
+	}
 
 	/**
 	 * 4つの絶対座標からテクスチャを描画します
@@ -66,159 +83,109 @@ public class WGui extends Gui {
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		w.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		w.pos(vx1, vy2, 0).tex(tx1, ty2).endVertex();
-		w.pos(vx2, vy2, 0).tex(tx2, ty2).endVertex();
-		w.pos(vx2, vy1, 0).tex(tx2, ty1).endVertex();
-		w.pos(vx1, vy1, 0).tex(tx1, ty1).endVertex();
-		t.draw();
+	private static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		beginTextureQuads()
+				.pos(vx1, vy2, 0).tex(tx1, ty2)
+				.pos(vx2, vy2, 0).tex(tx2, ty2)
+				.pos(vx2, vy1, 0).tex(tx2, ty1)
+				.pos(vx1, vy1, 0).tex(tx1, ty1)
+				.draw();
 	}
 
 	/**
 	 * 4つの絶対座標からテクスチャを描画します
 	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)が使用されます
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
-	 */
-	public static void drawTextureAbs(final float vx1, final float vy1, final float vx2, final float vy2) {
-		drawTextureAbs(vx1, vy1, vx2, vy2, 0, 0, 1, 1);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)：(1×1)にすることでテクスチャを1枚表示できます
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
-	 */
-	public static void drawTextureSize(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureAbs(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズからテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)：(1×1)が使用されます
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 */
-	public static void drawTextureSize(final float vx, final float vy, final float vw, final float vh) {
-		drawTextureAbs(vx, vy, vx+vw, vy+vh, 0, 0, 1, 1);
-	}
-
-	/**
-	 * 絶対範囲からテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)にすることでテクスチャを1枚表示できます
-	 * @param vertex 絶対範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTexture(final @Nonnull Area vertex, final @Nonnull Area textrue) {
-		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * 絶対範囲からテクスチャを描画します
-	 * <p>
-	 * テクスチャ座標(倍率)は(0, 0)⇒(1, 1)が使用されます
-	 * @param vertex 絶対範囲
-	 */
-	public static void drawTexture(final @Nonnull Area vertex) {
-		drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), 0, 0, 1, 1);
-	}
-
-	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureAbs(float, float, float, float, float, float, float, float)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
+	 * リピートされる無限サイズのテクスチャをトリミング絶対座標でくり抜きます。
+	 * @param vx1 1つ目のX画像絶対座標
+	 * @param vy1 1つ目のY画像絶対座標
+	 * @param vx2 2つ目のX画像絶対座標
+	 * @param vy2 2つ目のY画像絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
 	 * @param tx1 1つ目のXテクスチャ座標(倍率)
 	 * @param ty1 1つ目のYテクスチャ座標(倍率)
 	 * @param tx2 2つ目のXテクスチャ座標(倍率)
 	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureModalAbs(final float vx1, final float vy1, final float vx2, final float vy2, final float tx1, final float ty1, final float tx2, final float ty2) {
-		final float f = textureScale;
-		drawTextureAbs(vx1, vy1, vx2, vy2, f*tx1, f*ty1, f*tx2, f*ty2);
+	private static void drawTextureAbsTrim(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		final float ox1 = tx2-tx1;
+		final float oy1 = ty2-ty1;
+		final float ox2 = vx2-vx1;
+		final float oy2 = vy2-vy1;
+		final float ox3 = ox2/ox1;
+		final float oy3 = oy2/oy1;
+		final float ox4 = (rx1-vx1)/ox3;
+		final float oy4 = (ry1-vy1)/oy3;
+		final float ox5 = (rx2-vx1)/ox3;
+		final float oy5 = (ry2-vy1)/oy3;
+		final float ox6 = (rx2-rx1)/ox3;
+		final float oy6 = (ry2-ry1)/oy3;
+		final float ox7 = ox2/ox1*ox6;
+		final float oy7 = oy2/oy1*oy6;
+		beginTextureQuads()
+				.pos(rx1, ry1+oy7, 0).tex(ox4+tx1, oy5+ty1)
+				.pos(rx1+ox7, ry1+oy7, 0).tex(ox5+tx1, oy5+ty1)
+				.pos(rx1+ox7, ry1, 0).tex(ox5+tx1, oy4+ty1)
+				.pos(rx1, ry1, 0).tex(ox4+tx1, oy4+ty1)
+				.draw();
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureAbs(float, float, float, float)}と同様に描画します。
+	 * 4つの絶対座標からテクスチャを描画します
 	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx1 1つ目のX絶対座標
-	 * @param vy1 1つ目のY絶対座標
-	 * @param vx2 2つ目のX絶対座標
-	 * @param vy2 2つ目のY絶対座標
+	 * 画像絶対座標サイズのテクスチャをトリミング絶対座標でくり抜きます。
+	 * @param vx1 1つ目のX画像絶対座標
+	 * @param vy1 1つ目のY画像絶対座標
+	 * @param vx2 2つ目のX画像絶対座標
+	 * @param vy2 2つ目のY画像絶対座標
+	 * @param rx1 1つ目のXトリミング絶対座標
+	 * @param ry1 1つ目のYトリミング絶対座標
+	 * @param rx2 2つ目のXトリミング絶対座標
+	 * @param ry2 2つ目のYトリミング絶対座標
+	 * @param tx1 1つ目のXテクスチャ座標(倍率)
+	 * @param ty1 1つ目のYテクスチャ座標(倍率)
+	 * @param tx2 2つ目のXテクスチャ座標(倍率)
+	 * @param ty2 2つ目のYテクスチャ座標(倍率)
 	 */
-	public static void drawTextureModalAbs(final float vx1, final float vy1, final float vx2, final float vy2) {
-		drawTextureModalAbs(vx1, vy1, vx2, vy2, 0, 0, 1, 1);
+	@SuppressWarnings("unused")
+	@Deprecated
+	private static void drawTextureAbsTrimOne(final float vx1, final float vy1, final float vx2, final float vy2, final float rx1, final float ry1, final float rx2, final float ry2, final float tx1, final float ty1, final float tx2, final float ty2) {
+		drawTextureAbsTrim(vx1, vy1, vx2, vy2, Math.max(vx1, rx1), Math.max(vy1, ry1), Math.min(vx2, rx2), Math.min(vy2, ry2), tx1, ty1, tx2, ty2);
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureSize(float, float, float, float, float, float, float, float)}と同様に描画します。
+	 * 絶対範囲からテクスチャを描画します
 	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
-	 * @param tx Xテクスチャ座標(倍率)
-	 * @param ty Yテクスチャ座標(倍率)
-	 * @param tw テクスチャ幅(倍率)
-	 * @param th テクスチャ高さ(倍率)
+	 * テクスチャ範囲は(0, 0)⇒(1, 1)にすることでテクスチャを1枚表示でき、nullが指定された場合と同様です
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
+	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
+	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void drawTextureModalSize(final float vx, final float vy, final float vw, final float vh, final float tx, final float ty, final float tw, final float th) {
-		drawTextureModalAbs(vx, vy, vx+vw, vy+vh, tx, ty, tx+tw, ty+th);
+	public static void drawTexture(@Nullable Area vertex, @Nullable Area trim, @Nullable Area texture) {
+		if (vertex==null)
+			vertex = defaultTextureArea;
+		if (texture==null)
+			texture = defaultTextureArea;
+		if (trim!=null) {
+			trim = vertex.trimArea(trim);
+			if (trim!=null)
+				drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
+		} else
+			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
 	}
 
 	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModalAbs(float, float, float, float)}と同様に描画します。
+	 * テクスチャ倍率(1/256)をかけ、{@link #drawTexture(Area Area Area)}と同様に描画します。
 	 * <p>
 	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vx X絶対座標
-	 * @param vy Y絶対座標
-	 * @param vw 絶対幅
-	 * @param vh 絶対高さ
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
+	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
+	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒((1/256), (1/256))
 	 */
-	public static void drawTextureModalSize(final float vx, final float vy, final float vw, final float vh) {
-		drawTextureModalAbs(vx, vy, vx+vw, vy+vh, 0, 0, 1, 1);
-	}
-
-	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModal(Area, Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 絶対範囲
-	 * @param textrue テクスチャ範囲
-	 */
-	public static void drawTextureModal(final @Nonnull Area vertex, final @Nonnull Area textrue) {
-		drawTextureModalAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), textrue.x1(), textrue.y1(), textrue.x2(), textrue.y2());
-	}
-
-	/**
-	 * テクスチャ倍率(0.00390625)をかけ、{@link #drawTextureModal(Area)}と同様に描画します。
-	 * <p>
-	 * GUIを描画する場合主にこちらを使用します。
-	 * @param vertex 絶対範囲
-	 */
-	public static void drawTextureModal(final @Nonnull Area vertex) {
-		drawTextureModalAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), 0, 0, 1, 1);
+	public static void drawTextureModal(@Nullable final Area vertex, final @Nullable Area trim, @Nullable final Area texture) {
+		drawTexture(vertex, trim, (texture!=null ? texture : defaultTextureArea).scale(textureScale));
 	}
 
 	/**
@@ -229,142 +196,34 @@ public class WGui extends Gui {
 	 * @param y2 2つ目のY絶対座標
 	 * @param mode GL描画モード
 	 */
-	public static void drawAbs(final float x1, final float y1, final float x2, final float y2, final int mode) {
-		w.begin(mode, DefaultVertexFormats.POSITION);
-		w.pos(x1, y2, 0).endVertex();
-		w.pos(x2, y2, 0).endVertex();
-		w.pos(x2, y1, 0).endVertex();
-		w.pos(x1, y1, 0).endVertex();
-		t.draw();
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズとGL描画モードを使用して描画します。
-	 * @param x X絶対座標
-	 * @param y Y絶対座標
-	 * @param w 絶対幅
-	 * @param h 絶対高さ
-	 * @param mode GL描画モード
-	 */
-	public static void drawSize(final float x, final float y, final float w, final float h, final int mode) {
-		drawAbs(x, y, x+w, y+h, mode);
+	private static void drawAbs(final float x1, final float y1, final float x2, final float y2, final int mode) {
+		begin(mode)
+				.pos(x1, y2, 0)
+				.pos(x2, y2, 0)
+				.pos(x2, y1, 0)
+				.pos(x1, y1, 0)
+				.draw();
 	}
 
 	/**
 	 * 絶対範囲とGL描画モードを使用して描画します。
-	 * @param p 絶対範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 * @param mode GL描画モード
 	 */
-	public static void draw(final @Nonnull Area p, final int mode) {
-		drawAbs(p.x1(), p.y1(), p.x2(), p.y2(), mode);
-	}
-
-	/**
-	 * 4つの絶対座標を使用して描画します。
-	 * <p>
-	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param x1 1つ目のX絶対座標
-	 * @param y1 1つ目のY絶対座標
-	 * @param x2 2つ目のX絶対座標
-	 * @param y2 2つ目のY絶対座標
-	 */
-	public static void drawAbs(final float x1, final float y1, final float x2, final float y2) {
-		drawAbs(x1, y1, x2, y2, GL_QUADS);
-	}
-
-	/**
-	 * 2つの絶対座標と2つの絶対サイズを使用して描画します。
-	 * <p>
-	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param x X絶対座標
-	 * @param y Y絶対座標
-	 * @param w 絶対幅
-	 * @param h 絶対高さ
-	 */
-	public static void drawSize(final float x, final float y, final float w, final float h) {
-		drawAbs(x, y, x+w, y+h, GL_QUADS);
+	public static void draw(@Nullable Area vertex, final int mode) {
+		if (vertex==null)
+			vertex = defaultTextureArea;
+		drawAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), mode);
 	}
 
 	/**
 	 * 絶対範囲を使用して描画します。
 	 * <p>
 	 * GL描画モードは{@link org.lwjgl.opengl.GL11#GL_QUADS GL_QUADS}が使用されます
-	 * @param p 絶対範囲
+	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	public static void draw(final @Nonnull Area p) {
-		draw(p, GL_QUADS);
-	}
-
-	private static int fontcolor;
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * @param color フォントカラー
-	 */
-	public static void fontColor(final int color) {
-		WGui.fontcolor = color;
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * <br>
-	 * フォントカラーの範囲は0～255です
-	 * @param r フォントカラー(赤)
-	 * @param g フォントカラー(緑)
-	 * @param b フォントカラー(青)
-	 * @param a フォントカラー(不透明度)
-	 */
-	public static void fontColor(final int r, final int g, final int b, final int a) {
-		fontColor(Math.max(a&0xff, 0x4)<<24|(r&0xFF)<<16|(g&0xFF)<<8|(b&0xFF)<<0);
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * <br>
-	 * フォントカラーの範囲は0～1です
-	 * @param r フォントカラー(赤)
-	 * @param g フォントカラー(緑)
-	 * @param b フォントカラー(青)
-	 * @param a フォントカラー(不透明度)
-	 */
-	public static void fontColor(final float r, final float g, final float b, final float a) {
-		fontColor((int) (r*255+0.5), (int) (g*255+0.5), (int) (b*255+0.5), (int) (a*255+0.5));
-	}
-
-	/**
-	 * 次の描画で使用されるフォントカラーを設定します
-	 * <p>
-	 * ※一度使用されると元のフォントカラーに戻ります
-	 * @param color フォントカラー
-	 */
-	public static void fontColor(final @Nonnull Color color) {
-		fontColor(color.getRGB());
-	}
-
-	private static void resetFontColor() {
-		WGui.fontcolor = 0xff000000;
-	}
-
-	public static @Nonnull TextureManager texture() {
-		return mc.renderEngine;
-	}
-
-	/**
-	 * フォントレンダラー
-	 * <p>
-	 * フォントを描画する際に使用します
-	 * <br>
-	 * {@link Minecraft#fontRenderer}と等価です
-	 * @return {@link Minecraft#fontRenderer}
-	 */
-	public static @Nonnull FontRenderer font() {
-		return mc.fontRendererObj;
+	public static void draw(@Nullable final Area vertex) {
+		draw(vertex, GL_QUADS);
 	}
 
 	/**
@@ -382,9 +241,16 @@ public class WGui extends Gui {
 		OpenGL.glPushMatrix();
 		align.translate(text, x, w);
 		valign.translate(text, y, h);
-		font().drawString(text, 0, 0, fontcolor, shadow);
+		buf.clear();
+		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		final float r = buf.get(0);
+		final float g = buf.get(1);
+		final float b = buf.get(2);
+		final float a = buf.get(3);
+		OpenGL.glColor4f(1f, 1f, 1f, 1f);
+		font().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
+		OpenGL.glColor4f(r, g, b, a);
 		OpenGL.glPopMatrix();
-		resetFontColor();
 	}
 
 	/**

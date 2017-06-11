@@ -2,6 +2,8 @@ package com.kamesuta.mc.bnnwidget.var;
 
 import javax.annotation.Nonnull;
 
+import com.kamesuta.mc.bnnwidget.OverridablePoint;
+
 /**
  * 絶対的な値と相対的な値を定義た値です
  *
@@ -17,6 +19,7 @@ public class VBase implements VCommon {
 	}
 
 	@Override
+	@OverridablePoint
 	public float get() {
 		return this.coord;
 	}
@@ -24,5 +27,10 @@ public class VBase implements VCommon {
 	@Override
 	public float getAbsCoord(final float a, final float b) {
 		return this.type.calc(a, b, get());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("VBase [coord=%s, type=%s]", this.coord, this.type);
 	}
 }

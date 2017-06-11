@@ -44,13 +44,13 @@ public class VMotion extends VBase implements ICompoundMotion {
 	@Override
 	public @Nonnull VMotion stop() {
 		this.compoundMotion.stop();
-		return stopFirst();
+		return this;
 	}
 
 	@Override
 	public @Nonnull VMotion stopLast() {
 		this.compoundMotion.stopLast();
-		return stopFirst();
+		return this;
 	}
 
 	@Override
@@ -112,5 +112,10 @@ public class VMotion extends VBase implements ICompoundMotion {
 	public @Nonnull VMotion reset() {
 		this.compoundMotion.reset();
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("VMotion [compoundMotion=%s]", this.compoundMotion);
 	}
 }

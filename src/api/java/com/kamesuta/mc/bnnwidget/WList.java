@@ -36,6 +36,12 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 */
 	public void setList(final @Nonnull IModCount<T> check) {
 		this.check = check;
+		this.cachedModCount = -1;
+		this.toT.clear();
+		this.toW.clear();
+		this.Tindex.clear();
+		this.cws.clear();
+		this.removelist.addAll(getContainer());
 	}
 
 	/**
@@ -124,6 +130,7 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 * @param t 監視リストの要素
 	 * @param w 対応コンポーネント
 	 */
+	@OverridablePoint
 	protected void onAdded(final @Nonnull T t, final @Nonnull W w) {
 	}
 
@@ -132,6 +139,7 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 * @param t 監視リストの要素
 	 * @param w 対応コンポーネント
 	 */
+	@OverridablePoint
 	protected void onRemove(final @Nonnull T t, final @Nonnull W w) {
 	}
 
@@ -142,6 +150,7 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 * @param from 移動前のインデックス
 	 * @param to 移動後のインデックス
 	 */
+	@OverridablePoint
 	protected void onMoved(final @Nonnull T t, final @Nonnull W w, final int from, final int to) {
 	}
 }
