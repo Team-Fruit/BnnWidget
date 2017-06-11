@@ -10,6 +10,7 @@ import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 import net.minecraft.util.ResourceLocation;
@@ -34,7 +35,7 @@ public class MPanel extends WPanel {
 	}
 
 	@Override
-	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, final @Nonnull RenderOption opt) {
 		final Area a = getGuiPosition(pgp);
 		final float op = getGuiOpacity(popacity);
 
@@ -51,7 +52,7 @@ public class MPanel extends WPanel {
 			texture().bindTexture(background);
 			drawBack(a);
 		}
-		super.draw(ev, pgp, p, frame, popacity);
+		super.draw(ev, pgp, p, frame, popacity, opt);
 	}
 
 	/**

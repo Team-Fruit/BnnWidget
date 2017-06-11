@@ -9,6 +9,7 @@ import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.Point;
 import com.kamesuta.mc.bnnwidget.position.R;
 import com.kamesuta.mc.bnnwidget.render.OpenGL;
+import com.kamesuta.mc.bnnwidget.render.RenderOption;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
 /**
@@ -42,12 +43,12 @@ public class MSelectLabel extends MSelect<String> {
 		super(position, buttonwidth);
 		add(this.field = new MLabel(new R(Coord.left(this.buttonwidth), Coord.right(this.buttonwidth), Coord.top(0), Coord.bottom(0))) {
 			@Override
-			public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity) {
+			public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float popacity, final @Nonnull RenderOption opt) {
 				final Area a = getGuiPosition(pgp);
 				WRenderer.startShape();
 				OpenGL.glColor4f(0f, 0f, 0f, .4f);
 				draw(a);
-				super.draw(ev, pgp, p, frame, popacity);
+				super.draw(ev, pgp, p, frame, popacity, opt);
 			}
 
 			@Override
