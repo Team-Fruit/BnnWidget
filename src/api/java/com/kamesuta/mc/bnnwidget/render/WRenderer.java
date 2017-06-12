@@ -122,7 +122,7 @@ public class WRenderer extends Gui {
 		 * @return this
 		 */
 		public @Nonnull WVertex begin(final int mode) {
-			w.begin(mode, DefaultVertexFormats.POSITION_TEX);
+			w.begin(mode, DefaultVertexFormats.POSITION);
 			init();
 			return this;
 		}
@@ -157,6 +157,7 @@ public class WRenderer extends Gui {
 		 * @return this
 		 */
 		public @Nonnull WVertex pos(final double x, final double y, final double z) {
+			endVertex();
 			w.pos(x, y, z);
 			//			this.stack_x = x;
 			//			this.stack_y = y;
@@ -173,7 +174,6 @@ public class WRenderer extends Gui {
 		 */
 		public @Nonnull WVertex tex(final double u, final double v) {
 			w.tex(u, v);
-			endVertex();
 			return this;
 		}
 
