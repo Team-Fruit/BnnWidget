@@ -163,18 +163,15 @@ public class WGui extends WRenderer {
 	 * @param trim トリミング範囲 デフォルト:(-∞, -∞)⇒(∞, ∞)
 	 * @param texture テクスチャ範囲 デフォルト:(0, 0)⇒(1, 1)
 	 */
-	@SuppressWarnings("null")
-	public static void drawTexture(@Nullable Area vertex, @Nullable Area trim, @Nullable Area texture) {
-		if (vertex==null)
-			vertex = defaultTextureArea;
-		if (texture==null)
-			texture = defaultTextureArea;
+	public static void drawTexture(@Nullable final Area vertex, @Nullable Area trim, @Nullable final Area texture) {
+		final Area v = vertex!=null ? vertex : defaultTextureArea;
+		final Area t = texture!=null ? texture : defaultTextureArea;
 		if (trim!=null) {
-			trim = vertex.trimArea(trim);
+			trim = v.trimArea(trim);
 			if (trim!=null)
-				drawTextureAbsTrim(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
+				drawTextureAbsTrim(v.x1(), v.y1(), v.x2(), v.y2(), trim.x1(), trim.y1(), trim.x2(), trim.y2(), t.x1(), t.y1(), t.x2(), t.y2());
 		} else
-			drawTextureAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), texture.x1(), texture.y1(), texture.x2(), texture.y2());
+			drawTextureAbs(v.x1(), v.y1(), v.x2(), v.y2(), t.x1(), t.y1(), t.x2(), t.y2());
 	}
 
 	/**
@@ -211,11 +208,9 @@ public class WGui extends WRenderer {
 	 * @param vertex 絶対範囲 デフォルト:(0, 0)⇒(1, 1)
 	 * @param mode GL描画モード
 	 */
-	@SuppressWarnings("null")
-	public static void draw(@Nullable Area vertex, final int mode) {
-		if (vertex==null)
-			vertex = defaultTextureArea;
-		drawAbs(vertex.x1(), vertex.y1(), vertex.x2(), vertex.y2(), mode);
+	public static void draw(@Nullable final Area vertex, final int mode) {
+		final Area v = vertex!=null ? vertex : defaultTextureArea;
+		drawAbs(v.x1(), v.y1(), v.x2(), v.y2(), mode);
 	}
 
 	/**
