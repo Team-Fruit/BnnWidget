@@ -146,8 +146,8 @@ public class MinecraftFontRenderer extends FontRenderer {
 	}
 
 	@Override
-	public int splitStringWidth(final String p_78267_1_, final int p_78267_2_) {
-		return this.FONT_HEIGHT*listFormattedStringToWidth(p_78267_1_, p_78267_2_).size();
+	public int getWordWrappedHeight(final String str, final int maxLength) {
+		return this.FONT_HEIGHT*listFormattedStringToWidth(str, maxLength).size();
 	}
 
 	private String wrapFormattedStringToWidth0(final String p_78280_1_, final int p_78280_2_) {
