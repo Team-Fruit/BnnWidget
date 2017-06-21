@@ -116,12 +116,12 @@ public class MChatTextField extends WBase {
 	public void draw(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final float frame, final float opacity, final @Nonnull RenderOption opt) {
 		final Area a = getGuiPosition(pgp);
 		updateArea(a);
-		final int x = this.t.xPosition;
-		final int y = this.t.yPosition;
+		final int x = this.t.x;
+		final int y = this.t.y;
 		final int w = this.t.width;
 		final int h = this.t.height;
-		this.t.xPosition = 1;
-		this.t.yPosition = 1;
+		this.t.x = 1;
+		this.t.y = 1;
 		this.t.width = (int) a.w()-2;
 		this.t.height = (int) a.h()-2;
 		OpenGL.glPushMatrix();
@@ -130,8 +130,8 @@ public class MChatTextField extends WBase {
 		this.t.drawTextBox();
 
 		OpenGL.glPopMatrix();
-		this.t.xPosition = x;
-		this.t.yPosition = y;
+		this.t.x = x;
+		this.t.y = y;
 		this.t.width = w;
 		this.t.height = h;
 	}
@@ -200,8 +200,8 @@ public class MChatTextField extends WBase {
 	 */
 	protected void updateArea(final @Nonnull Area a) {
 		final Area b = a.child(1, 1, -1, -1);
-		this.t.xPosition = (int) b.x1();
-		this.t.yPosition = (int) b.y1();
+		this.t.x = (int) b.x1();
+		this.t.y = (int) b.y1();
 		this.t.width = (int) b.w();
 		this.t.height = (int) b.h();
 	}
@@ -525,8 +525,8 @@ public class MChatTextField extends WBase {
 		public void drawTextBox() {
 			super.drawTextBox();
 			if (!StringUtils.isEmpty(getWatermark())&&StringUtils.isEmpty(getText())&&!isFocused()) {
-				final int l = getEnableBackgroundDrawing() ? this.xPosition+4 : this.xPosition;
-				final int i1 = getEnableBackgroundDrawing() ? this.yPosition+(this.height-8)/2 : this.yPosition;
+				final int l = getEnableBackgroundDrawing() ? this.x+4 : this.x;
+				final int i1 = getEnableBackgroundDrawing() ? this.y+(this.height-8)/2 : this.y;
 				font().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
 			}
 		}
