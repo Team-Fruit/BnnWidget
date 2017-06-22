@@ -148,8 +148,7 @@ public class OpenGL {
 
 	public static void glClearColor(
 			final float red, final float green, final float blue,
-			final float alpha
-	) {
+			final float alpha) {
 		GlStateManager.clearColor(red, green, blue, alpha);
 		// GL11.glClearColor(red, green, blue, alpha);
 	}
@@ -400,7 +399,7 @@ public class OpenGL {
 	}
 
 	public static void glVertex(final Vec3d vertex) {
-		GL11.glVertex3f((float) vertex.xCoord, (float) vertex.yCoord, (float) vertex.zCoord);
+		GL11.glVertex3f((float) vertex.x, (float) vertex.y, (float) vertex.z);
 	}
 
 	public static void glLineWidth(final float width) {

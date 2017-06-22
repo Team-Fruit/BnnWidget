@@ -65,7 +65,7 @@ public class WRenderer extends Gui {
 	 * @return {@link Minecraft#fontRenderer}
 	 */
 	public static @Nonnull FontRenderer font() {
-		return mc.fontRendererObj;
+		return mc.fontRenderer;
 	}
 
 	/**
