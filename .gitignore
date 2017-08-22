@@ -1,7 +1,7 @@
 ## .gitignore ##
 # ignore all
 *
-1.*/
+1.*/*
 changelog.md
 
 # allow any
