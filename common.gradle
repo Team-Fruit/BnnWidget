@@ -43,8 +43,7 @@ if (project.forgegradle.contains('2.1')) {
 	}
 }
 
-version = (project.name=='common') ? "${mod_version}" : "${project.version_minecraft}-${mod_version}"
-archivesBaseName = rootProject.name
+version = mod_version
 
 configurations {
 	shade
@@ -83,7 +82,7 @@ task setupSourceSets {
 
 processResources {
 	// this will ensure that this task is redone when the versions change.
-	inputs.property 'version', project.version
+	inputs.property 'version', mod_version
 	inputs.property 'mcversion', project.minecraft.version
 
 	from(sourceSets.main.resources.srcDirs) {
@@ -112,28 +111,14 @@ repositories {
 	}
 }
 
-def projectName = "${rootProject.name}-${project.name}"
-
-idea {
-	module {
-		name = projectName
-	}
-}
-
-eclipse {
-	project {
-		name = projectName
-	}
-}
-
 dependencies {
 	compile fileTree(dir: 'libs', include: '*.jar')
 	shade fileTree(dir: 'libs/shade', include: '*.jar')
 	compile fileTree(dir: '../libs', include: '*.jar')
 	shade fileTree(dir: '../libs/shade', include: '*.jar')
 
-	if (project.name!='common')
-		shade rootProject.project('common')
+	if (project.name==mod_commonname)
+		shade rootProject.project(mod_commonname)
 }
 
 ext.commonManifest = {

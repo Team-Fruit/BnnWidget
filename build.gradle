@@ -18,6 +18,7 @@ allprojects {
 import org.apache.commons.lang.StringUtils
 
 ext {
+	mod_commonname = "${rootProject.name}-common"
 	mod_build_prefix = 'b'
 
 	assert project.isProperty('version_major'): 'missing property: version_major'
@@ -230,7 +231,7 @@ version = "${mod_version}"
 
 jar {
 	subprojects.each { p ->
-		if (p.name=='common') {
+		if (p.name==mod_commonname) {
 			manifest p.commonManifest
 			p.tasks.shadowJar.outputs.files.each { f ->
 				from zipTree(f)
