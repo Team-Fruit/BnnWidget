@@ -212,6 +212,6 @@ public class R {
 
 	@Override
 	public @Nonnull String toString() {
-		return String.format("RArea[x1=%s, y1=%s, x2=%s, y2=%s]", this.x1, this.y1, this.x2, this.y2);
+		return String.format("RArea[parent=%s, x1=%s, y1=%s, x2=%s, y2=%s]", this.parent, this.x1, this.y1, this.x2, this.y2);
 	}
 }

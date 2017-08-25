@@ -134,13 +134,15 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 	@Override
 	public @Nonnull CompoundMotion stopNext() {
 		final boolean notfinish = this.current!=null&&!this.current.isFinished();
-		if (!notfinish&&!this.paused) {
-			if (this.current!=null)
-				this.coord = this.current.getEnd(this.coord);
-			next();
+		if (!notfinish) {
+			if (!this.paused) {
+				if (this.current!=null)
+					this.coord = this.current.getEnd(this.coord);
+				next();
+			}
+			if (this.looplast&&this.tasks.isFinished())
+				restart();
 		}
-		if (this.looplast&&!notfinish&&this.tasks.isFinished())
-			restart();
 		return this;
 	}
 
@@ -186,8 +188,9 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 	@Override
 	public boolean isFinished() {
 		stopNext();
-		final boolean notfinish = this.current!=null&&!this.current.isFinished();
-		return !this.looplast&&!notfinish&&this.tasks.isFinished();
+		final IMotion last = this.tasks.getLast();
+		final boolean notfinish = last!=null&&!last.isFinished();
+		return !this.looplast&&!notfinish&&this.tasks.isLast();
 	}
 
 	@Override
@@ -271,6 +274,11 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 			this.after.run();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("CompoundMotion [paused=%s, tasks=%s, looplast=%s]", this.paused, this.tasks, this.looplast);
+	}
+
 	/**
 	 * モーションからモーションセットを作成します
 	 * @param motions モーション
@@ -323,6 +331,8 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 		}
 
 		public @Nullable E poll() {
+			if (isEmpty())
+				return get();
 			return get(this.pos++);
 		}
 
@@ -343,13 +353,26 @@ public class CompoundMotion implements IMotion, ICompoundMotion {
 			return get(this.tasks.size()-1);
 		}
 
+		public boolean isEmpty() {
+			return this.tasks.isEmpty();
+		}
+
 		public boolean isFinished() {
+			return this.pos>this.tasks.size();
+		}
+
+		public boolean isLast() {
 			return this.pos>=this.tasks.size();
 		}
 
 		@Override
 		public @Nullable Iterator<E> iterator() {
 			return this.tasks.iterator();
+		}
+
+		@Override
+		public String toString() {
+			return String.format("TaskList [tasks=%s, pos=%s]", this.tasks, this.pos);
 		}
 
 	}

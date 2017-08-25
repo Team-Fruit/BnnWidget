@@ -90,6 +90,11 @@ public abstract class Motion implements IMotion {
 			r.run();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Motion[(%1$ss)]", this.duration);
+	}
+
 	/**
 	 * Easingモーションを作成します
 	 * @param duration モーションの長さ
@@ -207,7 +212,7 @@ public abstract class Motion implements IMotion {
 		protected final float end;
 
 		public MoveMotion(final float end) {
-			super(0.5f);
+			super(0f);
 			this.end = end;
 		}
 

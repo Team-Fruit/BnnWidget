@@ -97,6 +97,26 @@ public class OpenGL {
 		}
 	}
 
+	public static boolean glIsEnabled(final int attrib) {
+		return GL11.glIsEnabled(attrib);
+	}
+
+	public static boolean glEnabled(final int attrib) {
+		if (!glIsEnabled(attrib)) {
+			glEnable(attrib);
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean glDisabled(final int attrib) {
+		if (glIsEnabled(attrib)) {
+			glEnable(attrib);
+			return true;
+		}
+		return false;
+	}
+
 	public static void glHint(final int target, final int mode) {
 		GL11.glHint(target, mode);
 	}
@@ -158,12 +178,54 @@ public class OpenGL {
 		// GL11.glColor4ub(red, green, blue, alpha);
 	}
 
+	public static void glColorRGB(final int rgb) {
+		final int value = 0xff000000|rgb;
+		glColor4i(value>>16&0xff, value>>8&0xff, value>>0&0xff, value>>24&0xff);
+	}
+
+	public static void glColorRGBA(final int rgba) {
+		glColor4i(rgba>>16&0xff, rgba>>8&0xff, rgba>>0&0xff, rgba>>24&0xff);
+	}
+
 	public static void glColor(final Color color) {
 		glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
 	public static void glColor(final org.lwjgl.util.Color color) {
 		glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	}
+
+	public static int glGetColorRGBA() {
+		final FloatBuffer buf = WRenderer.buf;
+		buf.clear();
+		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		final float r = buf.get(0);
+		final float g = buf.get(1);
+		final float b = buf.get(2);
+		final float a = buf.get(3);
+		return WRenderer.toColorCode(r, g, b, a);
+	}
+
+	public static Color glGetColor() {
+		final FloatBuffer buf = WRenderer.buf;
+		buf.clear();
+		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		final float r = Math.min(1f, buf.get(0));
+		final float g = Math.min(1f, buf.get(1));
+		final float b = Math.min(1f, buf.get(2));
+		final float a = Math.min(1f, buf.get(3));
+		return new Color(r, g, b, a);
+	}
+
+	public static org.lwjgl.util.Color glGetLwjglColor() {
+		final FloatBuffer buf = WRenderer.buf;
+		buf.clear();
+		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		final float r = buf.get(0);
+		final float g = buf.get(1);
+		final float b = buf.get(2);
+		final float a = buf.get(3);
+		return new org.lwjgl.util.Color((int) (r*255+0.5)&0xff, (int) (g*255+0.5)&0xff, (int) (b*255+0.5)&0xff, (int) (a*255+0.5)&0xff);
 	}
 
 	public static void glColorMask(final boolean red, final boolean green, final boolean blue, final boolean alpha) {
