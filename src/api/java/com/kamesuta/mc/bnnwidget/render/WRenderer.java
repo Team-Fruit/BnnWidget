@@ -231,7 +231,6 @@ public class WRenderer extends Gui {
 		private void endVertex() {
 			if (this.stack) {
 				this.stack = false;
-				w.finishDrawing();
 			}
 		}
 	}
