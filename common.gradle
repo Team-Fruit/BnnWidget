@@ -116,9 +116,22 @@ dependencies {
 	shade fileTree(dir: 'libs/shade', include: '*.jar')
 	compile fileTree(dir: '../libs', include: '*.jar')
 	shade fileTree(dir: '../libs/shade', include: '*.jar')
+}
 
-	if (project.name==mod_commonname)
-		shade rootProject.project(mod_commonname)
+sourceSets {
+	def fg_plugin = plugins.findPlugin project.forgegradle_plugin
+	[[common: common_api, src: api], [common: common_main, src: main], [common: common_test, src: test]].each { s ->
+		s.common.java {
+			srcDirs = ["../src/${s.src.name}/java"]
+		}
+		s.common.resources {
+			srcDirs = ["../src/${s.src.name}/resources"]
+		}
+		s.common.compileClasspath += s.src.compileClasspath
+		s.common.runtimeClasspath += s.src.runtimeClasspath
+		s.src.compileClasspath += s.common.output
+		s.src.runtimeClasspath += s.common.output
+	}
 }
 
 ext.commonManifest = {
@@ -137,6 +150,8 @@ shadowJar.configurations = [project.configurations.shade]
 shadowJar {
 	from sourceSets.main.output
 	from sourceSets.api.output
+	from sourceSets.common_main.output
+	from sourceSets.common_api.output
 	classifier 'universal'
 	manifest commonManifest
 }
