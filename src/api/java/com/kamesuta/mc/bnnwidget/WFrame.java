@@ -700,8 +700,27 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	 * @param widgettype 判定用ウィジェット
 	 * @return ウィジェットのインスタンスかどうか
 	 */
+	public static boolean isInstanceOf(@Nullable final GuiScreen screen, @Nonnull final Class<?> widgettype) {
+		return widgettype.isInstance(getWidget(screen));
+	}
+
+	/**
+	 * GUIがウィジェットのインスタンスかどうかを判定します
+	 * @param screen GUI
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェットのインスタンスかどうか
+	 */
 	public static boolean isInstanceOf(@Nullable final GuiScreen screen, @Nonnull final WFrame widgettype) {
-		return widgettype.getClass().isInstance(getWidget(screen));
+		return isInstanceOf(screen, widgettype.getClass());
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定します
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェットのインスタンスかどうか
+	 */
+	public static boolean isCurrentInstanceOf(@Nonnull final Class<?> widgettype) {
+		return isInstanceOf(getCurrent(), widgettype);
 	}
 
 	/**
@@ -719,6 +738,21 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	 * @param widgettype 判定用ウィジェット
 	 * @return ウィジェット
 	 */
+	public static @Nullable <T extends WFrame> T getWidgetWithCheck(@Nullable final GuiScreen screen, @Nonnull final Class<T> widgettype) {
+		if (isInstanceOf(screen, widgettype)) {
+			@SuppressWarnings("unchecked")
+			final T typedwidget = (T) getWidget(screen);
+			return typedwidget;
+		}
+		return null;
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定し、GUIのウィジェットかnullを返します
+	 * @param screen GUI
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェット
+	 */
 	public static @Nullable <T extends WFrame> T getWidgetWithCheck(@Nullable final GuiScreen screen, @Nonnull final T widgettype) {
 		if (isInstanceOf(screen, widgettype)) {
 			@SuppressWarnings("unchecked")
@@ -726,6 +760,15 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 			return typedwidget;
 		}
 		return null;
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定し、GUIのウィジェットかnullを返します
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェット
+	 */
+	public static @Nullable <T extends WFrame> T getCurrentWidgetWithCheck(@Nonnull final Class<T> widgettype) {
+		return getWidgetWithCheck(getCurrent(), widgettype);
 	}
 
 	/**
