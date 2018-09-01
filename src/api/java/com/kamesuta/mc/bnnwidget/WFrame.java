@@ -74,19 +74,31 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 
 	protected @Nonnull WScreenImpl screen = new WScreenImpl(this);
 
-	public GuiScreen getScreen() {
+	/**
+	 * ウィジェットからGUIを取得します
+	 * @return GUI
+	 */
+	public @Nonnull GuiScreen getScreen() {
 		return this.screen;
 	}
 
 	/**
-	 * Guiを描画します
+	 * ウィジェットからGUIを取得します
+	 * @return GUI
+	 */
+	public static @Nullable GuiScreen getScreen(@Nullable final WFrame frame) {
+		return frame==null ? null : frame.getScreen();
+	}
+
+	/**
+	 * GUIを描画します
 	 */
 	public static void displayGuiScreen(final GuiScreen screen) {
 		WRenderer.mc.displayGuiScreen(screen);
 	}
 
 	/**
-	 * Guiを描画します
+	 * GUIを描画します
 	 */
 	public static void displayFrame(final WFrame frame) {
 		displayGuiScreen(frame.getScreen());
