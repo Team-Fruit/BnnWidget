@@ -35,7 +35,7 @@ public class WScreenImpl extends GuiScreen implements WScreen {
 	}
 
 	protected void sSetWorldAndResolution(final @Nonnull Minecraft mc, final int i, final int j) {
-		super.setWorldAndResolution(mc, i, i);
+		super.setWorldAndResolution(mc, i, j);
 	}
 
 	@Override
