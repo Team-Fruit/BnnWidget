@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.kamesuta.mc.bnnwidget.WFrame;
 import com.kamesuta.mc.bnnwidget.compat.Compat;
 import com.kamesuta.mc.bnnwidget.compat.OpenGL;
 import com.kamesuta.mc.bnnwidget.compat.WVertex;
@@ -17,7 +16,6 @@ import com.kamesuta.mc.bnnwidget.compat.WVertex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureManager;
 
@@ -91,20 +89,6 @@ public class WRenderer extends Gui {
 	}
 
 	public static final @Nonnull WVertex vertex = Compat.getWVertex();
-
-	/**
-	 * Guiを描画します
-	 */
-	public static void displayGuiScreen(final GuiScreen screen) {
-		mc.displayGuiScreen(screen);
-	}
-
-	/**
-	 * Guiを描画します
-	 */
-	public static void displayFrame(final WFrame frame) {
-		displayGuiScreen(frame.getScreen());
-	}
 
 	/**
 	 * {@link net.minecraft.client.gui.FontRenderer FontRenderer}で使用可能なカラーコードへ変換します。

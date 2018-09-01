@@ -78,8 +78,18 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 		return this.screen;
 	}
 
-	public void display() {
-		WRenderer.displayFrame(this);
+	/**
+	 * Guiを描画します
+	 */
+	public static void displayGuiScreen(final GuiScreen screen) {
+		WRenderer.mc.displayGuiScreen(screen);
+	}
+
+	/**
+	 * Guiを描画します
+	 */
+	public static void displayFrame(final WFrame frame) {
+		displayGuiScreen(frame.getScreen());
 	}
 
 	/**
@@ -667,12 +677,64 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 
 	/**
 	 * GUIのウィジェットを返します
+	 * @param screen GUI
 	 * @return ウィジェット
 	 */
 	public static @Nullable WFrame getWidget(@Nullable final GuiScreen screen) {
 		if (screen instanceof WScreen)
 			return ((WScreen) screen).getWidget();
 		return null;
+	}
+
+	/**
+	 * 現在のGUIのウィジェットを返します
+	 * @return ウィジェット
+	 */
+	public static @Nullable WFrame getCurrentWidget() {
+		return getWidget(getCurrent());
+	}
+
+	/**
+	 * GUIがウィジェットのインスタンスかどうかを判定します
+	 * @param screen GUI
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェットのインスタンスかどうか
+	 */
+	public static boolean isInstanceOf(@Nullable final GuiScreen screen, @Nonnull final WFrame widgettype) {
+		return widgettype.getClass().isInstance(getWidget(screen));
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定します
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェットのインスタンスかどうか
+	 */
+	public static boolean isCurrentInstanceOf(@Nonnull final WFrame widgettype) {
+		return isInstanceOf(getCurrent(), widgettype);
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定し、GUIのウィジェットかnullを返します
+	 * @param screen GUI
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェット
+	 */
+	public static @Nullable <T extends WFrame> T getWidgetWithCheck(@Nullable final GuiScreen screen, @Nonnull final T widgettype) {
+		if (isInstanceOf(screen, widgettype)) {
+			@SuppressWarnings("unchecked")
+			final T typedwidget = (T) getWidget(screen);
+			return typedwidget;
+		}
+		return null;
+	}
+
+	/**
+	 * 現在のGUIがウィジェットのインスタンスかどうかを判定し、GUIのウィジェットかnullを返します
+	 * @param widgettype 判定用ウィジェット
+	 * @return ウィジェット
+	 */
+	public static @Nullable <T extends WFrame> T getCurrentWidgetWithCheck(@Nonnull final T widgettype) {
+		return getWidgetWithCheck(getCurrent(), widgettype);
 	}
 
 	@Override
