@@ -1,0 +1,20 @@
+{
+	"modListVersion": 2,
+	"modList": [
+		{
+			"modid": "bnnwidget",
+			"name": "BnnWidget",
+			"description": "Easy but powerful Minecraft GUI widget",
+			"authorList": [
+				"Kamesuta",
+				"sjcl"
+			],
+			"credits": "2016-2018 TeamFruit",
+			"logoFile": "assets/bnnwidget/textures/logo.png",
+			"screenshots": [],
+			"updateUrl": "https://github.com/Team-Fruit/BnnWidget/releases",
+			"url": "https://github.com/Team-Fruit/BnnWidget/releases",
+			"useDependencyInformation": false
+		}
+	]
+}
