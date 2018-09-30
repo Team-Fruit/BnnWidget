@@ -20,7 +20,7 @@ public class BnnWidgetL {
 	public static @Nullable BnnWidgetL instance;
 
 	static {
-		UniversalVersioner.loadVersion();
+		UniversalVersioner.loadVersionFromFMLMod();
 	}
 
 	@NetworkCheckHandler
