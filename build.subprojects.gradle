@@ -191,46 +191,6 @@ ext.commonManifest = {
 	attributes manifests.manifests
 }
 
-// println(shadowJar.getSource().getFiles())
-shadowJar.configurations = [project.configurations.shade]
-
-shadowJar {
-	from sourceSets.main.output
-	from sourceSets.api.output
-	from sourceSets.base_main.output
-	from sourceSets.base_api.output
-	from sourceSets.bootstrap_main.output
-	from sourceSets.bootstrap_api.output
-	if (project.name!=mod_commonname) {
-		from sourceSets.compat_main.output
-		from sourceSets.compat_api.output
-	}
-	from sourceSets.universal_main.output
-	from sourceSets.universal_api.output
-	classifier 'universal'
-	manifest commonManifest
-}
-
-jar {
-	from sourceSets.main.output
-	from sourceSets.api.output
-	if (project.name==mod_commonname) {
-		from sourceSets.base_main.output
-		from sourceSets.base_api.output
-		from sourceSets.bootstrap_main.output
-		from sourceSets.bootstrap_api.output
-		from sourceSets.universal_main.output
-		from sourceSets.universal_api.output
-	} else {
-		from sourceSets.compat_main.output
-		from sourceSets.compat_api.output
-	}
-	classifier 'diff'
-	manifest commonManifest
-}
-tasks.jar.dependsOn 'shadowJar'
-
-// println !reobf.hasProperty('dependsOn')
 if (!reobf.hasProperty('dependsOn')) {
 	reobf {
 		shadowJar { mappingType = 'SEARGE' }
@@ -267,6 +227,38 @@ if (tasks.findByPath('sourceJar')==null) {
 		manifest commonManifest
 	}
 }
+
+shadowJar.configurations = [project.configurations.shade]
+
+shadowJar {
+	from sourceSets.main.output
+	from sourceSets.api.output
+	from sourceSets.base_main.output
+	from sourceSets.base_api.output
+	from sourceSets.bootstrap_main.output
+	from sourceSets.bootstrap_api.output
+	if (project.name==mod_commonname) {
+		tasks.reobfShadowJar.classpath += sourceSets.compat_main.output
+		tasks.reobfShadowJar.classpath += sourceSets.compat_api.output
+	} else {
+		from sourceSets.compat_main.output
+		from sourceSets.compat_api.output
+	}
+	from sourceSets.universal_main.output
+	from sourceSets.universal_api.output
+	classifier 'universal'
+	manifest commonManifest
+}
+
+jar {
+	from sourceSets.main.output
+	from sourceSets.api.output
+	from sourceSets.compat_main.output
+	from sourceSets.compat_api.output
+	classifier 'diff'
+	manifest commonManifest
+}
+tasks.jar.dependsOn 'shadowJar'
 
 sourceJar {
 	from sourceSets.main.allSource
