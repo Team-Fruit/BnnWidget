@@ -7,6 +7,7 @@ import com.kamesuta.mc.bnnwidget.WCommon;
 import com.kamesuta.mc.bnnwidget.WEvent;
 import com.kamesuta.mc.bnnwidget.WPanel;
 import com.kamesuta.mc.bnnwidget.WidgetBuilder;
+import com.kamesuta.mc.bnnwidget.compat.Compat;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Coord;
 import com.kamesuta.mc.bnnwidget.position.Coord.CoordSide;
@@ -124,7 +125,7 @@ public class MTab extends WPanel {
 			Coord cwidth;
 			Coord ctop;
 			final Coord cheight = Coord.height(MTab.this.height);
-			final float w = font().getStringWidth(name)+MTab.this.widthadd;
+			final float w = Compat.getFontRenderer().getStringWidth(name)+MTab.this.widthadd;
 			switch (MTab.this.side) {
 				case Left:
 				case Right:
@@ -173,11 +174,6 @@ public class MTab extends WPanel {
 	}
 
 	public void addTab(final @Nonnull String name, final @Nonnull WCommon widget) {
-		addTab(name, new WidgetBuilder<WCommon>() {
-			@Override
-			public WCommon build() {
-				return widget;
-			}
-		});
+		addTab(name, () -> widget);
 	}
 }

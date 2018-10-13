@@ -20,7 +20,7 @@ public class Compat {
 
 	public static class CompatGuiTextField extends GuiTextField {
 		public CompatGuiTextField() {
-			super(Minecraft_font(), 0, 0, 0, 0);
+			super(getFontRenderer().getFontRendererObj(), 0, 0, 0, 0);
 		}
 
 		public int getNthWordFromPosWS(final int p_146197_1_, final int p_146197_2_, final boolean p_146197_3_) {
@@ -44,8 +44,8 @@ public class Compat {
 		}
 	}
 
-	public static abstract class CompatFontRenderer extends FontRenderer {
-		public CompatFontRenderer(final GameSettings gameSettingsIn, final ResourceLocation location, final TextureManager textureManagerIn, final boolean unicode) {
+	public static abstract class CompatFontRendererBase extends FontRenderer {
+		public CompatFontRendererBase(final GameSettings gameSettingsIn, final ResourceLocation location, final TextureManager textureManagerIn, final boolean unicode) {
 			super(gameSettingsIn, location, textureManagerIn, unicode);
 		}
 
@@ -75,35 +75,54 @@ public class Compat {
 		return Minecraft.getMinecraft();
 	}
 
-	public static @Nonnull FontRenderer Minecraft_font() {
-		return getMinecraft().fontRenderer;
+	public static @Nonnull CompatFontRenderer getFontRenderer() {
+		return new CompatFontRenderer(getMinecraft().fontRenderer);
+	}
+
+	public static class CompatFontRenderer {
+		private final FontRenderer font;
+
+		public CompatFontRenderer(final FontRenderer font) {
+			this.font = font;
+		}
+
+		public int drawString(final String msg, final float x, final float y, final int color, final boolean shadow) {
+			return this.font.drawString(msg, (int) x, (int) y, color, shadow);
+		}
+
+		public int drawString(final String msg, final float x, final float y, final int color) {
+			return drawString(msg, x, y, color, false);
+		}
+
+		public int drawStringWithShadow(final String msg, final float x, final float y, final int color) {
+			return drawString(msg, x, y, color, true);
+		}
+
+		public int getStringWidth(final @Nullable String s) {
+			return this.font.getStringWidth(s);
+		}
+
+		public int getStringWidthWithoutFormattingCodes(final @Nullable String s) {
+			return getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+		}
+
+		public FontRenderer getFontRendererObj() {
+			return this.font;
+		}
 	}
 
 	private static class WVertexImpl implements WVertex {
-		/**
-		 * Tessellatorインスタンス
-		 * <p>
-		 * 描画に使用します
-		 */
 		public static final @Nonnull Tessellator t = Tessellator.instance;
 
 		public WVertexImpl() {
 		}
 
-		/**
-		 * 実際に描画します
-		 */
 		@Override
 		public void draw() {
 			endVertex();
 			t.draw();
 		}
 
-		/**
-		 * 描画を開始します。
-		 * @param mode GL描画モード
-		 * @return this
-		 */
 		@Override
 		public WVertex begin(final int mode) {
 			t.startDrawing(mode);
@@ -111,11 +130,6 @@ public class Compat {
 			return this;
 		}
 
-		/**
-		 * テクスチャ描画を開始します。
-		 * @param mode GL描画モード
-		 * @return this
-		 */
 		@Override
 		public WVertex beginTexture(final int mode) {
 			t.startDrawing(mode);
@@ -132,15 +146,6 @@ public class Compat {
 		private double stack_y;
 		private double stack_z;
 
-		/**
-		 * 頂点の設定を開始します。
-		 * <p>
-		 * この後続けて色やテクスチャなどの設定を行うことができます。
-		 * @param x X座標
-		 * @param y Y座標
-		 * @param z Z座標
-		 * @return this
-		 */
 		@Override
 		public WVertex pos(final double x, final double y, final double z) {
 			endVertex();
@@ -151,74 +156,34 @@ public class Compat {
 			return this;
 		}
 
-		/**
-		 * テクスチャのマッピング
-		 * @param u U座標
-		 * @param v V座標
-		 * @return this
-		 */
 		@Override
 		public WVertex tex(final double u, final double v) {
 			t.setTextureUV(u, v);
 			return this;
 		}
 
-		/**
-		 * 頂点の色
-		 * @param red 赤(0～1)
-		 * @param green 緑(0～1)
-		 * @param blue 青(0～1)
-		 * @param alpha アルファ(0～1)
-		 * @return this
-		 */
 		@Override
 		public WVertex color(final float red, final float green, final float blue, final float alpha) {
 			return this.color((int) (red*255.0F), (int) (green*255.0F), (int) (blue*255.0F), (int) (alpha*255.0F));
 		}
 
-		/**
-		 * 頂点の色
-		 * @param red 赤(0～255)
-		 * @param green 緑(0～255)
-		 * @param blue 青(0～255)
-		 * @param alpha アルファ(0～255)
-		 * @return this
-		 */
 		@Override
 		public WVertex color(final int red, final int green, final int blue, final int alpha) {
 			t.setColorRGBA(red, green, blue, alpha);
 			return this;
 		}
 
-		/**
-		 * 法線
-		 * @param nx X法線
-		 * @param ny Y法線
-		 * @param nz Z法線
-		 * @return
-		 */
 		@Override
 		public WVertex normal(final float nx, final float ny, final float nz) {
 			t.setNormal(nx, ny, nz);
 			return this;
 		}
 
-		/**
-		 * オフセット
-		 * @param x Xオフセット
-		 * @param y Yオフセット
-		 * @param z Zオフセット
-		 */
 		@Override
 		public void setTranslation(final double x, final double y, final double z) {
 			t.setTranslation(x, y, z);
 		}
 
-		/**
-		 * 頂点の描画を終了します。
-		 * <p>
-		 * なお、{@link #pos(double, double, double) pos()}や{@link #draw() draw()}時に自動的に実行されるため、手動で呼ぶ必要はありません。
-		 */
 		private void endVertex() {
 			if (this.stack) {
 				this.stack = false;
@@ -229,9 +194,5 @@ public class Compat {
 
 	public static @Nonnull WVertex getWVertex() {
 		return new WVertexImpl();
-	}
-
-	public static int getStringWidthWithoutFormattingCodes(final @Nonnull String s) {
-		return Minecraft_font().getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
 	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.kamesuta.mc.bnnwidget.compat.OpenGL;
-import com.kamesuta.mc.bnnwidget.compat.Compat.CompatFontRenderer;
+import com.kamesuta.mc.bnnwidget.compat.Compat.CompatFontRendererBase;
 import com.kamesuta.mc.bnnwidget.render.WGui.Align;
 import com.kamesuta.mc.bnnwidget.render.WRenderer;
 
@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @author TeamFruit
  */
-public class MinecraftFontRenderer extends CompatFontRenderer {
+public class MinecraftFontRenderer extends CompatFontRendererBase {
 	private static final float scale = .5f;
 
 	private final WFont font;

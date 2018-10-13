@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.kamesuta.mc.bnnwidget.OverridablePoint;
 import com.kamesuta.mc.bnnwidget.WEvent;
+import com.kamesuta.mc.bnnwidget.compat.Compat;
 import com.kamesuta.mc.bnnwidget.compat.OpenGL;
 import com.kamesuta.mc.bnnwidget.position.Area;
 import com.kamesuta.mc.bnnwidget.position.Point;
@@ -86,9 +87,9 @@ public class MCheckBox extends MLabel {
 		if (this.checked) {
 			final String strcheck = "\u2713";
 			OpenGL.glPushMatrix();
-			OpenGL.glTranslatef(in.x1()+(in.w()-font().getStringWidth(strcheck))/2, in.y1()+(in.h()-font().FONT_HEIGHT)/2, 0f);
+			OpenGL.glTranslatef(in.x1()+(in.w()-Compat.getFontRenderer().getStringWidth(strcheck))/2, in.y1()+(in.h()-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0f);
 			//glScalef(2f, 2f, 1f);
-			font().drawStringWithShadow(strcheck, 0, 0, 0xffffff);
+			Compat.getFontRenderer().drawStringWithShadow(strcheck, 0, 0, 0xffffff);
 			OpenGL.glPopMatrix();
 		}
 	}

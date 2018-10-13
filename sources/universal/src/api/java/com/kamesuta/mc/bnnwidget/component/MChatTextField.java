@@ -524,7 +524,7 @@ public class MChatTextField extends WBase {
 			if (!StringUtils.isEmpty(getWatermark())&&StringUtils.isEmpty(getText())&&!isFocused()) {
 				final int l = getEnableBackgroundDrawing() ? getX()+4 : getX();
 				final int i1 = getEnableBackgroundDrawing() ? getY()+(this.height-8)/2 : getY();
-				font().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
+				Compat.getFontRenderer().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
 			}
 		}
 

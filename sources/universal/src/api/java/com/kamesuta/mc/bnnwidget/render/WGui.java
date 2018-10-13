@@ -246,7 +246,7 @@ public class WGui extends WRenderer {
 		final float b = buf.get(2);
 		final float a = buf.get(3);
 		OpenGL.glColor4f(1f, 1f, 1f, 1f);
-		font().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
+		Compat.getFontRenderer().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
 		OpenGL.glColor4f(r, g, b, a);
 		OpenGL.glPopMatrix();
 	}
@@ -321,7 +321,7 @@ public class WGui extends WRenderer {
 		MIDDLE {
 			@Override
 			protected void translate(final @Nonnull String text, final float y, final float h) {
-				OpenGL.glTranslatef(0, y+(h-font().FONT_HEIGHT)/2, 0);
+				OpenGL.glTranslatef(0, y+(h-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0);
 			}
 		},
 		/**
@@ -330,7 +330,7 @@ public class WGui extends WRenderer {
 		BOTTOM {
 			@Override
 			protected void translate(final @Nonnull String text, final float y, final float h) {
-				OpenGL.glTranslatef(0, y+h-font().FONT_HEIGHT, 0);
+				OpenGL.glTranslatef(0, y+h-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT, 0);
 			}
 		},
 		;
@@ -345,6 +345,6 @@ public class WGui extends WRenderer {
 	public static int getStringWidth(final @Nonnull String s) {
 		if (StringUtils.isEmpty(s))
 			return 0;
-		return Compat.getStringWidthWithoutFormattingCodes(s);
+		return Compat.getFontRenderer().getStringWidthWithoutFormattingCodes(s);
 	}
 }

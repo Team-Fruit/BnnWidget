@@ -18,7 +18,7 @@ public class Compat {
 
 	public static class CompatGuiTextField extends GuiTextField {
 		public CompatGuiTextField() {
-			super(1, Minecraft_font(), 0, 0, 0, 0);
+			super(1, getFontRenderer().getFontRendererObj(), 0, 0, 0, 0);
 			throw new IllegalStateException("Not Compatible");
 		}
 
@@ -39,8 +39,8 @@ public class Compat {
 		}
 	}
 
-	public static abstract class CompatFontRenderer extends FontRenderer {
-		public CompatFontRenderer(final GameSettings gameSettingsIn, final ResourceLocation location, final TextureManager textureManagerIn, final boolean unicode) {
+	public static abstract class CompatFontRendererBase extends FontRenderer {
+		public CompatFontRendererBase(final GameSettings gameSettingsIn, final ResourceLocation location, final TextureManager textureManagerIn, final boolean unicode) {
 			super(gameSettingsIn, location, textureManagerIn, unicode);
 			throw new IllegalStateException("Not Compatible");
 		}
@@ -71,15 +71,41 @@ public class Compat {
 		throw new IllegalStateException("Not Compatible");
 	}
 
-	public static @Nonnull FontRenderer Minecraft_font() {
+	public static @Nonnull CompatFontRenderer getFontRenderer() {
 		throw new IllegalStateException("Not Compatible");
+	}
+
+	public static class CompatFontRenderer {
+		public CompatFontRenderer(final FontRenderer font) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public int drawString(final String msg, final float x, final float y, final int color, final boolean shadow) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public int drawString(final String msg, final float x, final float y, final int color) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public int drawStringWithShadow(final String msg, final float x, final float y, final int color) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public int getStringWidth(final @Nullable String s) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public int getStringWidthWithoutFormattingCodes(final @Nullable String s) {
+			throw new IllegalStateException("Not Compatible");
+		}
+
+		public FontRenderer getFontRendererObj() {
+			throw new IllegalStateException("Not Compatible");
+		}
 	}
 
 	public static @Nonnull WVertex getWVertex() {
-		throw new IllegalStateException("Not Compatible");
-	}
-
-	public static int getStringWidthWithoutFormattingCodes(final @Nonnull String s) {
 		throw new IllegalStateException("Not Compatible");
 	}
 }
