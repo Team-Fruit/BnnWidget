@@ -55,18 +55,18 @@ Change the package name to anything you want and include these files!
 ```java
 import javax.annotation.Nonnull;
 
-import com.kamesuta.mc.bnnwidget.WBase;
-import com.kamesuta.mc.bnnwidget.WEvent;
-import com.kamesuta.mc.bnnwidget.WFrame;
-import com.kamesuta.mc.bnnwidget.WPanel;
-import com.kamesuta.mc.bnnwidget.WRenderer;
-import com.kamesuta.mc.bnnwidget.motion.Easings;
-import com.kamesuta.mc.bnnwidget.position.Area;
-import com.kamesuta.mc.bnnwidget.position.Point;
-import com.kamesuta.mc.bnnwidget.position.R;
-import com.kamesuta.mc.bnnwidget.render.OpenGL;
-import com.kamesuta.mc.bnnwidget.var.V;
-import com.kamesuta.mc.bnnwidget.var.VMotion;
+import net.teamfruit.bnnwidget.WBase;
+import net.teamfruit.bnnwidget.WEvent;
+import net.teamfruit.bnnwidget.WFrame;
+import net.teamfruit.bnnwidget.WPanel;
+import net.teamfruit.bnnwidget.WRenderer;
+import net.teamfruit.bnnwidget.motion.Easings;
+import net.teamfruit.bnnwidget.position.Area;
+import net.teamfruit.bnnwidget.position.Point;
+import net.teamfruit.bnnwidget.position.R;
+import net.teamfruit.bnnwidget.render.OpenGL;
+import net.teamfruit.bnnwidget.var.V;
+import net.teamfruit.bnnwidget.var.VMotion;
 
 // your main gui extends "WFrame"
 public class MyGui extends WFrame {
