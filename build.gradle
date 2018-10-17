@@ -124,15 +124,21 @@ ext {
 	(mod_changelog_title, mod_changelog, mod_releasetype) = ({
 		// Get Changelog from Git Tag or File
 		def (changelog_title, changelog, releasetype) = parseChangelog(({
+			println("mod_buildtag: ${mod_buildtag}")
 			if (!StringUtils.isEmpty(mod_buildtag)) {
 				def git_ref = mod_git_repo.getRef "refs/tags/${mod_buildtag}"
 
+				println("git_ref: ${git_ref}")
 				if (git_ref!=null) {
 					def git_revwalk = new org.eclipse.jgit.revwalk.RevWalk(mod_git_repo)
+					println("git_revwalk: ${git_revwalk}")
 					try {
-						return git_revwalk.parseTag(git_ref.getObjectId()).getFullMessage()
+						def msg = git_revwalk.parseTag(git_ref.getObjectId()).getFullMessage()
+						println("msg: ${msg}")
+						return msg
 					} catch(org.eclipse.jgit.errors.IncorrectObjectTypeException e) {
 					} finally {
+						println("exit revwalk")
 						git_revwalk.dispose()
 					}
 				}
@@ -162,6 +168,10 @@ ext {
 			else
 				return ["v${mod_version_full}", "v${mod_version_full}"]
 		})()
+
+		println("changelog_title: ${changelog_title}")
+		println("changelog: ${changelog}")
+		println("releasetype: ${releasetype}")
 
 		if (changelog_title!=null)
 			n_changelog_title = convertChangelog(changelog_title)
