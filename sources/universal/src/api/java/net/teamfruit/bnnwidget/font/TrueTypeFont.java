@@ -16,15 +16,16 @@ import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.font.LoadedFontShape.FontAtlas;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.render.WGui;
-import net.teamfruit.bnnwidget.render.WRenderer;
 import net.teamfruit.bnnwidget.render.WGui.Align;
 import net.teamfruit.bnnwidget.render.WGui.VerticalAlign;
+import net.teamfruit.bnnwidget.render.WRenderer;
 
 /**
  * {@link WFont}のTrueTypeフォント実装です
  *
  * @author TeamFruit
  */
+@Deprecated
 public class TrueTypeFont implements WFont {
 	private static @Nonnull Random fontRandom = new Random();
 

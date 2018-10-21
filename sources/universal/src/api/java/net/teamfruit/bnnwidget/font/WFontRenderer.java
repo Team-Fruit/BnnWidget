@@ -1,7 +1,5 @@
 package net.teamfruit.bnnwidget.font;
 
-import java.awt.Font;
-
 import javax.annotation.Nonnull;
 
 import net.teamfruit.bnnwidget.position.Area;
@@ -14,14 +12,6 @@ import net.teamfruit.bnnwidget.render.WGui.VerticalAlign;
  * @author TeamFruit
  */
 public class WFontRenderer implements WFont {
-	public static final @Nonnull WFont defaultFont;
-
-	static {
-		final FontSet fontSet = new FontSet.Builder().addName("HGP創英角ﾎﾟｯﾌﾟ体").setStyle(Font.PLAIN).build();
-		final FontStyle style = new FontStyle.Builder().setFont(fontSet).build();
-		defaultFont = new TrueTypeFont(style);
-	}
-
 	private final @Nonnull WFont font;
 
 	private @Nonnull FontPosition setting = new FontPosition();
@@ -29,10 +19,6 @@ public class WFontRenderer implements WFont {
 
 	public WFontRenderer(@Nonnull final WFont font) {
 		this.font = font;
-	}
-
-	public WFontRenderer() {
-		this(defaultFont);
 	}
 
 	@Override

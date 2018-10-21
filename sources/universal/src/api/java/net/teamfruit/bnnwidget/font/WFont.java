@@ -11,15 +11,6 @@ import net.teamfruit.bnnwidget.font.LoadedFontShape.FontManager;
  */
 public interface WFont {
 	/**
-	 * プレーンなフォントです
-	 */
-	public static final @Nonnull WFont font = new TrueTypeFont(new FontStyle.Builder().build());
-	/**
-	 * プレーンなフォントレンダーです
-	 */
-	public static final @Nonnull WFontRenderer fontRenderer = new WFontRenderer(font);
-
-	/**
 	 * フォントを描画します。
 	 * @param p 文字描画設定
 	 * @return 幅

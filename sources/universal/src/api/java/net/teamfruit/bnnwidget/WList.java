@@ -81,6 +81,7 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	/**
 	 * 監視リストの変更を反映します
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public void update() {
 		final List<W> ws = getContainer();
 		this.cws.clear();

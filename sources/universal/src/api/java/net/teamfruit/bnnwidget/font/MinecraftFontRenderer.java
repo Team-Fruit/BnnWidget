@@ -8,10 +8,10 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.compat.Compat.CompatFontRendererBase;
-import net.teamfruit.bnnwidget.render.WRenderer;
+import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.render.WGui.Align;
+import net.teamfruit.bnnwidget.render.WRenderer;
 
 /**
  * {@link WFont}のMinecraftFontRendererラッパーです
@@ -20,6 +20,7 @@ import net.teamfruit.bnnwidget.render.WGui.Align;
  *
  * @author TeamFruit
  */
+@Deprecated
 public class MinecraftFontRenderer extends CompatFontRendererBase {
 	private static final float scale = .5f;
 
