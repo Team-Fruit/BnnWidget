@@ -22,23 +22,13 @@ public class WFontRenderer implements WFont {
 	}
 
 	@Override
-	public float drawString(@Nonnull final FontPosition p) {
-		return this.font.drawString(p);
+	public void drawString(@Nonnull final FontPosition p) {
+		this.font.drawString(p);
 	}
 
 	@Override
 	public float getWidth(@Nonnull final FontPosition p) {
 		return this.font.getWidth(p);
-	}
-
-	@Override
-	public float getCharWidth(final char ch, final int fontsize, final float scaleX) {
-		return this.font.getCharWidth(ch, fontsize, scaleX);
-	}
-
-	@Override
-	public @Nonnull FontStyle getStyle() {
-		return this.font.getStyle();
 	}
 
 	/**
@@ -80,7 +70,7 @@ public class WFontRenderer implements WFont {
 				dx = w;
 				break;
 		}
-		this.p.set(this.p).setScale(1f).setText(str).setAlign(align).setPosition(x+dx, y).setFontSize(Math.round(absheight)).setShadow(shadow);
+		this.p.set(this.p).setScale(absheight).setText(str).setAlign(align).setPosition(x+dx, y).setShadow(shadow);
 		final float ratiowh = this.font.getWidth(this.p)/Math.round(absheight);
 		if (absheight*ratiowh>abswidth) {
 			final float newwidth = absheight*ratiowh;
@@ -89,7 +79,7 @@ public class WFontRenderer implements WFont {
 			correctscale *= 1f;
 		final float correctheight = absheight*correctscale;
 		final float correctedscale = correctheight/(float) Math.ceil(correctheight);
-		this.font.drawString(this.p.setScale(scale*correctedscale).setFontSize((int) Math.floor(correctheight)));
+		this.font.drawString(this.p.setScale(scale*correctedscale*correctheight));
 	}
 
 	/**
