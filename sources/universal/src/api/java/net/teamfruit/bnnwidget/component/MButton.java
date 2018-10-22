@@ -1,7 +1,5 @@
 package net.teamfruit.bnnwidget.component;
 
-import static org.lwjgl.opengl.GL11.*;
-
 import java.awt.Color;
 
 import javax.annotation.Nonnull;
@@ -31,10 +29,6 @@ public class MButton extends WBase {
 	 * BnnWidget同封のMinecraftデザイン、ボタンです。
 	 */
 	public static final @Nonnull ResourceLocation button = new ResourceLocation("bnnwidget", "textures/gui/buttons.png");
-	/**
-	 * BnnWidgetは新デザインを開発中です。
-	 */
-	public static boolean tryNew;
 
 	/**
 	 * ボタンのテキストです
@@ -112,31 +106,16 @@ public class MButton extends WBase {
 		final Area a = getGuiPosition(pgp);
 		final float opacity = getGuiOpacity(popacity);
 
-		if (tryNew) {
-			WRenderer.startShape();
-			if (isEnabled()) {
-				OpenGL.glColor4f(.2f, .2f, .2f, opacity*.2f);
-				draw(a);
-			}
-			OpenGL.glColor4f(1f, 1f, 1f, opacity*this.o.get()*.3f);
-			draw(a);
-			OpenGL.glLineWidth(1f);
-			if (isEnabled())
-				OpenGL.glColor4f(0f, 0f, 0f, opacity);
-			else
-				OpenGL.glColor4f(.5f, .5f, .5f, opacity);
-			draw(a, GL_LINE_LOOP);
-		} else {
-			WRenderer.startTexture();
-			OpenGL.glColor4f(1.0F, 1.0F, 1.0F, opacity);
-			texture().bindTexture(button);
-			final int state = !isEnabled() ? 0 : a.pointInside(p) ? 2 : 1;
+		WRenderer.startTexture();
+		OpenGL.glColor4f(1.0F, 1.0F, 1.0F, opacity);
+		texture().bindTexture(button);
+		final int state = !isEnabled() ? 0 : a.pointInside(p) ? 2 : 1;
 
-			drawTextureModal(Area.size(a.x1(), a.y1(), a.w()/2, a.h()/2), null, Area.size(0, state*80, a.w()/2, a.h()/2));
-			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80, a.w()/2, a.h()/2));
-			drawTextureModal(Area.size(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(0, state*80+80-a.h()/2, a.w()/2, a.h()/2));
-			drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2));
-		}
+		drawTextureModal(Area.size(a.x1(), a.y1(), a.w()/2, a.h()/2), null, Area.size(0, state*80, a.w()/2, a.h()/2));
+		drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1(), a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80, a.w()/2, a.h()/2));
+		drawTextureModal(Area.size(a.x1(), a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(0, state*80+80-a.h()/2, a.w()/2, a.h()/2));
+		drawTextureModal(Area.size(a.x1()+a.w()/2, a.y1()+a.h()/2, a.w()/2, a.h()/2), null, Area.size(256-a.w()/2, state*80+80-a.h()/2, a.w()/2, a.h()/2));
+
 		drawText(ev, pgp, p, frame, opacity);
 	}
 

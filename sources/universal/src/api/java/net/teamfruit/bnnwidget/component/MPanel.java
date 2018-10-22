@@ -1,7 +1,5 @@
 package net.teamfruit.bnnwidget.component;
 
-import static org.lwjgl.opengl.GL11.*;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.util.ResourceLocation;
@@ -24,10 +22,6 @@ public class MPanel extends WPanel {
 	 * BnnWidget同封のMinecraftデザイン、パネルです。
 	 */
 	public static final @Nonnull ResourceLocation background = new ResourceLocation("bnnwidget", "textures/gui/background.png");
-	/**
-	 * BnnWidgetは新デザインを開発中です。
-	 */
-	public static boolean tryNew;
 
 	public MPanel(final @Nonnull R position) {
 		super(position);
@@ -38,19 +32,11 @@ public class MPanel extends WPanel {
 		final Area a = getGuiPosition(pgp);
 		final float op = getGuiOpacity(popacity);
 
-		if (tryNew) {
-			WRenderer.startShape();
-			OpenGL.glColor4f(0f, 0f, 0f, op*.5f);
-			draw(a);
-			OpenGL.glLineWidth(1f);
-			OpenGL.glColor4f(1f, 1f, 1f, op);
-			draw(a, GL_LINE_LOOP);
-		} else {
-			WRenderer.startTexture();
-			OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			texture().bindTexture(background);
-			drawBack(a);
-		}
+		WRenderer.startTexture();
+		OpenGL.glColor4f(1.0F, 1.0F, 1.0F, op);
+		texture().bindTexture(background);
+		drawBack(a);
+
 		super.draw(ev, pgp, p, frame, popacity, opt);
 	}
 
