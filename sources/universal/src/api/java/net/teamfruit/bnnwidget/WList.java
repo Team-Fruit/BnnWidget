@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Point;
 import net.teamfruit.bnnwidget.position.R;
-import net.teamfruit.bnnwidget.util.NotifyCollections.IModCount;
+import net.teamfruit.bnnwidget.util.NotifyList;
 
 /**
  * リストを監視し、ウィジェットに反映します。
@@ -24,9 +24,9 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	/**
 	 * 監視するリスト
 	 */
-	protected @Nonnull IModCount<T> check;
+	protected @Nonnull NotifyList<T> check;
 
-	public WList(final @Nonnull R position, final @Nonnull IModCount<T> check) {
+	public WList(final @Nonnull R position, final @Nonnull NotifyList<T> check) {
 		super(position);
 		this.check = check;
 	}
@@ -35,7 +35,7 @@ public abstract class WList<T, W extends WCommon> extends WTypedPanel<W> {
 	 * 監視するリストを設定します
 	 * @param check 監視するリスト
 	 */
-	public void setList(final @Nonnull IModCount<T> check) {
+	public void setList(final @Nonnull NotifyList<T> check) {
 		this.check = check;
 		this.cachedModCount = -1;
 		this.toT.clear();
