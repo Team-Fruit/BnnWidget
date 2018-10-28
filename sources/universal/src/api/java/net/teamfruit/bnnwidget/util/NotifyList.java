@@ -12,7 +12,7 @@ import com.google.common.collect.ForwardingList;
  *
  * @author TeamFruit
  */
-public class NotifyList<E> extends ForwardingList<E> {
+public class NotifyList<E> extends ForwardingList<E> implements NotifyCollection<E> {
 	private final List<E> delegate;
 	private int modCount;
 
@@ -21,6 +21,7 @@ public class NotifyList<E> extends ForwardingList<E> {
 		this.modCount = 0;
 	}
 
+	@Override
 	public int getModCount() {
 		return this.modCount;
 	}
