@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.teamfruit.bnnwidget.OverridablePoint;
+import net.teamfruit.bnnwidget.WCommon;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Point;
 import net.teamfruit.bnnwidget.position.R;

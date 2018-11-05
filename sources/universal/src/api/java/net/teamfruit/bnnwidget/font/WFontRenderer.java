@@ -31,6 +31,11 @@ public class WFontRenderer implements WFont {
 		return this.font.getWidth(p);
 	}
 
+	@Override
+	public float getHeight(@Nonnull final FontPosition p) {
+		return this.font.getHeight(p);
+	}
+
 	/**
 	 * 設定を設定
 	 * @param setting 設定
@@ -54,8 +59,8 @@ public class WFontRenderer implements WFont {
 	 */
 	@Deprecated
 	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align, final @Nonnull VerticalAlign valign, final boolean shadow) {
-		final float abswidth = w/scale;
-		final float absheight = h/scale;
+		final float abswidth = w;
+		final float absheight = h;
 		float correctscale = 1f;
 		float dx;
 		switch (align) {
@@ -70,16 +75,15 @@ public class WFontRenderer implements WFont {
 				dx = w;
 				break;
 		}
-		this.p.set(this.p).setScale(absheight).setText(str).setAlign(align).setPosition(x+dx, y).setShadow(shadow);
-		final float ratiowh = this.font.getWidth(this.p)/Math.round(absheight);
-		if (absheight*ratiowh>abswidth) {
-			final float newwidth = absheight*ratiowh;
-			correctscale *= abswidth/newwidth;
-		} else
-			correctscale *= 1f;
+		this.p.set(this.p).setScale(1).setText(str).setAlign(align).setPosition(x+dx, y).setShadow(shadow);
+		final float fontwidth = this.font.getWidth(this.p);
+		final float fontheight = this.font.getHeight(this.p);
+		if (fontwidth/fontheight>abswidth/absheight)
+			correctscale *= abswidth/fontwidth;
+		else
+			correctscale *= absheight/fontheight;
 		final float correctheight = absheight*correctscale;
-		final float correctedscale = correctheight/(float) Math.ceil(correctheight);
-		this.font.drawString(this.p.setScale(scale*correctedscale*correctheight));
+		this.font.drawString(this.p.setScale(correctscale));
 	}
 
 	/**

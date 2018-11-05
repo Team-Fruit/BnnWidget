@@ -48,15 +48,20 @@ public class MFont implements WFont {
 		final int color = OpenGL.glGetColorRGBA();
 		OpenGL.glColorRGBA(0xffffffff);
 		OpenGL.glPushMatrix();
+		OpenGL.glTranslatef(x, y, 0);
 		OpenGL.glScalef(scale, scale, 1);
-		this.font.drawString(p.getText(), x, y, color, false);
+		this.font.drawString(p.getText(), 0, 0, color, false);
 		OpenGL.glPopMatrix();
 		OpenGL.glColorRGBA(color);
 	}
 
 	@Override
 	public float getWidth(final FontPosition p) {
-		final float scale = p.getScale();
-		return this.font.getStringWidthWithoutFormattingCodes(p.getText())*scale;
+		return this.font.getStringWidthWithoutFormattingCodes(p.getText())*p.getScale();
+	}
+
+	@Override
+	public float getHeight(final FontPosition p) {
+		return this.font.getFontRendererObj().FONT_HEIGHT*p.getScale();
 	}
 }

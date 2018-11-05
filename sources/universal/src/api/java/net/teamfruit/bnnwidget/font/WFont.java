@@ -20,4 +20,11 @@ public interface WFont {
 	 * @return 幅
 	 */
 	float getWidth(final @Nonnull FontPosition p);
+
+	/**
+	 * 文字列の高さを取得します。
+	 * @param p 文字描画設定
+	 * @return 高さ
+	 */
+	float getHeight(final @Nonnull FontPosition p);
 }
