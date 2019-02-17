@@ -59,9 +59,6 @@ public class WFontRenderer implements WFont {
 	 */
 	@Deprecated
 	public void drawString(final String str, final float x, final float y, final float w, final float h, final float scale, final @Nonnull Align align, final @Nonnull VerticalAlign valign, final boolean shadow) {
-		final float abswidth = w;
-		final float absheight = h;
-		float correctscale = 1f;
 		float dx;
 		switch (align) {
 			default:
@@ -75,14 +72,27 @@ public class WFontRenderer implements WFont {
 				dx = w;
 				break;
 		}
-		this.p.set(this.p).setScale(1).setText(str).setAlign(align).setPosition(x+dx, y).setShadow(shadow);
+		float dy;
+		switch (valign) {
+			default:
+			case TOP:
+				dy = 0;
+				break;
+			case MIDDLE:
+				dy = h/2;
+				break;
+			case BOTTOM:
+				dy = h;
+				break;
+		}
+		this.p.set(this.p).setScale(1).setText(str).setAlign(align).setVAlign(valign).setPosition(x+dx, y+dy).setShadow(shadow);
 		final float fontwidth = this.font.getWidth(this.p);
 		final float fontheight = this.font.getHeight(this.p);
-		if (fontwidth/fontheight>abswidth/absheight)
-			correctscale *= abswidth/fontwidth;
+		float correctscale = 1f;
+		if (fontwidth*h>w*fontheight)
+			correctscale *= w/fontwidth;
 		else
-			correctscale *= absheight/fontheight;
-		final float correctheight = absheight*correctscale;
+			correctscale *= h/fontheight;
 		this.font.drawString(this.p.setScale(correctscale));
 	}
 

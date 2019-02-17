@@ -2,6 +2,8 @@ package net.teamfruit.bnnwidget.test;
 
 import java.awt.Color;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.teamfruit.bnnwidget.WBase;
 import net.teamfruit.bnnwidget.WEvent;
@@ -9,6 +11,7 @@ import net.teamfruit.bnnwidget.WFrame;
 import net.teamfruit.bnnwidget.WPanel;
 import net.teamfruit.bnnwidget.compat.Compat;
 import net.teamfruit.bnnwidget.compat.OpenGL;
+import net.teamfruit.bnnwidget.component.MScaledLabel;
 import net.teamfruit.bnnwidget.font.MFont;
 import net.teamfruit.bnnwidget.font.WFontRenderer;
 import net.teamfruit.bnnwidget.position.Area;
@@ -82,7 +85,17 @@ public class BnnExGui extends WFrame {
 						WGui.draw(a);
 						OpenGL.glColor(Color.BLACK);
 						WRenderer.startTexture();
-						font.drawString("kjhdazrgckajgc", a, ev.owner.guiScale(), Align.LEFT, false);
+						font.drawString("kjhdazrgckajgc", a, ev.owner.guiScale(), Align.CENTER, VerticalAlign.MIDDLE, false);
+					}
+				});
+				add(new MScaledLabel(new R(Coord.left(10), Coord.top(100), Coord.width(vwidth), Coord.height(vheight))).setText("kjhdazrgckajgc"));
+				add(new WBase(new R(Coord.left(10), Coord.top(100), Coord.width(vwidth), Coord.height(vheight))) {
+					@Override
+					public void draw(final WEvent ev, final Area pgp, final Point p, final float frame, final float popacity, final RenderOption opt) {
+						final Area a = getGuiPosition(pgp);
+						OpenGL.glColor(Color.GRAY);
+						WRenderer.startShape();
+						WGui.draw(a, GL11.GL_LINE_LOOP);
 					}
 				});
 			}
