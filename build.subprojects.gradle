@@ -24,6 +24,11 @@ plugins {
 }
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'java'
+if (project.forgegradle.contains('3.+')) {
+	apply plugin: 'net.minecraftforge.gradle'
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+}
 
 // Configure Source Sets - Step1
 sourceSets {
@@ -134,22 +139,60 @@ minecraft {
 	if (project.forgegradle.contains('2.2'))
 		setSuppressVersionTest(true);
 
-	version = "${project.version_minecraft}-${project.version_forge}"
-
 	if (project.isProperty('version_mappings'))
 		mappings = project.version_mappings
 
-	if (!project.isProperty('run_location'))
-		runDir = 'run'
-	else
-		runDir = run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft)
+	if (project.forgegradle.contains('3.+')) {
+		runs {
+	        client {
+	        	if (!project.isProperty('run_location'))
+		            workingDirectory project.file('run')
+		        else
+		        	workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
 
-	replaceIn 'Reference.java'
-	replace '${modid}', project.modid
-	replace '${modname}', project.modname
-	replace '${version}', mod_version
-	replace '${mcversion}', project.version_minecraft
-	replace '${forgeversion}', project.version_forge
+	            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+	            property 'forge.logging.console.level', 'debug'
+
+	            mods {
+	                bnnwidget {
+	                    source sourceSets.main
+	                }
+	            }
+	        }
+
+	        server {
+	        	if (!project.isProperty('run_location'))
+		            workingDirectory project.file('run')
+		        else
+		        	workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
+
+	            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+	            property 'forge.logging.console.level', 'debug'
+
+	            mods {
+	                bnnwidget {
+	                    source sourceSets.main
+	                }
+	            }
+	        }
+    	}
+	} else {
+		version = "${project.version_minecraft}-${project.version_forge}"
+
+		if (!project.isProperty('run_location'))
+			runDir = 'run'
+		else
+			runDir = run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft)
+	
+		replaceIn 'Reference.java'
+		replace '${modid}', project.modid
+		replace '${modname}', project.modname
+		replace '${version}', mod_version
+		replace '${mcversion}', project.version_minecraft
+		replace '${forgeversion}', project.version_forge
+	}
 }
 
 // Auto-Generated Directory
@@ -158,7 +201,11 @@ task setupSourceSets {
 		sourceSets*.java.srcDirs*.each { it.mkdirs() }
 		sourceSets*.resources.srcDirs*.each { it.mkdirs() }
 	}
-	[tasks.eclipseClasspath, tasks.ideaModule]*.dependsOn 'setupSourceSets'
+
+	if (project.forgegradle.contains('3.+'))
+		[tasks.getByName("eclipseClasspath"), tasks.getByName("ideaModule")]*.dependsOn 'setupSourceSets'
+	else
+		[tasks.eclipseClasspath, tasks.ideaModule]*.dependsOn 'setupSourceSets'
 }
 
 // Version Update Check
@@ -193,10 +240,16 @@ dependencies {
 		if (project.isProperty('extra_fmlcore'))
 			shade 'net.teamfruit:coremodlegacydependency:1.0.0'
 	}
+
+	if (project.forgegradle.contains('3.+')) {
+		minecraft "net.minecraftforge:forge:${project.version_minecraft}-${project.version_forge}"
+	}
 }
 
 // ReobfShadowJar for 1.7.10
-if (!reobf.hasProperty('dependsOn')) {
+if (project.forgegradle.contains('3.+')) {
+
+} else if (!reobf.hasProperty('dependsOn')) {
 	reobf {
 		shadowJar { mappingType = 'SEARGE' }
 	}

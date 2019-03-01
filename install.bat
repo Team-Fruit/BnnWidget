@@ -1,3 +1,3 @@
 cd /d %~dp0
-call gradlew setupDevWorkspace setupDecompWorkspace eclipse
+call gradlew setupDevWorkspace setupDecompWorkspace eclipse genEclipseRuns
 pause
