@@ -6,9 +6,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.teamfruit.bnnwidget.compat.Compat.CompatGuiScreen;
 
-public class WScreenImpl extends GuiScreen implements WScreen {
+public class WScreenImpl extends CompatGuiScreen implements WScreen {
 	private WFrame widget;
 
 	public WScreenImpl(final WFrame frame) {
@@ -39,22 +39,23 @@ public class WScreenImpl extends GuiScreen implements WScreen {
 	}
 
 	@Override
-	public void drawScreen(final int mousex, final int mousey, final float f) {
+	public void drawScreenCompat(final int mousex, final int mousey, final float f) {
 		this.widget.drawScreen(mousex, mousey, f, this.widget.getOpacity(), null);
 	}
 
 	protected void sDrawScreen(final int mousex, final int mousey, final float f) {
-		super.drawScreen(mousex, mousey, f);
+		super.drawScreenCompat(mousex, mousey, f);
 	}
 
 	@Override
-	protected void mouseClicked(final int x, final int y, final int button) {
-		this.widget.mouseClicked(x, y, button);
+	public boolean mouseClickedCompat(final double x, final double y, final int button) {
+		this.widget.mouseClicked((int) x, (int) y, button);
+		return true;
 	}
 
-	protected void sMouseClicked(final int x, final int y, final int button) {
+	protected void sMouseClicked(final double x, final double y, final int button) {
 		try {
-			super.mouseClicked(x, y, button);
+			super.mouseClickedCompat(x, y, button);
 			if (!"".isEmpty())
 				throw new IOException();
 		} catch (final IOException e) {
@@ -62,31 +63,33 @@ public class WScreenImpl extends GuiScreen implements WScreen {
 	}
 
 	@Override
-	protected void mouseClickMove(final int x, final int y, final int button, final long time) {
-		this.widget.mouseClickMove(x, y, button, time);
+	public boolean mouseClickMoveCompat(final double x, final double y, final int button, final long time, final double dx, final double dy) {
+		this.widget.mouseClickMove((int) x, (int) y, button, time);
+		return true;
 	}
 
-	protected void sMouseClickMove(final int x, final int y, final int button, final long time) {
-		super.mouseClickMove(x, y, button, time);
+	protected void sMouseClickMove(final int x, final int y, final int button, final long time, final double dx, final double dy) {
+		super.mouseClickMoveCompat(x, y, button, time, dx, dy);
 	}
 
 	@Override
-	public void updateScreen() {
+	public void updateScreenCompat() {
 		this.widget.updateScreen();
 	}
 
 	protected void sUpdateScreen() {
-		super.updateScreen();
+		super.updateScreenCompat();
 	}
 
 	@Override
-	protected void keyTyped(final char c, final int keycode) {
+	public boolean keyTypedCompat(final char c, final int keycode) {
 		this.widget.keyTyped(c, keycode);
+		return true;
 	}
 
 	protected void sKeyTyped(final char c, final int keycode) {
 		try {
-			super.keyTyped(c, keycode);
+			super.keyTypedCompat(c, keycode);
 			if (!"".isEmpty())
 				throw new IOException();
 		} catch (final IOException e) {
@@ -98,36 +101,17 @@ public class WScreenImpl extends GuiScreen implements WScreen {
 		this.widget.onGuiClosed();
 	}
 
-	public void sOnGuiClosed() {
+	protected void sOnGuiClosed() {
 		super.onGuiClosed();
 	}
 
 	@Override
-	public void handleMouseInput() {
-		this.widget.handleMouseInput();
+	public boolean mouseScrolledCompat(final double scroll) {
+		return this.widget.mouseScrolled(scroll);
 	}
 
-	protected void sHandleMouseInput() {
-		try {
-			super.handleMouseInput();
-			if (!"".isEmpty())
-				throw new IOException();
-		} catch (final IOException e) {
-		}
-	}
-
-	@Override
-	public void handleKeyboardInput() {
-		this.widget.handleKeyboardInput();
-	}
-
-	protected void sHandleKeyboardInput() {
-		try {
-			super.handleKeyboardInput();
-			if (!"".isEmpty())
-				throw new IOException();
-		} catch (final IOException e) {
-		}
+	protected boolean sMouseScrolled(final double scroll) {
+		return super.mouseScrolledCompat(scroll);
 	}
 
 	@Override

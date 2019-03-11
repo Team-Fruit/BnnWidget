@@ -6,11 +6,10 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.lwjgl.util.Timer;
-
 import com.google.common.eventbus.EventBus;
 
 import net.teamfruit.bnnwidget.render.WRenderer;
+import net.teamfruit.bnnwidget.util.Timer;
 
 /**
  * いくつかのデータをGUI全体で共有するのに役立ちます。

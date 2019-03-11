@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
 import net.teamfruit.bnnwidget.WBase;
 import net.teamfruit.bnnwidget.WEvent;
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatSound;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.motion.Easings;
 import net.teamfruit.bnnwidget.position.Area;
@@ -86,7 +86,7 @@ public class MButton extends WBase {
 	 * ボタンが押された時の効果音を再生します
 	 */
 	public static void playPressButtonSound() {
-		mc.getSoundHandler().playSound(Compat.createClickSound());
+		CompatSound.createClickSound().play();
 	}
 
 	/**

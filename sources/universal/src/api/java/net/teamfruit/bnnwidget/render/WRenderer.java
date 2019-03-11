@@ -16,6 +16,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.compat.WVertex;
 
@@ -39,7 +40,7 @@ public class WRenderer extends Gui {
 	 * @return {@link Minecraft#renderEngine}
 	 */
 	public static @Nonnull TextureManager texture() {
-		return mc.renderEngine;
+		return CompatMinecraft.getMinecraft().getTextureManager();
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class WRenderer extends Gui {
 	 * @return {@link Minecraft#fontRenderer}
 	 */
 	public static @Nonnull FontRenderer font() {
-		return Compat.getFontRenderer().getFontRendererObj();
+		return CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj();
 	}
 
 	/**
@@ -190,10 +191,10 @@ public class WRenderer extends Gui {
 		DST_ALPHA(8, GL_DST_ALPHA),
 		ONE_MINUS_DST_ALPHA(9, GL_ONE_MINUS_DST_ALPHA),
 		SRC_ALPHA_SATURATE(10, GL_SRC_ALPHA_SATURATE),
-		CONSTANT_COLOR(11, GL_CONSTANT_COLOR),
-		ONE_MINUS_CONSTANT_COLOR(12, GL_ONE_MINUS_CONSTANT_COLOR),
-		CONSTANT_ALPHA(13, GL_CONSTANT_ALPHA),
-		ONE_MINUS_CONSTANT_ALPHA(14, GL_ONE_MINUS_CONSTANT_ALPHA),
+		CONSTANT_COLOR(11, 0x8001),
+		ONE_MINUS_CONSTANT_COLOR(12, 0x8002),
+		CONSTANT_ALPHA(13, 0x8003),
+		ONE_MINUS_CONSTANT_ALPHA(14, 0x8004),
 		// @formatter:on
 
 		;
