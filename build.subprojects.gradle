@@ -4,6 +4,10 @@ buildscript {
 		mavenCentral()
 		jcenter()
 		maven {
+			name = 'Bintray TeamFruit'
+			url = "https://dl.bintray.com/team-fruit/mods/"
+		}
+		maven {
 			name = 'forge'
 			url = 'http://files.minecraftforge.net/maven'
 		}
@@ -25,7 +29,6 @@ plugins {
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'java'
 if (project.forgegradle.contains('3.+')) {
-	apply plugin: 'net.minecraftforge.gradle'
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
 }
@@ -137,47 +140,47 @@ if (tasks.findByPath('makeEclipseCleanRunClient')!=null) {
 // Configure Minecraft
 minecraft {
 	if (project.forgegradle.contains('2.2'))
-		setSuppressVersionTest(true);
+		setSuppressVersionTest(true)
 
 	if (project.isProperty('version_mappings'))
 		mappings = project.version_mappings
 
 	if (project.forgegradle.contains('3.+')) {
 		runs {
-	        client {
-	        	if (!project.isProperty('run_location'))
-		            workingDirectory project.file('run')
-		        else
-		        	workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
+			client {
+				if (!project.isProperty('run_location'))
+					workingDirectory project.file('run')
+				else
+					workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
 
-	            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+				property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
-	            property 'forge.logging.console.level', 'debug'
+				property 'forge.logging.console.level', 'debug'
 
-	            mods {
-	                bnnwidget {
-	                    source sourceSets.main
-	                }
-	            }
-	        }
+				mods {
+					bnnwidget {
+						source sourceSets.main
+					}
+				}
+			}
 
-	        server {
-	        	if (!project.isProperty('run_location'))
-		            workingDirectory project.file('run')
-		        else
-		        	workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
+			server {
+				if (!project.isProperty('run_location'))
+					workingDirectory project.file('run')
+				else
+					workingDirectory project.file(run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft))
 
-	            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+				property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
-	            property 'forge.logging.console.level', 'debug'
+				property 'forge.logging.console.level', 'debug'
 
-	            mods {
-	                bnnwidget {
-	                    source sourceSets.main
-	                }
-	            }
-	        }
-    	}
+				mods {
+					bnnwidget {
+						source sourceSets.main
+					}
+				}
+			}
+		}
 	} else {
 		version = "${project.version_minecraft}-${project.version_forge}"
 
@@ -185,7 +188,7 @@ minecraft {
 			runDir = 'run'
 		else
 			runDir = run_location.replace('{modid}', project.modid).replace('{mcversion}', project.version_minecraft)
-	
+
 		replaceIn 'Reference.java'
 		replace '${modid}', project.modid
 		replace '${modname}', project.modname
@@ -236,7 +239,7 @@ dependencies {
 	shade fileTree(dir: '../libs/shade', include: '*.jar')
 
 	if (project.name==mod_commonname) {
-		compile 'net.teamfruit:fmllegacydependency:1.0.4'
+		compile 'net.teamfruit:fmllegacydependency:1.0.5'
 		if (project.isProperty('extra_fmlcore'))
 			shade 'net.teamfruit:coremodlegacydependency:1.0.0'
 	}
@@ -292,6 +295,19 @@ ext.commonManifest = {
 		attributes 'FMLCorePluginContainsFMLMod': project.extra_fmlcore
 	if (project.isProperty('extra_fmlat'))
 		attributes 'FMLAT': project.extra_fmlat
+
+	if (project.forgegradle.contains('3.+')) {
+		attributes([
+			"Specification-Title": project.modid,
+			"Specification-Vendor": project.modvendor,
+			"Specification-Version": "1", // We are version 1 of ourselves
+			"Implementation-Title": project.modname,
+			"Implementation-Version": project.mod_version,
+			"Implementation-Vendor": project.modvendor,
+			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
+	}
+
 	// Prevent from CurseForge duplicate error
 	attributes 'ModVersion': mod_version_full
 }
@@ -377,11 +393,11 @@ task apiJar(dependsOn: 'classes', type: Jar) {
 
 // Output Jar
 artifacts {
-    archives jar
-    archives shadowJar
-    archives devJar
-    archives sourceJar
-    archives apiJar
+	archives jar
+	archives shadowJar
+	archives devJar
+	archives sourceJar
+	archives apiJar
 }
 
 // Release CurseForge
@@ -414,10 +430,11 @@ if (sec_curseforge_key!=null&&project.isProperty('extra_curseforge_id')) {
 				}
 			}
 
-			/*
-			relations {
+			if (project.isProperty('extra_curseforge_dependency')) {
+				relations {
+					requiredLibrary project.extra_curseforge_dependency
+				}
 			}
-			*/
 		}
 	}
 } else
