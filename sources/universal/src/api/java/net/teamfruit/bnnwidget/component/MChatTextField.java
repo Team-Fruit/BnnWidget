@@ -15,6 +15,7 @@ import net.teamfruit.bnnwidget.OverridablePoint;
 import net.teamfruit.bnnwidget.WBase;
 import net.teamfruit.bnnwidget.WEvent;
 import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Point;
@@ -180,12 +181,12 @@ public class MChatTextField extends WBase {
 
 	@Override
 	public void update(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p) {
-		this.t.updateCursorCounter();
+		this.t.tickCompat();
 	}
 
 	@Override
 	public boolean keyTyped(final @Nonnull WEvent ev, final @Nonnull Area pgp, final @Nonnull Point p, final char c, final int keycode) {
-		this.t.textboxKeyTyped(c, keycode);
+		this.t.charTypedCompat(c, keycode);
 		return isFocused();
 	}
 
@@ -282,7 +283,7 @@ public class MChatTextField extends WBase {
 	}
 
 	public int func_146197_a(final int p_146197_1_, final int p_146197_2_, final boolean p_146197_3_) {
-		return this.t.getNthWordFromPosWS(p_146197_1_, p_146197_2_, p_146197_3_);
+		return this.t.getNthWordFromPosWSCompat(p_146197_1_, p_146197_2_, p_146197_3_);
 	}
 
 	public void moveCursorBy(final int p_146182_1_) {
@@ -519,12 +520,12 @@ public class MChatTextField extends WBase {
 		}
 
 		@Override
-		public void drawTextBox() {
-			super.drawTextBox();
+		public void drawTextBoxCompat() {
+			super.drawTextBoxCompat();
 			if (!StringUtils.isEmpty(getWatermark())&&StringUtils.isEmpty(getText())&&!isFocused()) {
 				final int l = getEnableBackgroundDrawing() ? getX()+4 : getX();
 				final int i1 = getEnableBackgroundDrawing() ? getY()+(this.height-8)/2 : getY();
-				Compat.getFontRenderer().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
+				CompatMinecraft.getMinecraft().getFontRenderer().drawStringWithShadow(getWatermark(), l, i1, MChatTextField.this.watermarkcolor);
 			}
 		}
 

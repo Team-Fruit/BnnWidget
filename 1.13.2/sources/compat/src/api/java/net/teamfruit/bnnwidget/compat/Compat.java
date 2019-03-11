@@ -1,27 +1,26 @@
 package net.teamfruit.bnnwidget.compat;
 
 import java.io.IOException;
-import java.nio.IntBuffer;
+import java.nio.DoubleBuffer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.gui.fonts.Font;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -35,11 +34,11 @@ public class Compat {
 		}
 
 		public static CompatSound createClickSound() {
-			return new CompatSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+			return new CompatSound(SimpleSound.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 		}
 
 		public void play() {
-			getMinecraft().getSoundHandler().playSound(this.sound);
+			getMinecraft().getSoundHandler().play(this.sound);
 		}
 	}
 
@@ -53,30 +52,29 @@ public class Compat {
 		}
 
 		public int getX() {
-			return this.xPosition;
+			return this.x;
 		}
 
 		public void setX(final int value) {
-			this.xPosition = value;
+			this.x = value;
 		}
 
 		public int getY() {
-			return this.yPosition;
+			return this.y;
 		}
 
 		public void setY(final int value) {
-			this.yPosition = value;
+			this.y = value;
 		}
 
 		public void tickCompat() {
-			updateCursorCounter();
+			tick();
 		}
 
 		public void charTypedCompat(final char c, final int keycode) {
-			textboxKeyTyped(c, keycode);
+			charTyped(c, keycode);
 		}
 
-		@Override
 		public void drawTextBox() {
 			drawTextBoxCompat();
 		}
@@ -87,7 +85,7 @@ public class Compat {
 
 	public static abstract class CompatFontRendererBase extends FontRenderer {
 		public CompatFontRendererBase(final GameSettings gameSettingsIn, final ResourceLocation location, final TextureManager textureManagerIn, final boolean unicode) {
-			super(gameSettingsIn, location, textureManagerIn, unicode);
+			super(textureManagerIn, new Font(textureManagerIn, location));
 		}
 
 		@Override
@@ -98,14 +96,14 @@ public class Compat {
 		protected abstract int drawStringWithShadowCompat(@Nullable final String str, final float x, final float y, final int color);
 
 		@Override
-		public int drawString(@Nullable final String str, final float x, final float y, final int color, final boolean shadow) {
-			return drawStringCompat(str, (int) x, (int) y, color, shadow);
+		public int drawString(@Nullable final String str, final float x, final float y, final int color) {
+			return drawStringCompat(str, (int) x, (int) y, color, false);
 		}
 
 		protected abstract int drawStringCompat(@Nullable final String str, final float x, final float y, final int color, final boolean shadow);
 
 		@Override
-		public int splitStringWidth(final String str, final int maxLength) {
+		public int getWordWrappedHeight(final String str, final int maxLength) {
 			return getWordWrappedHeightCompat(str, maxLength);
 		}
 
@@ -113,7 +111,7 @@ public class Compat {
 	}
 
 	public static @Nonnull Minecraft getMinecraft() {
-		return Minecraft.getMinecraft();
+		return Minecraft.getInstance();
 	}
 
 	public static class CompatMinecraft {
@@ -132,15 +130,15 @@ public class Compat {
 		}
 
 		public @Nonnull CompatFontRenderer getFontRenderer() {
-			return new CompatFontRenderer(this.minecraft.fontRendererObj);
+			return new CompatFontRenderer(this.minecraft.fontRenderer);
 		}
 
 		public int getDisplayWidth() {
-			return this.minecraft.displayWidth;
+			return this.minecraft.mainWindow.getWidth();
 		}
 
 		public int getDisplayHeight() {
-			return this.minecraft.displayHeight;
+			return this.minecraft.mainWindow.getHeight();
 		}
 	}
 
@@ -152,7 +150,10 @@ public class Compat {
 		}
 
 		public int drawString(final String msg, final float x, final float y, final int color, final boolean shadow) {
-			return this.font.drawString(msg, x, y, color, shadow);
+			if (shadow)
+				return this.font.drawStringWithShadow(msg, x, y, color);
+			else
+				return this.font.drawString(msg, x, y, color);
 		}
 
 		public int drawString(final String msg, final float x, final float y, final int color) {
@@ -178,7 +179,7 @@ public class Compat {
 
 	private static class WVertexImpl implements WVertex {
 		public static final @Nonnull Tessellator t = Tessellator.getInstance();
-		public static final @Nonnull VertexBuffer w = t.getBuffer();
+		public static final @Nonnull BufferBuilder w = t.getBuffer();
 
 		public WVertexImpl() {
 		}
@@ -259,126 +260,116 @@ public class Compat {
 
 	public static class CompatTime {
 		public static long getTimerResolution() {
-			return Sys.getTimerResolution();
+			return GLFW.glfwGetTimerFrequency();
 		}
 
 		public static long getTime() {
-			return Sys.getTime();
+			return GLFW.glfwGetTimerValue();
 		}
 	}
 
 	public static class CompatCursor {
-		private static final @Nullable org.lwjgl.input.Cursor cur;
-
-		static {
-			org.lwjgl.input.Cursor cursor = null;
-			try {
-				final IntBuffer buf = GLAllocation.createDirectIntBuffer(1);
-				buf.put(0);
-				buf.flip();
-				cursor = new org.lwjgl.input.Cursor(1, 1, 0, 0, 1, buf, null);
-			} catch (final LWJGLException e) {
-			}
-			cur = cursor;
-		}
-
 		public static void setCursorVisible(final boolean b) {
-			if (cur!=null)
-				try {
-					Mouse.setNativeCursor(b ? null : cur);
-				} catch (final LWJGLException e) {
-				}
+			if (b)
+				GLFW.glfwSetInputMode(getMinecraft().mainWindow.getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			else
+				GLFW.glfwSetInputMode(getMinecraft().mainWindow.getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 		}
 	}
 
 	public static class CompatGuiScreen extends GuiScreen {
 		@Override
-		public void drawScreen(final int mousex, final int mousey, final float f) {
+		public void render(final int mousex, final int mousey, final float f) {
 			drawScreenCompat(mousex, mousey, f);
 		}
 
 		public void drawScreenCompat(final int mousex, final int mousey, final float f) {
-			super.drawScreen(mousex, mousey, f);
+			super.render(mousex, mousey, f);
 		}
 
 		public static void drawScreen(final GuiScreen screen, final int mousex, final int mousey, final float f) {
-			screen.drawScreen(mousex, mousey, f);
+			screen.render(mousex, mousey, f);
 		}
 
 		@Override
-		public void mouseClicked(final int x, final int y, final int button) {
-			mouseClickedCompat(x, y, button);
+		public boolean mouseClicked(final double x, final double y, final int button) {
+			return mouseClickedCompat(x, y, button);
 		}
 
 		public boolean mouseClickedCompat(final double x, final double y, final int button) {
 			try {
-				super.mouseClicked((int) x, (int) y, button);
+				final boolean b = super.mouseClicked(x, y, button);
 				if (!"".isEmpty())
 					throw new IOException();
+				return b;
 			} catch (final IOException e) {
 			}
-			return true;
+			return false;
 		}
 
 		@Override
-		public void mouseClickMove(final int x, final int y, final int button, final long time) {
-			mouseClickMoveCompat(x, y, button, time, 0, 0);
+		public boolean mouseDragged(final double x, final double y, final int button, final double dx, final double dy) {
+			return mouseClickedCompat(x, y, button);
 		}
 
 		public boolean mouseClickMoveCompat(final double x, final double y, final int button, final long time, final double dx, final double dy) {
-			super.mouseClickMove((int) x, (int) y, button, time);
-			return true;
+			return super.mouseDragged(x, y, button, dx, dy);
 		}
 
 		@Override
-		public void updateScreen() {
+		public void tick() {
 			updateScreenCompat();
 		}
 
 		public void updateScreenCompat() {
-			super.updateScreen();
+			super.tick();
 		}
 
 		public static void updateScreen(final GuiScreen screen) {
-			screen.updateScreen();
+			screen.tick();
 		}
 
 		@Override
-		public void keyTyped(final char c, final int keycode) {
-			keyTypedCompat(c, keycode);
+		public boolean charTyped(final char c, final int keycode) {
+			return keyTypedCompat(c, keycode);
 		}
 
 		public boolean keyTypedCompat(final char c, final int keycode) {
 			try {
-				super.keyTyped(c, keycode);
+				final boolean b = super.charTyped(c, keycode);
 				if (!"".isEmpty())
 					throw new IOException();
+				return b;
 			} catch (final IOException e) {
 			}
-			return true;
+			return false;
 		}
 
 		@Override
-		public void handleMouseInput() {
-			mouseScrolledCompat(Mouse.getEventDWheel());
+		public boolean mouseScrolled(final double scroll) {
+			return mouseScrolledCompat(scroll);
 		}
 
 		public boolean mouseScrolledCompat(final double scroll) {
-			return true;
+			return super.mouseScrolled(scroll);
 		}
 	}
 
 	public static class CompatMouse {
 		public static double getX() {
-			return Mouse.getX();
+			final DoubleBuffer pos = BufferUtils.createDoubleBuffer(1);
+			GLFW.glfwGetCursorPos(getMinecraft().mainWindow.getHandle(), pos, null);
+			return pos.get(0);
 		}
 
 		public static double getY() {
-			return Mouse.getY();
+			final DoubleBuffer pos = BufferUtils.createDoubleBuffer(1);
+			GLFW.glfwGetCursorPos(getMinecraft().mainWindow.getHandle(), null, pos);
+			return pos.get(0);
 		}
 
 		public static boolean isButtonDown(final int button) {
-			return Mouse.isButtonDown(button);
+			return GLFW.glfwGetMouseButton(getMinecraft().mainWindow.getHandle(), button)==GLFW.GLFW_PRESS;
 		}
 	}
 }

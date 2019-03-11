@@ -7,12 +7,12 @@ import net.teamfruit.bnnwidget.WCommon;
 import net.teamfruit.bnnwidget.WEvent;
 import net.teamfruit.bnnwidget.WPanel;
 import net.teamfruit.bnnwidget.WidgetBuilder;
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Coord;
+import net.teamfruit.bnnwidget.position.Coord.CoordSide;
 import net.teamfruit.bnnwidget.position.Point;
 import net.teamfruit.bnnwidget.position.R;
-import net.teamfruit.bnnwidget.position.Coord.CoordSide;
 import net.teamfruit.bnnwidget.var.VCommon;
 
 /**
@@ -125,7 +125,7 @@ public class MTab extends WPanel {
 			Coord cwidth;
 			Coord ctop;
 			final Coord cheight = Coord.height(MTab.this.height);
-			final float w = Compat.getFontRenderer().getStringWidth(name)+MTab.this.widthadd;
+			final float w = CompatMinecraft.getMinecraft().getFontRenderer().getStringWidth(name)+MTab.this.widthadd;
 			switch (MTab.this.side) {
 				case Left:
 				case Right:

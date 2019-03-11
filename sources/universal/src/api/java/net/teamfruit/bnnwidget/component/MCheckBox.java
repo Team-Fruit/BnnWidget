@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.teamfruit.bnnwidget.OverridablePoint;
 import net.teamfruit.bnnwidget.WEvent;
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Point;
@@ -87,9 +87,9 @@ public class MCheckBox extends MLabel {
 		if (this.checked) {
 			final String strcheck = "\u2713";
 			OpenGL.glPushMatrix();
-			OpenGL.glTranslatef(in.x1()+(in.w()-Compat.getFontRenderer().getStringWidth(strcheck))/2, in.y1()+(in.h()-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0f);
+			OpenGL.glTranslatef(in.x1()+(in.w()-CompatMinecraft.getMinecraft().getFontRenderer().getStringWidth(strcheck))/2, in.y1()+(in.h()-CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0f);
 			//glScalef(2f, 2f, 1f);
-			Compat.getFontRenderer().drawStringWithShadow(strcheck, 0, 0, 0xffffff);
+			CompatMinecraft.getMinecraft().getFontRenderer().drawStringWithShadow(strcheck, 0, 0, 0xffffff);
 			OpenGL.glPopMatrix();
 		}
 	}

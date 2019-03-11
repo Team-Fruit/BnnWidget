@@ -7,13 +7,13 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import com.google.common.collect.Sets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.teamfruit.bnnwidget.compat.Compat.CompatGuiScreen;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMouse;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.Point;
@@ -171,7 +171,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	 * @return Minecraftの画面の幅
 	 */
 	protected static float getDisplayWidth() {
-		return WRenderer.mc.displayWidth;
+		return CompatMinecraft.getMinecraft().getDisplayWidth();
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	 * @return Minecraftの画面の高さ
 	 */
 	protected static float getDisplayHeight() {
-		return WRenderer.mc.displayHeight;
+		return CompatMinecraft.getMinecraft().getDisplayHeight();
 	}
 
 	/**
@@ -265,8 +265,8 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	 * @return カーソルの絶対座標
 	 */
 	public @Nonnull Point getMouseAbsolute() {
-		return new Point(Mouse.getX()*width()/getDisplayWidth(),
-				height()-Mouse.getY()*height()/getDisplayHeight()-1);
+		return new Point((float) CompatMouse.getX()*width()/getDisplayWidth(),
+				height()-(float) CompatMouse.getY()*height()/getDisplayHeight()-1);
 	}
 
 	@Override
@@ -311,9 +311,9 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 
 	protected void sInitGui() {
 		checkParentAndClose();
-		if (this.parent!=null)
-			this.parent.initGui();
-		this.screen.sInitGui();
+		//		if (this.parent!=null)
+		//			this.parent.initGui();
+		//		this.screen.sInitGui();
 	}
 
 	protected void initPane() {
@@ -361,7 +361,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 		if (parent!=null) {
 			OpenGL.glPushMatrix();
 			OpenGL.glTranslatef(0, 0, -200f);
-			parent.drawScreen(mousex, mousey, f);
+			CompatGuiScreen.drawScreen(parent, mousex, mousey, f);
 			OpenGL.glPopMatrix();
 		}
 		this.screen.sDrawScreen(mousex, mousey, f);
@@ -402,7 +402,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	}
 
 	protected void sMouseClickMove(final int x, final int y, final int button, final long time) {
-		this.screen.sMouseClickMove(x, y, button, time);
+		this.screen.sMouseClickMove(x, y, button, time, 0, 0);
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 			this.state.reset();
 			for (final Iterator<Integer> itr = this.pressed.iterator(); itr.hasNext();) {
 				final Integer button = itr.next();
-				if (!Mouse.isButtonDown(button)) {
+				if (!CompatMouse.isButtonDown(button)) {
 					this.state.removed.add(button);
 					this.state.lastRemoved = button;
 					itr.remove();
@@ -479,7 +479,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	protected void sUpdateScreen() {
 		checkParentAndClose();
 		if (this.parent!=null)
-			this.parent.updateScreen();
+			CompatGuiScreen.updateScreen(this.parent);
 		this.screen.sUpdateScreen();
 	}
 
@@ -492,7 +492,7 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 
 	@OverridablePoint
 	protected void sKeyTyped(final char c, final int keycode) {
-		if (keycode==Keyboard.KEY_ESCAPE)
+		if (keycode==0x01 /* Keyboard.KEY_ESCAPE */)
 			requestClose();
 	}
 
@@ -537,26 +537,17 @@ public class WFrame implements WCommon, WContainer<WCommon> {
 	protected void onClosed() {
 	}
 
-	public void handleMouseInput() {
-		final int i = Mouse.getEventDWheel();
-		if (i!=0) {
+	public boolean mouseScrolled(final double scroll) {
+		if (scroll!=0) {
 			final Area gp = getAbsolute();
 			final Point p = getMouseAbsolute();
-			dispatchMouseScrolled(gp, p, i);
+			return dispatchMouseScrolled(gp, p, (int) scroll);
 		}
-		sHandleMouseInput();
+		return sMouseScrolled(scroll);
 	}
 
-	protected void sHandleMouseInput() {
-		this.screen.sHandleMouseInput();
-	}
-
-	public void handleKeyboardInput() {
-		sHandleKeyboardInput();
-	}
-
-	protected void sHandleKeyboardInput() {
-		this.screen.sHandleKeyboardInput();
+	public boolean sMouseScrolled(final double scroll) {
+		return this.screen.sMouseScrolled(scroll);
 	}
 
 	public boolean doesGuiPauseGame() {

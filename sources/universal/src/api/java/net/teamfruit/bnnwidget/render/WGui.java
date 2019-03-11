@@ -2,18 +2,14 @@ package net.teamfruit.bnnwidget.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.IntBuffer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.GLAllocation;
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatCursor;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.position.Area;
 
@@ -34,20 +30,6 @@ public class WGui extends WRenderer {
 
 	public static final @Nonnull Area defaultTextureArea = Area.abs(0f, 0f, 1f, 1f);
 
-	private static final @Nullable org.lwjgl.input.Cursor cur;
-
-	static {
-		org.lwjgl.input.Cursor cursor = null;
-		try {
-			final IntBuffer buf = GLAllocation.createDirectIntBuffer(1);
-			buf.put(0);
-			buf.flip();
-			cursor = new org.lwjgl.input.Cursor(1, 1, 0, 0, 1, buf, null);
-		} catch (final LWJGLException e) {
-		}
-		cur = cursor;
-	}
-
 	/**
 	 * カーソルの表示を切り替えます。
 	 * <p>
@@ -55,11 +37,7 @@ public class WGui extends WRenderer {
 	 * @param b カーソルを表示する場合true
 	 */
 	public static void setCursorVisible(final boolean b) {
-		if (cur!=null)
-			try {
-				Mouse.setNativeCursor(b ? null : cur);
-			} catch (final LWJGLException e) {
-			}
+		CompatCursor.setCursorVisible(b);
 	}
 
 	public static void showCursor() {
@@ -239,13 +217,13 @@ public class WGui extends WRenderer {
 		align.translate(text, x, w);
 		valign.translate(text, y, h);
 		buf.clear();
-		GL11.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
+		OpenGL.glGetFloat(GL11.GL_CURRENT_COLOR, buf);
 		final float r = buf.get(0);
 		final float g = buf.get(1);
 		final float b = buf.get(2);
 		final float a = buf.get(3);
 		OpenGL.glColor4f(1f, 1f, 1f, 1f);
-		Compat.getFontRenderer().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
+		CompatMinecraft.getMinecraft().getFontRenderer().drawString(text, 0, 0, Math.max((int) (a*255+0.5)&0xff, 0x4)<<24|((int) (r*255+0.5)&0xFF)<<16|((int) (g*255+0.5)&0xFF)<<8|((int) (b*255+0.5)&0xFF)<<0, shadow);
 		OpenGL.glColor4f(r, g, b, a);
 		OpenGL.glPopMatrix();
 	}
@@ -320,7 +298,7 @@ public class WGui extends WRenderer {
 		MIDDLE {
 			@Override
 			protected void translate(final @Nonnull String text, final float y, final float h) {
-				OpenGL.glTranslatef(0, y+(h-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0);
+				OpenGL.glTranslatef(0, y+(h-CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj().FONT_HEIGHT)/2, 0);
 			}
 		},
 		/**
@@ -329,7 +307,7 @@ public class WGui extends WRenderer {
 		BOTTOM {
 			@Override
 			protected void translate(final @Nonnull String text, final float y, final float h) {
-				OpenGL.glTranslatef(0, y+h-Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT, 0);
+				OpenGL.glTranslatef(0, y+h-CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj().FONT_HEIGHT, 0);
 			}
 		},
 		;
@@ -344,6 +322,6 @@ public class WGui extends WRenderer {
 	public static int getStringWidth(final @Nonnull String s) {
 		if (StringUtils.isEmpty(s))
 			return 0;
-		return Compat.getFontRenderer().getStringWidthWithoutFormattingCodes(s);
+		return CompatMinecraft.getMinecraft().getFontRenderer().getStringWidthWithoutFormattingCodes(s);
 	}
 }

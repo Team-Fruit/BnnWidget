@@ -3,7 +3,7 @@ package net.teamfruit.bnnwidget.motion;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.lwjgl.util.Timer;
+import net.teamfruit.bnnwidget.util.Timer;
 
 /**
  * モーション

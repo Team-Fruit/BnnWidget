@@ -2,7 +2,7 @@ package net.teamfruit.bnnwidget.component;
 
 import javax.annotation.Nonnull;
 
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.position.Area;
 import net.teamfruit.bnnwidget.position.R;
 
@@ -18,15 +18,15 @@ public class MScaledLabel extends MLabel {
 
 	@Override
 	public float getScaleWidth(final @Nonnull Area a) {
-		final float f1 = a.w()/Compat.getFontRenderer().getStringWidth(getText());
-		final float f2 = a.h()/Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT;
+		final float f1 = a.w()/CompatMinecraft.getMinecraft().getFontRenderer().getStringWidth(getText());
+		final float f2 = a.h()/CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj().FONT_HEIGHT;
 		return Math.min(f1, f2);
 	}
 
 	@Override
 	public float getScaleHeight(final @Nonnull Area a) {
-		final float f1 = a.w()/Compat.getFontRenderer().getStringWidth(getText());
-		final float f2 = a.h()/Compat.getFontRenderer().getFontRendererObj().FONT_HEIGHT;
+		final float f1 = a.w()/CompatMinecraft.getMinecraft().getFontRenderer().getStringWidth(getText());
+		final float f2 = a.h()/CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj().FONT_HEIGHT;
 		return Math.min(f1, f2);
 	}
 }
