@@ -52,6 +52,11 @@ def fg_plugin = plugins.findPlugin project.forgegradle_plugin
 
 // Configure Source Sets - Step3
 sourceSets {
+	if (project.forgegradle.contains('3.+')) {
+		api.compileClasspath += main.compileClasspath
+		api.runtimeClasspath += main.runtimeClasspath
+	}
+
 	[
 		[src: api, base: base_api, bootstrap: bootstrap_api, compat: compat_api, universal: universal_api],
 		[src: main, base: base_main, bootstrap: bootstrap_main, compat: compat_main, universal: universal_main],
