@@ -9,7 +9,7 @@ import net.teamfruit.bnnwidget.WBase;
 import net.teamfruit.bnnwidget.WEvent;
 import net.teamfruit.bnnwidget.WFrame;
 import net.teamfruit.bnnwidget.WPanel;
-import net.teamfruit.bnnwidget.compat.Compat;
+import net.teamfruit.bnnwidget.compat.Compat.CompatMinecraft;
 import net.teamfruit.bnnwidget.compat.OpenGL;
 import net.teamfruit.bnnwidget.component.MScaledLabel;
 import net.teamfruit.bnnwidget.font.MFont;
@@ -75,7 +75,7 @@ public class BnnExGui extends WFrame {
 					}
 				};
 
-				final WFontRenderer font = new WFontRenderer(new MFont(Compat.getFontRenderer().getFontRendererObj()));
+				final WFontRenderer font = new WFontRenderer(new MFont(CompatMinecraft.getMinecraft().getFontRenderer().getFontRendererObj()));
 				add(new WBase(new R(Coord.left(10), Coord.top(10), Coord.width(vwidth), Coord.height(vheight))) {
 					@Override
 					public void draw(final WEvent ev, final Area pgp, final Point p, final float frame, final float popacity, final RenderOption opt) {
