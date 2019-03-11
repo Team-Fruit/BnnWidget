@@ -90,14 +90,14 @@ public class Compat {
 
 		@Override
 		public int drawStringWithShadow(@Nullable final String str, final float x, final float y, final int color) {
-			return drawStringWithShadowCompat(str, (int) x, (int) y, color);
+			return drawStringWithShadowCompat(str, x, y, color);
 		}
 
 		protected abstract int drawStringWithShadowCompat(@Nullable final String str, final float x, final float y, final int color);
 
 		@Override
 		public int drawString(@Nullable final String str, final float x, final float y, final int color) {
-			return drawStringCompat(str, (int) x, (int) y, color, false);
+			return drawStringCompat(str, x, y, color, false);
 		}
 
 		protected abstract int drawStringCompat(@Nullable final String str, final float x, final float y, final int color, final boolean shadow);
