@@ -256,7 +256,11 @@ dependencies {
 
 // ReobfShadowJar for 1.7.10
 if (project.forgegradle.contains('3.+')) {
-
+	afterEvaluate {
+		reobf {
+			shadowJar { mappings = tasks.reobfJar.mappings }
+		}
+	}
 } else if (!reobf.hasProperty('dependsOn')) {
 	reobf {
 		shadowJar { mappingType = 'SEARGE' }
