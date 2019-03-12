@@ -153,6 +153,10 @@ minecraft {
 	if (project.forgegradle.contains('3.+')) {
 		runs {
 			client {
+				taskName = "${project.name}_Client"
+
+				arg '--username Kamesuta'
+
 				if (!project.isProperty('run_location'))
 					workingDirectory project.file('run')
 				else
@@ -164,12 +168,16 @@ minecraft {
 
 				mods {
 					bnnwidget {
-						source sourceSets.main
+						sourceSets.each { s ->
+							source s
+						}
 					}
 				}
 			}
 
 			server {
+				taskName = "${project.name}_Server"
+
 				if (!project.isProperty('run_location'))
 					workingDirectory project.file('run')
 				else
@@ -181,7 +189,9 @@ minecraft {
 
 				mods {
 					bnnwidget {
-						source sourceSets.main
+						sourceSets.each { s ->
+							source s
+						}
 					}
 				}
 			}
