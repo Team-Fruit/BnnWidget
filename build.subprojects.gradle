@@ -142,6 +142,15 @@ if (tasks.findByPath('makeEclipseCleanRunClient')!=null) {
 	}
 }
 
+// FG3 task
+if (project.forgegradle.contains('3.+')) {
+	task setupCIWorkspace(dependsOn: 'prepareRuns')
+	task setupDevWorkspace(dependsOn: 'prepareRuns')
+	task setupDecompWorkspace(dependsOn: 'prepareRuns')
+	tasks.eclipse.dependsOn 'genEclipseRuns'
+	tasks.idea.dependsOn 'genIntellijRuns'
+}
+
 // Configure Minecraft
 minecraft {
 	if (project.forgegradle.contains('2.2'))
