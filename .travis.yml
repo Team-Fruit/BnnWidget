@@ -11,7 +11,8 @@ before_install:
 install: "./gradlew setupCIWorkspace --continue"
 script: "./gradlew build --continue"
 after_success:
-  - ./gradlew githubRelease curseforge bintrayUpload --continue
+  #- ./gradlew githubRelease curseforge bintrayUpload --continue
+  - ./gradlew githubRelease bintrayUpload --continue
   #- ./gradlew githubRelease --continue
   #- ./gradlew bintrayUpload --continue
 before_cache:
