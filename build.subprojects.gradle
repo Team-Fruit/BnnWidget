@@ -176,7 +176,7 @@ minecraft {
 				// property 'forge.logging.console.level', 'debug'
 
 				mods {
-					bnnwidget {
+					create(project.modid) {
 						source sourceSets.bootstrap_main
 					}
 				}
@@ -195,7 +195,7 @@ minecraft {
 				// property 'forge.logging.console.level', 'debug'
 
 				mods {
-					bnnwidget {
+					create(project.modid) {
 						source sourceSets.bootstrap_main
 					}
 				}
